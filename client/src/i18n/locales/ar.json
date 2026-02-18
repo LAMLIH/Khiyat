@@ -1,0 +1,50 @@
+{
+    "common": {
+        "dashboard": "لوحة القيادة",
+        "management": "التسيير",
+        "clients": "الزبناء",
+        "measurements": "القياسات",
+        "orders": "الطلبات",
+        "stats": "الإحصائيات",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "user": "المستخدم",
+        "online": "متصل",
+        "offline": "غير متصل",
+        "add": "إضافة",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "search": "بحث",
+        "profit": "الربح",
+        "cost": "التكلفة",
+        "price": "الثمن"
+    },
+    "garments": {
+        "Caftan": "قفطان",
+        "Takchitta": "تكشيطة",
+        "Jellaba": "جلابة",
+        "Gandoura": "غندورة",
+        "Jabador": "جبادور",
+        "Autre": "أخرى"
+    },
+    "measurements": {
+        "shoulders": "الأكتاف",
+        "chest": "الصدر",
+        "waist": "الحزام",
+        "hips": "الحوض",
+        "length": "الطول",
+        "sleeves": "الأكمام",
+        "wrist": "رأس الكم",
+        "neck": "العنق",
+        "last": "آخر القياسات"
+    },
+    "steps": {
+        "Coupe": "الفصالة",
+        "Couture": "الخياطة",
+        "Finition": "الفينيسيون",
+        "Broderie": "الطرز",
+        "Perlage": "التنبات"
+    }
+}

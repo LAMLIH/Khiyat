@@ -1,0 +1,50 @@
+{
+    "common": {
+        "dashboard": "Tableau de bord",
+        "management": "Gestion",
+        "clients": "Clients",
+        "measurements": "Mesures",
+        "orders": "Commandes",
+        "stats": "Statistiques",
+        "settings": "Paramètres",
+        "logout": "Déconnexion",
+        "user": "Utilisateur",
+        "online": "En ligne",
+        "offline": "Hors ligne",
+        "add": "Ajouter",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "search": "Rechercher",
+        "profit": "Bénéfice",
+        "cost": "Coût",
+        "price": "Prix"
+    },
+    "garments": {
+        "Caftan": "Caftan",
+        "Takchitta": "Takchitta",
+        "Jellaba": "Djellaba",
+        "Gandoura": "Gandoura",
+        "Jabador": "Jabador",
+        "Autre": "Autre"
+    },
+    "measurements": {
+        "shoulders": "Épaules",
+        "chest": "Poitrine",
+        "waist": "Taille",
+        "hips": "Bassin",
+        "length": "Longueur",
+        "sleeves": "Manches",
+        "wrist": "Poignet",
+        "neck": "Col",
+        "last": "Dernières mesures"
+    },
+    "steps": {
+        "Coupe": "Coupe",
+        "Couture": "Couture",
+        "Finition": "Finition",
+        "Broderie": "Broderie",
+        "Perlage": "Perlage"
+    }
+}
