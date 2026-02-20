@@ -45,16 +45,29 @@ app.use((req, res, next) => {
     const server = registerRoutes(app);
 
     // Serve static files in production
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
         const publicPath = path.resolve(__dirname, "public");
+        console.log(`Production mode: serving static files from ${publicPath}`);
+
         app.use(express.static(publicPath));
+
+        // Health check route
+        app.get("/api/health", (_req, res) => {
+            res.json({ status: "ok", mode: process.env.NODE_ENV, time: new Date().toISOString() });
+        });
 
         // Serve index.html for any other routes (client-side routing)
         app.get("*", (req, res) => {
             if (!req.path.startsWith("/api") && !req.path.startsWith("/auth")) {
-                res.sendFile(path.resolve(publicPath, "index.html"));
+                const indexPath = path.resolve(publicPath, "index.html");
+                res.sendFile(indexPath, (err) => {
+                    if (err) {
+                        console.error(`Error sending index.html from ${indexPath}:`, err);
+                        res.status(404).send("Front-end build not found. Please check deployment logs.");
+                    }
+                });
             } else {
-                res.status(404).json({ message: "Not Found" });
+                res.status(404).json({ message: "API Route Not Found" });
             }
         });
     }
@@ -67,8 +80,8 @@ app.use((req, res, next) => {
         res.status(status).json({ message });
     });
 
-    const PORT = 5000;
-    server.listen(PORT, "0.0.0.0", () => {
-        console.log(`Server running on port ${PORT}`);
+    const PORT = process.env.PORT || 5000;
+    server.listen(Number(PORT), "0.0.0.0", () => {
+        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
     });
 })();
