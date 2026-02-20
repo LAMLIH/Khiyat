@@ -41,5 +41,19 @@ export function useOrders() {
         },
     });
 
-    return { orders, isLoading, createOrder };
+    const updateOrder = useMutation({
+        mutationFn: async ({ id, data }: { id: number; data: Partial<Order> }) => {
+            if (isOnline) {
+                return apiRequest("PATCH", `/api/orders/${id}`, data);
+            } else {
+                await db.orders.update(id, { ...data, synced: false });
+                return { id, ...data } as Order;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["/api/orders", tenantId] });
+        },
+    });
+
+    return { orders, isLoading, createOrder, updateOrder };
 }

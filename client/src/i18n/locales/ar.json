@@ -19,7 +19,12 @@
         "search": "بحث",
         "profit": "الربح",
         "cost": "التكلفة",
-        "price": "الثمن"
+        "price": "الثمن",
+        "finance": "المالية",
+        "expenses": "المصاريف",
+        "invoices": "الفواتير",
+        "products": "المنتجات",
+        "preferences": "التفضيلات"
     },
     "garments": {
         "Caftan": "قفطان",

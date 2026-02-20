@@ -13,12 +13,12 @@ declare global {
 
 export function setupAuth(app: Express) {
     const sessionSettings: session.SessionOptions = {
-        secret: "khiyatma-secret",
+        secret: process.env.SESSION_SECRET || "khiyatma-default-secret",
         resave: false,
         saveUninitialized: false,
         store: storage.sessionStore,
         cookie: {
-            secure: false, // Set to true if using HTTPS
+            secure: process.env.NODE_ENV === "production",
             maxAge: 24 * 60 * 60 * 1000, // 24 hours
         }
     };

@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </div>
                     <div>
                         <h2 className="font-bold text-xl tracking-wide text-white">
-                            KHIYATMA
+                            khiyat.ma
                         </h2>
                         <p className="text-xs text-blue-300 font-medium">
                             {language === 'ar' ? 'خياطة عصرية' : 'Gestion Couture'}

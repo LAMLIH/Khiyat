@@ -67,14 +67,50 @@ export function registerRoutes(app: Express): Server {
     app.post("/api/orders", async (req, res) => {
         try {
             const tenantId = Number(req.body.tenantId) || req.user?.tenantId;
-            if (!tenantId) return res.status(400).send("tenantId is required");
+            if (!tenantId) {
+                console.warn("Order creation attempt without tenantId");
+                return res.status(400).send("tenantId is required");
+            }
 
-            const orderData = insertOrderSchema.omit({ tenantId: true }).parse(req.body);
+            console.log("Creating order for tenant:", tenantId, "Data:", JSON.stringify(req.body, null, 2));
+
+            let orderData;
+            try {
+                orderData = insertOrderSchema.omit({ tenantId: true }).parse(req.body);
+            } catch (parseError: any) {
+                console.error("Order Data Parsing Error:", parseError);
+                return res.status(400).json({
+                    error: "Invalid order data",
+                    details: parseError.errors || parseError.message
+                });
+            }
+
             const order = await storage.createOrder(tenantId, orderData);
+            console.log("Order created successfully:", order.id);
             res.status(201).json(order);
-        } catch (error) {
-            console.error("Order creation error:", error);
-            res.status(500).json({ error: "Failed to create order" });
+        } catch (error: any) {
+            console.error("Order creation database error:", error);
+            res.status(500).json({
+                error: "Failed to create order",
+                message: error.message,
+                detail: error.detail // Postgres detail if available
+            });
+        }
+    });
+
+    app.patch("/api/orders/:id", async (req, res) => {
+        try {
+            const id = Number(req.params.id);
+            const tenantId = req.user?.tenantId;
+            if (!tenantId) return res.status(401).send("Unauthorized");
+
+            // We use Partial because we only want to update some fields
+            const updateData = insertOrderSchema.partial().parse(req.body);
+            const order = await storage.updateOrder(id, updateData);
+            res.json(order);
+        } catch (error: any) {
+            console.error("Order update error:", error);
+            res.status(500).json({ error: "Failed to update order", message: error.message });
         }
     });
 

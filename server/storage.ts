@@ -34,6 +34,7 @@ export interface IStorage {
     // Orders
     getOrders(tenantId: number): Promise<Order[]>;
     createOrder(tenantId: number, order: InsertOrder): Promise<Order>;
+    updateOrder(id: number, order: Partial<InsertOrder>): Promise<Order>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -107,6 +108,12 @@ export class DatabaseStorage implements IStorage {
 
     async createOrder(tenantId: number, insertOrder: InsertOrder): Promise<Order> {
         const [order] = await db.insert(orders).values({ ...insertOrder, tenantId }).returning();
+        return order;
+    }
+
+    async updateOrder(id: number, update: Partial<InsertOrder>): Promise<Order> {
+        const [order] = await db.update(orders).set(update).where(eq(orders.id, id)).returning();
+        if (!order) throw new Error("Order not found");
         return order;
     }
 }

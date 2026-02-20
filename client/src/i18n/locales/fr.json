@@ -19,7 +19,12 @@
         "search": "Rechercher",
         "profit": "Bénéfice",
         "cost": "Coût",
-        "price": "Prix"
+        "price": "Prix",
+        "finance": "Finance",
+        "expenses": "Dépenses",
+        "invoices": "Factures",
+        "products": "Produits",
+        "preferences": "Préférences"
     },
     "garments": {
         "Caftan": "Caftan",

@@ -1,9 +1,14 @@
-import "dotenv/config";
+import "dotenv/config"; // Refreshed configuration
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { createServer } from "http";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
@@ -38,6 +43,21 @@ app.use((req, res, next) => {
 
 (async () => {
     const server = registerRoutes(app);
+
+    // Serve static files in production
+    if (process.env.NODE_ENV === "production") {
+        const publicPath = path.resolve(__dirname, "public");
+        app.use(express.static(publicPath));
+
+        // Serve index.html for any other routes (client-side routing)
+        app.get("*", (req, res) => {
+            if (!req.path.startsWith("/api") && !req.path.startsWith("/auth")) {
+                res.sendFile(path.resolve(publicPath, "index.html"));
+            } else {
+                res.status(404).json({ message: "Not Found" });
+            }
+        });
+    }
 
     // Error handling
     app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
