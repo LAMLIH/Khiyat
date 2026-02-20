@@ -14,6 +14,18 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Health check VERY early to rule out middleware/tenant issues
+app.get("/api/health", (_req, res) => {
+    console.log("Health check Pinged");
+    res.json({
+        status: "ok",
+        mode: process.env.NODE_ENV,
+        port: process.env.PORT,
+        cwd: process.cwd(),
+        dir: __dirname
+    });
+});
+
 // Multi-tenant middleware
 app.use(async (req, res, next) => {
     const host = req.get("host") || "";
@@ -51,10 +63,7 @@ app.use((req, res, next) => {
 
         app.use(express.static(publicPath));
 
-        // Health check route
-        app.get("/api/health", (_req, res) => {
-            res.json({ status: "ok", mode: process.env.NODE_ENV, time: new Date().toISOString() });
-        });
+        // Health check route moved to top
 
         // Serve index.html for any other routes (client-side routing)
         app.get("*", (req, res) => {
