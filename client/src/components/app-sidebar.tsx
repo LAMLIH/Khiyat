@@ -54,6 +54,8 @@ interface CollapsibleNavItem {
 
 type SidebarItem = ({ type: "simple" } & NavItem) | ({ type: "collapsible" } & CollapsibleNavItem);
 
+import logo from "@/assets/logo.png";
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const [location] = useLocation();
     const { t } = useTranslation();
@@ -164,20 +166,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             className="border-none bg-[#1e293b] text-white"
             {...props}
         >
-            <SidebarHeader className="p-6 pb-2">
-                <div className="flex items-center gap-3 px-2">
-                    <div className="h-10 w-10 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
-                        <Scissors className="h-6 w-6 text-blue-400" />
+            <SidebarHeader className="p-4 flex flex-col items-center justify-center border-b border-white/10 mb-4">
+                <Link href="/" className="flex flex-col items-center gap-2 group transition-transform hover:scale-105">
+                    <div className="relative h-24 w-full flex items-center justify-center overflow-hidden rounded-xl bg-white/5 p-2 border border-white/5 group-hover:bg-white/10">
+                        <img
+                            src={logo}
+                            alt="Khiyatma Logo"
+                            className="h-full w-auto object-contain drop-shadow-2xl"
+                        />
                     </div>
-                    <div>
-                        <h2 className="font-bold text-xl tracking-wide text-white">
-                            khiyat.ma
-                        </h2>
-                        <p className="text-xs text-blue-300 font-medium">
-                            {language === 'ar' ? 'خياطة عصرية' : 'Gestion Couture'}
-                        </p>
-                    </div>
-                </div>
+                </Link>
             </SidebarHeader>
 
             <SidebarContent className="px-3 py-6 custom-scrollbar">
