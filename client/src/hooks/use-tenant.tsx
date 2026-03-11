@@ -23,8 +23,8 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         } else if (parts.length === 2 && parts[1] === "localhost") {
             setSubdomain(parts[0]);
         } else if (host === "localhost" || host === "127.0.0.1") {
-            // Default to 'default' tenant in local dev if no subdomain
-            setSubdomain("default");
+            // No default tenant on root localhost to allow Landing Page
+            setSubdomain("");
         }
     }, []);
 

@@ -48,9 +48,14 @@ app.get("/api/health", async (_req, res) => {
 app.use(async (req, res, next) => {
     try {
         const host = req.get("host") || "";
-        const subdomain = host.split(".")[0];
+        const hostname = host.split(":")[0]; // Strip port
+        const parts = hostname.split(".");
+        const subdomain = parts.length > 1 ? parts[0] : "";
 
-        if (subdomain && subdomain !== "www" && subdomain !== "localhost" && !subdomain.includes("127.0.0.1")) {
+        // Skip tenant lookup for system subdomains
+        const systemSubdomains = ["www", "localhost", "127", "admin"];
+
+        if (subdomain && !systemSubdomains.includes(subdomain.toLowerCase())) {
             const tenant = await storage.getTenantBySubdomain(subdomain);
             if (tenant) {
                 (req as any).tenant = tenant;
@@ -58,7 +63,6 @@ app.use(async (req, res, next) => {
         }
     } catch (error) {
         console.error("Tenant middleware error:", error);
-        // Continue even if tenant lookup fails to avoid crashing
     }
     next();
 });

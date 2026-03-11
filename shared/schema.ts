@@ -52,7 +52,7 @@ export const orders = pgTable("orders", {
     clientId: integer("client_id").references(() => clients.id),
     garmentType: text("garment_type", { enum: garmentTypes }).notNull(),
     status: text("status").notNull().default("Nouvelle"),
-    currentStep: text("current_step").notNull().default("Coupe"),
+    currentStep: text("current_step").notNull().default("Fsalla"),
 
     totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull().default("0"),
     totalCost: numeric("total_cost", { precision: 10, scale: 2 }).notNull().default("0"),
@@ -73,6 +73,7 @@ export const orders = pgTable("orders", {
         description: string;
         cost: number;
         date: string;
+        step?: string;
     }>>().default([]),
 
     createdAt: timestamp("created_at").defaultNow(),

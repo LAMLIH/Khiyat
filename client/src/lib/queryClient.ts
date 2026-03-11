@@ -33,11 +33,15 @@ export async function apiRequest(
     if (!res.ok) {
         let message = res.statusText;
         try {
-            const error = await res.json();
-            message = error.message || message;
+            const body = await res.clone().text();
+            try {
+                const error = JSON.parse(body);
+                message = error.message || message;
+            } catch {
+                if (body) message = body.slice(0, 100);
+            }
         } catch {
-            const text = await res.text();
-            if (text) message = text.slice(0, 100);
+            // Fallback to statusText
         }
         throw new Error(message);
     }

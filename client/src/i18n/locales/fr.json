@@ -46,10 +46,36 @@
         "last": "Dernières mesures"
     },
     "steps": {
-        "Coupe": "Coupe",
-        "Couture": "Couture",
+        "Fsalla": "Fsalla",
+        "Terwam": "Terwam",
+        "Khiata": "Khiata",
         "Finition": "Finition",
-        "Broderie": "Broderie",
-        "Perlage": "Perlage"
+        "Mslouh": "Mslouh",
+        "Prete": "Prête",
+        "Coupe": "Coupe"
+    },
+    "landing": {
+        "logo": "Khiyat Pro",
+        "hero": {
+            "title": "Propulsez votre atelier de Couture à l'ère Digitale",
+            "subtitle": "La plateforme tout-en-un pour gérer vos clients, vos mesures, votre production et vos finances. Conçue pour les maîtres tailleurs modernes.",
+            "cta": "Commencer maintenant",
+            "demo": "Voir la démo"
+        },
+        "features": {
+            "title": "Fonctionnalités Clés",
+            "subtitle": "Tout ce dont vous avez besoin pour passer d'un carnet papier à une gestion d'entreprise performante."
+        },
+        "pricing": {
+            "title": "Tarifs Transparents",
+            "subtitle": "Une offre adaptée à chaque taille d'atelier. Sans engagement.",
+            "choose": "Choisir ce plan",
+            "month": "DH/mois"
+        },
+        "cta_final": {
+            "title": "Prêt à transformer votre maison de couture ?",
+            "subtitle": "Rejoignez des centaines de tailleurs passionnés qui utilisent déjà Khiyat Pro pour optimiser leur passion.",
+            "button": "Créer mon compte gratuit"
+        }
     }
 }

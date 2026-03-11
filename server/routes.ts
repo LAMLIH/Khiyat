@@ -11,6 +11,19 @@ export function registerRoutes(app: Express): Server {
     app.get("/api/tenant", async (req, res) => {
         const subdomain = req.query.subdomain as string;
         if (!subdomain) return res.status(400).send("subdomain is required");
+
+        // Handle system subdomains
+        if (subdomain.toLowerCase() === "admin") {
+            return res.json({
+                id: 0,
+                name: "SaaS Admin Portal",
+                subdomain: "admin",
+                isActive: true,
+                plan: "Pro",
+                settings: {}
+            });
+        }
+
         const tenant = await storage.getTenantBySubdomain(subdomain);
         if (!tenant) return res.status(404).send("Tenant not found");
         res.json(tenant);

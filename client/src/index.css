@@ -16,8 +16,8 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 204 64% 44%;
-    /* #2980b9 */
+    --primary: 179 68% 34%;
+    /* #1c918f */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -30,7 +30,7 @@
     --border: 214.3 31.8% 91.4%;
     /* light subtle border */
     --input: 214.3 31.8% 91.4%;
-    --ring: 204 64% 44%;
+    --ring: 179 68% 34%;
     --radius: 0.75rem;
     /* Exactly rounded-xl, not huge, not sharp */
     --chart-1: 12 76% 61%;
@@ -40,16 +40,16 @@
     --chart-5: 27 87% 67%;
 
     /* Sidebar variables */
-    --sidebar: 204 64% 44%;
-    /* #2980b9 */
+    --sidebar: 179 68% 34%;
+    /* #1c918f */
     --sidebar-foreground: 0 0% 100%;
     /* Pure white */
     --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 204 64% 44%;
-    --sidebar-accent: 204 80% 38%;
-    /* Slightly darker blue for hover */
+    --sidebar-primary-foreground: 179 68% 34%;
+    --sidebar-accent: 179 80% 28%;
+    /* Slightly darker teal for hover */
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 204 60% 40%;
+    --sidebar-border: 179 60% 30%;
     --sidebar-ring: 0 0% 100%;
   }
 
@@ -60,8 +60,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 204 64% 44%;
-    /* #2980b9 */
+    --primary: 179 68% 34%;
+    /* #1c918f */
     --primary-foreground: 0 0% 98%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -73,7 +73,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 204 64% 44%;
+    --ring: 179 68% 34%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -83,12 +83,12 @@
     /* Sidebar variables for dark mode */
     --sidebar: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 204 64% 44%;
+    --sidebar-primary: 179 68% 34%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 204 64% 44%;
+    --sidebar-ring: 179 68% 34%;
   }
 }
 
@@ -127,7 +127,7 @@
   }
 
   .premium-form-section {
-    @apply bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm transition-all hover:border-primary/20;
+    @apply bg-card p-6 rounded-2xl border border-border shadow-sm transition-all hover:border-primary/20;
   }
 
   .premium-input-focus {

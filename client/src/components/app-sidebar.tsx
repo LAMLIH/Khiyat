@@ -13,7 +13,8 @@ import {
     Settings,
     FileText,
     Truck,
-    Factory
+    Factory,
+    Building2
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
@@ -83,34 +84,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         setOpenMenus(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const menuStructure: SidebarItem[] = [
+    const hostname = window.location.hostname;
+    const isSaaSAdminSubdomain = hostname.startsWith("admin.");
+
+    const saasAdminMenu: SidebarItem[] = [
+        {
+            type: "simple",
+            titleKey: "Dashboard Admin",
+            url: "/",
+            icon: LayoutDashboard,
+        },
+        {
+            type: "simple",
+            titleKey: "Gestion Clients",
+            url: "/tenants",
+            icon: Building2,
+        },
+    ];
+
+    const tenantMenu: SidebarItem[] = [
         {
             type: "simple",
             titleKey: "common.dashboard",
             url: "/",
             icon: LayoutDashboard,
         },
-        // SaaS Admin Section
-        ...(user?.role === "saas_admin" ? [
-            {
-                type: "collapsible" as const,
-                key: "saas_admin",
-                titleKey: "SaaS Admin",
-                icon: Building2,
-                items: [
-                    {
-                        titleKey: "Dashboard",
-                        url: "/saas-admin",
-                        icon: LayoutDashboard,
-                    },
-                    {
-                        titleKey: "Clients",
-                        url: "/saas-admin/tenants",
-                        icon: Building2,
-                    },
-                ],
-            }
-        ] : []),
         {
             type: "collapsible",
             key: "management",
@@ -121,7 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     titleKey: "common.orders",
                     url: "/orders",
                     icon: ClipboardList,
-                    badge: 5, // Example badge count
+                    badge: 5,
                 },
                 {
                     titleKey: "common.clients",
@@ -138,16 +136,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {
             type: "collapsible",
             key: "finance",
-            titleKey: "common.finance", // Need to ensure translation exists or fallback
+            titleKey: "common.finance",
             icon: Wallet,
             items: [
                 {
-                    titleKey: "common.expenses", // Placeholder for now
+                    titleKey: "common.expenses",
                     url: "/expenses",
                     icon: ShoppingBag,
                 },
                 {
-                    titleKey: "common.invoices", // Placeholder
+                    titleKey: "common.invoices",
                     url: "/invoices",
                     icon: FileText,
                 },
@@ -179,6 +177,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ]
         }
     ];
+
+    const menuStructure = isSaaSAdminSubdomain ? saasAdminMenu : tenantMenu;
 
     return (
         <Sidebar
