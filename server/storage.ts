@@ -13,6 +13,9 @@ const PostgresSessionStore = connectPg(session);
 export interface IStorage {
     sessionStore: session.Store;
 
+    // Base Connectivity
+    dbPing(): Promise<void>;
+
     // Tenants
     getTenant(id: number): Promise<Tenant | undefined>;
     getTenantBySubdomain(subdomain: string): Promise<Tenant | undefined>;
@@ -47,6 +50,11 @@ export class DatabaseStorage implements IStorage {
             },
             createTableIfMissing: true,
         });
+    }
+
+    async dbPing(): Promise<void> {
+        // Simple query to verify connection
+        await db.select({ id: tenants.id }).from(tenants).limit(1);
     }
 
     async getTenant(id: number): Promise<Tenant | undefined> {

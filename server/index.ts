@@ -15,10 +15,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Health check VERY early to rule out middleware/tenant issues
-app.get("/api/health", (_req, res) => {
-    console.log("Health check Pinged");
+app.get("/api/health", async (_req, res) => {
+    let dbStatus = "unknown";
+    try {
+        await storage.dbPing();
+        dbStatus = "connected";
+    } catch (err: any) {
+        dbStatus = `error: ${err.message}`;
+    }
+
     res.json({
         status: "ok",
+        database: dbStatus,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
         cwd: process.cwd(),
@@ -28,14 +36,19 @@ app.get("/api/health", (_req, res) => {
 
 // Multi-tenant middleware
 app.use(async (req, res, next) => {
-    const host = req.get("host") || "";
-    const subdomain = host.split(".")[0];
+    try {
+        const host = req.get("host") || "";
+        const subdomain = host.split(".")[0];
 
-    if (subdomain && subdomain !== "www" && subdomain !== "localhost" && !subdomain.includes("127.0.0.1")) {
-        const tenant = await storage.getTenantBySubdomain(subdomain);
-        if (tenant) {
-            (req as any).tenant = tenant;
+        if (subdomain && subdomain !== "www" && subdomain !== "localhost" && !subdomain.includes("127.0.0.1")) {
+            const tenant = await storage.getTenantBySubdomain(subdomain);
+            if (tenant) {
+                (req as any).tenant = tenant;
+            }
         }
+    } catch (error) {
+        console.error("Tenant middleware error:", error);
+        // Continue even if tenant lookup fails to avoid crashing
     }
     next();
 });
