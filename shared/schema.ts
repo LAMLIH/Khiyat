@@ -6,6 +6,9 @@ export const tenants = pgTable("tenants", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     subdomain: text("subdomain").notNull().unique(),
+    isActive: boolean("is_active").default(true).notNull(),
+    plan: text("plan").notNull().default("Starter"), // 'Starter', 'Pro', 'Enterprise'
+    subscriptionExpiresAt: timestamp("subscription_expires_at"),
     settings: jsonb("settings").$type<{
         theme?: string;
         language?: string;
@@ -19,7 +22,7 @@ export const users = pgTable("users", {
     username: text("username").notNull().unique(),
     password: text("password").notNull(),
     fullName: text("full_name").notNull(),
-    role: text("role").notNull().default("staff"),
+    role: text("role").notNull().default("staff"), // 'staff', 'admin', 'saas_admin'
 });
 
 export const clients = pgTable("clients", {

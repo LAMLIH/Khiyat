@@ -1,6 +1,7 @@
 import "dotenv/config"; // Refreshed configuration
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { saasAdminRouter } from "./saas-admin";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { createServer } from "http";
@@ -76,6 +77,11 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+    setupAuth(app);
+
+    // SaaS Admin routes
+    app.use("/api/saas-admin", saasAdminRouter);
+
     const server = registerRoutes(app);
 
     // Serve static files in production

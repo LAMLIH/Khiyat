@@ -20,11 +20,14 @@ export interface IStorage {
     getTenant(id: number): Promise<Tenant | undefined>;
     getTenantBySubdomain(subdomain: string): Promise<Tenant | undefined>;
     createTenant(tenant: InsertTenant): Promise<Tenant>;
+    getAllTenants(): Promise<Tenant[]>;
+    updateTenant(id: number, tenant: Partial<InsertTenant>): Promise<Tenant>;
 
     // Users
     getUser(id: number): Promise<User | undefined>;
     getUserByUsername(username: string): Promise<User | undefined>;
     createUser(user: InsertUser): Promise<User>;
+    getAllUsers(): Promise<User[]>;
 
     // Clients
     getClients(tenantId: number): Promise<Client[]>;
@@ -125,6 +128,21 @@ export class DatabaseStorage implements IStorage {
         const [order] = await db.update(orders).set(update).where(eq(orders.id, id)).returning();
         if (!order) throw new Error("Order not found");
         return order;
+    }
+
+    // SaaS Admin
+    async getAllTenants(): Promise<Tenant[]> {
+        return db.select().from(tenants);
+    }
+
+    async updateTenant(id: number, update: Partial<InsertTenant>): Promise<Tenant> {
+        const [tenant] = await db.update(tenants).set(update).where(eq(tenants.id, id)).returning();
+        if (!tenant) throw new Error("Tenant not found");
+        return tenant;
+    }
+
+    async getAllUsers(): Promise<User[]> {
+        return db.select().from(users);
     }
 }
 

@@ -90,6 +90,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "/",
             icon: LayoutDashboard,
         },
+        // SaaS Admin Section
+        ...(user?.role === "saas_admin" ? [
+            {
+                type: "collapsible" as const,
+                key: "saas_admin",
+                titleKey: "SaaS Admin",
+                icon: Building2,
+                items: [
+                    {
+                        titleKey: "Dashboard",
+                        url: "/saas-admin",
+                        icon: LayoutDashboard,
+                    },
+                    {
+                        titleKey: "Clients",
+                        url: "/saas-admin/tenants",
+                        icon: Building2,
+                    },
+                ],
+            }
+        ] : []),
         {
             type: "collapsible",
             key: "management",

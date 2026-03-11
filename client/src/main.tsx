@@ -21,6 +21,10 @@ import ClientsPage from "./pages/clients";
 import MeasurementsPage from "./pages/measurements";
 import OrdersPage from "./pages/orders";
 
+// SaaS Admin Pages
+import SaaSAdminDashboard from "./pages/saas-admin/dashboard";
+import SaaSAdminTenants from "./pages/saas-admin/tenants";
+
 function Router() {
     const { user, isLoading } = useAuth();
     const [location] = useLocation();
@@ -49,6 +53,15 @@ function Router() {
                 <Route path="/measurements" component={MeasurementsPage} />
                 <Route path="/orders" component={OrdersPage} />
                 <Route path="/stats" component={() => <div className="p-8 text-2xl font-bold">Statistiques (En construction)</div>} />
+
+                {/* SaaS Admin Routes */}
+                {user?.role === "saas_admin" && (
+                    <>
+                        <Route path="/saas-admin" component={SaaSAdminDashboard} />
+                        <Route path="/saas-admin/tenants" component={SaaSAdminTenants} />
+                    </>
+                )}
+
                 <Route path="/products" component={() => <div className="p-8 text-2xl font-bold">Produits (En construction)</div>} />
                 <Route path="/expenses" component={() => <div className="p-8 text-2xl font-bold">Dépenses (En construction)</div>} />
                 <Route path="/invoices" component={() => <div className="p-8 text-2xl font-bold">Facturation (En construction)</div>} />
