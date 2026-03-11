@@ -6,10 +6,10 @@ async function seed() {
     try {
         console.log("Seeding database...");
 
-        // Create a default tenant
+        // Create the actual tenant used on Sevalla
         const tenant = await storage.createTenant({
-            name: "Khiyatma Default",
-            subdomain: "default",
+            name: "Khiyatma Production",
+            subdomain: "khiyat-x1bor",
             settings: { theme: "light", language: "fr" },
         });
         console.log("Created tenant:", tenant.name);
