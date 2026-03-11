@@ -35,10 +35,18 @@ function Router() {
     const hostname = window.location.hostname;
     const parts = hostname.split(".");
 
-    // In local dev, localhost or 127.0.0.1 is the root.
-    // If there's a subdomain (e.g., admin.localhost), parts.length will be > 1 or specific logic applies.
     let subdomain = "";
-    if (parts.length > 2) {
+
+    // Logic for subdomain detection:
+    // 1. localhost: sub.localhost (length 2)
+    // 2. Platform (sevalla.app): tenant.app-name.sevalla.app (length 4)
+    // 3. Custom Domain: sub.domain.com (length 3)
+
+    if (hostname.endsWith("sevalla.app")) {
+        if (parts.length > 3) {
+            subdomain = parts[0];
+        }
+    } else if (parts.length > 2) {
         subdomain = parts[0];
     } else if (parts.length === 2 && parts[1] === "localhost") {
         subdomain = parts[0];

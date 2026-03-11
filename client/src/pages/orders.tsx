@@ -650,7 +650,7 @@ export default function OrdersPage() {
                                 {selectedOrder && (
                                     <div className="space-y-8 pb-10">
                                         {/* Production Pipeline */}
-                                        <div className="premium-form-section flex flex-col gap-6 p-6 bg-card rounded-2xl border border-border shadow-sm transition-all">
+                                        <div className="premium-form-section flex flex-col gap-8 py-10 px-6 bg-card rounded-2xl border border-border shadow-sm transition-all">
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
                                                     <Scissors className="h-6 w-6" />
@@ -661,26 +661,26 @@ export default function OrdersPage() {
                                                 </Badge>
                                             </div>
 
-                                            <div className="relative flex justify-between items-center px-2">
-                                                <div className="absolute left-0 right-0 h-1 bg-border top-1/2 -translate-y-1/2 z-0" />
+                                            <div className="relative flex justify-between items-center px-4 pt-4">
+                                                <div className="absolute left-0 right-0 h-1.5 bg-border top-[40%] -translate-y-1/2 z-0" />
                                                 <div
-                                                    className="absolute left-0 h-1 bg-primary top-1/2 -translate-y-1/2 z-0 transition-all duration-500"
+                                                    className="absolute left-0 h-1.5 bg-primary top-[40%] -translate-y-1/2 z-0 transition-all duration-500"
                                                     style={{ width: `${(ORDER_STEPS.indexOf(selectedOrder.currentStep as any) / (ORDER_STEPS.length - 1)) * 100}%` }}
                                                 />
                                                 {ORDER_STEPS.map((step, idx) => {
                                                     const isReached = ORDER_STEPS.indexOf(selectedOrder.currentStep as any) >= idx;
                                                     const isCurrent = selectedOrder.currentStep === step;
                                                     return (
-                                                        <div key={step} className="relative z-10 flex flex-col items-center gap-2">
+                                                        <div key={step} className="relative z-10 flex flex-col items-center gap-3">
                                                             <div className={cn(
-                                                                "h-8 w-8 rounded-full flex items-center justify-center border-2 transition-all duration-300",
+                                                                "h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300",
                                                                 isReached ? "bg-primary border-primary text-white" : "bg-background border-border text-muted-foreground",
-                                                                isCurrent && "scale-125 shadow-lg shadow-primary/20"
+                                                                isCurrent && "scale-125 shadow-lg shadow-primary/20 ring-4 ring-primary/10"
                                                             )}>
-                                                                {isReached ? <Check className="h-4 w-4" /> : <span className="text-xs font-bold">{idx + 1}</span>}
+                                                                {isReached ? <Check className="h-5 w-5" /> : <span className="text-sm font-bold">{idx + 1}</span>}
                                                             </div>
                                                             <span className={cn(
-                                                                "text-[10px] font-bold uppercase tracking-tighter absolute -bottom-6 whitespace-nowrap",
+                                                                "text-[11px] font-bold uppercase tracking-tight whitespace-nowrap mt-2",
                                                                 isReached ? "text-primary" : "text-muted-foreground"
                                                             )}>
                                                                 {t(`steps.${step}`)}
