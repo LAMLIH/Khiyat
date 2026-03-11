@@ -178,24 +178,22 @@ export default function OrdersPage() {
     };
 
     return (
-        <div className="p-6 space-y-8 animate-in fade-in duration-500">
+        <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
-                        <span className="p-2 bg-primary/10 rounded-xl">
-                            <ClipboardList className="h-8 w-8 text-primary" />
-                        </span>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
+                        <ClipboardList className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground/50" />
                         {t("common.orders")}
                     </h1>
-                    <p className="text-muted-foreground mt-2 text-lg">
+                    <p className="text-muted-foreground mt-1 text-base md:text-lg">
                         {isRTL ? "متابعة تطور و تكاليف طلبات الخياطة" : "Suivi de l'avancement et des coûts de vos commandes."}
                     </p>
                 </div>
 
                 <Drawer.Root open={isNewOrderOpen} onOpenChange={setIsNewOrderOpen}>
                     <Drawer.Trigger asChild>
-                        <Button size="lg" className="hover-elevate shadow-lg gap-2 text-lg h-14 px-8 rounded-2xl transition-all hover:scale-105 active:scale-95">
-                            <Plus className="h-6 w-6" />
+                        <Button size="lg" className="hover-elevate shadow-sm gap-2 text-[15px] h-14 px-6 md:px-8 rounded-full transition-all hover:scale-105 active:scale-95 bg-primary font-bold">
+                            <Plus className="h-5 w-5 md:h-6 md:w-6" />
                             {isRTL ? "طلب جديد" : "Nouvelle commande"}
                         </Button>
                     </Drawer.Trigger>
@@ -217,13 +215,13 @@ export default function OrdersPage() {
                                     </Drawer.Description>
 
                                     <div className="space-y-8">
-                                        <div className="space-y-4 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                                <span className="bg-primary/10 p-1.5 rounded-lg text-primary"><UserPlus className="h-4 w-4" /></span>
+                                        <div className="premium-form-section flex flex-col gap-4">
+                                            <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                <UserPlus className="h-6 w-6" />
                                                 {t("common.clients")}
                                             </h3>
                                             <Select onValueChange={(val) => setNewOrder(prev => ({ ...prev, clientId: Number(val) }))}>
-                                                <SelectTrigger className="h-14 rounded-xl border-2 bg-background">
+                                                <SelectTrigger className="h-14 rounded-xl border-2 bg-background font-medium">
                                                     <SelectValue placeholder={t("common.search")} />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -235,19 +233,19 @@ export default function OrdersPage() {
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-4 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                                                <h3 className="text-lg font-bold flex items-center gap-2">
-                                                    <span className="bg-primary/10 p-1.5 rounded-lg text-primary"><Scissors className="h-4 w-4" /></span>
+                                            <div className="premium-form-section flex flex-col gap-4">
+                                                <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                    <Scissors className="h-6 w-6" />
                                                     {isRTL ? "تفاصيل الطلب" : "Détails de la commande"}
                                                 </h3>
-                                                <div className="space-y-4">
+                                                <div className="space-y-6">
                                                     <div className="space-y-2">
-                                                        <Label className="text-sm font-semibold">{isRTL ? "نوع اللباس" : "Type d'habit"}</Label>
+                                                        <Label className="text-sm font-bold text-slate-700">{isRTL ? "نوع اللباس" : "Type d'habit"}</Label>
                                                         <Select
                                                             defaultValue="Caftan"
                                                             onValueChange={(val: any) => setNewOrder(prev => ({ ...prev, garmentType: val }))}
                                                         >
-                                                            <SelectTrigger className="h-12 rounded-xl border-2 bg-background">
+                                                            <SelectTrigger className="h-14 rounded-xl border-2 bg-background font-medium">
                                                                 <SelectValue />
                                                             </SelectTrigger>
                                                             <SelectContent>
@@ -258,113 +256,115 @@ export default function OrdersPage() {
                                                         </Select>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label className="text-sm font-semibold">{isRTL ? "تاريخ التسليم" : "Date prévue"}</Label>
+                                                        <Label className="text-sm font-bold text-slate-700">{isRTL ? "تاريخ التسليم" : "Date prévue"}</Label>
                                                         <Input
                                                             type="date"
-                                                            className="h-12 rounded-xl border-2 bg-background"
                                                             onChange={(e) => setNewOrder(prev => ({ ...prev, dueDate: new Date(e.target.value).toISOString() }))}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-4 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                                                <h3 className="text-lg font-bold flex items-center gap-2">
-                                                    <span className="bg-primary/10 p-1.5 rounded-lg text-primary"><Wallet className="h-4 w-4" /></span>
+                                            <div className="premium-form-section flex flex-col gap-4">
+                                                <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                    <Wallet className="h-6 w-6" />
                                                     {isRTL ? "التكلفة والدفع" : "Coûts et Paiement"}
                                                 </h3>
-                                                <div className="space-y-4">
+                                                <div className="space-y-6">
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="space-y-2">
-                                                            <Label className="text-sm font-semibold">{t("common.price")}</Label>
-                                                            <div className="relative">
+                                                            <Label className="text-sm font-bold text-slate-700">{t("common.price")}</Label>
+                                                            <div className="relative group">
                                                                 <Input
                                                                     type="number"
-                                                                    className="h-12 rounded-xl border-2 bg-background pr-8"
+                                                                    className="pr-12 font-bold text-lg"
                                                                     value={newOrder.totalPrice}
                                                                     onChange={(e) => setNewOrder(prev => ({ ...prev, totalPrice: e.target.value }))}
                                                                 />
-                                                                <span className="absolute rt-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold right-3">DH</span>
+                                                                <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
-                                                            <Label className="text-sm font-semibold">{isRTL ? "تسبيق" : "Avance"}</Label>
-                                                            <div className="relative">
+                                                            <Label className="text-sm font-bold text-slate-700">{isRTL ? "تسبيق" : "Avance"}</Label>
+                                                            <div className="relative group">
                                                                 <Input
                                                                     type="number"
-                                                                    className="h-12 rounded-xl border-2 bg-background pr-8"
+                                                                    className="pr-12 font-bold text-lg"
                                                                     value={newOrder.advancePayment}
                                                                     onChange={(e) => setNewOrder(prev => ({ ...prev, advancePayment: e.target.value }))}
                                                                 />
-                                                                <span className="absolute rt-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold right-3">DH</span>
+                                                                <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="flex justify-between items-center p-3 bg-background rounded-xl border border-border">
-                                                        <span className="text-sm font-medium text-muted-foreground">{t("common.cost")}</span>
-                                                        <span className="text-lg font-bold">{newOrder.totalCost} <span className="text-xs font-normal">DH</span></span>
+                                                    <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                                        <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">{t("common.cost")}</span>
+                                                        <span className="text-2xl font-lalezar text-slate-900">{newOrder.totalCost} <span className="text-xs font-sans font-bold text-slate-400">DH</span></span>
                                                     </div>
-                                                    <div className="flex justify-between items-center p-3 bg-primary/5 rounded-xl border border-primary/20">
-                                                        <span className="text-sm font-medium text-primary">{t("common.profit")}</span>
-                                                        <span className="text-lg font-bold text-primary">
-                                                            {(Number(newOrder.totalPrice) - Number(newOrder.totalCost)).toFixed(2)} <span className="text-xs font-normal">DH</span>
+                                                    <div className="flex justify-between items-center p-4 bg-primary/5 rounded-xl border-2 border-primary/20 shadow-sm">
+                                                        <span className="text-sm font-bold text-primary uppercase tracking-widest">{t("common.profit")}</span>
+                                                        <span className="text-2xl font-lalezar text-primary">
+                                                            {(Number(newOrder.totalPrice) - Number(newOrder.totalCost)).toFixed(2)} <span className="text-xs font-sans font-bold text-primary/60">DH</span>
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-4 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                                <span className="bg-primary/10 p-1.5 rounded-lg text-primary"><ShoppingBag className="h-4 w-4" /></span>
+                                        <div className="premium-form-section flex flex-col gap-6">
+                                            <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                <ShoppingBag className="h-6 w-6" />
                                                 {isRTL ? "المصاريف (سلعة، خياطة...)" : "Dépenses (Fournitures, Couture...)"}
                                             </h3>
 
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-3">
                                                 <Input
                                                     placeholder={isRTL ? "الوصف (مثال: ثوب)" : "Description (ex: Tissu)"}
-                                                    className="flex-[2] h-12 rounded-xl border-2 bg-background"
+                                                    className="flex-[2]"
                                                     value={newExpense.description}
                                                     onChange={(e) => setNewExpense(prev => ({ ...prev, description: e.target.value }))}
                                                 />
-                                                <Input
-                                                    type="number"
-                                                    placeholder={isRTL ? "الثمن" : "Prix"}
-                                                    className="flex-1 h-12 rounded-xl border-2 bg-background"
-                                                    value={newExpense.cost}
-                                                    onChange={(e) => setNewExpense(prev => ({ ...prev, cost: e.target.value }))}
-                                                />
-                                                <Button onClick={handleAddExpense} size="icon" className="h-12 w-12 rounded-xl bg-primary hover:bg-primary/90">
-                                                    <Plus className="h-5 w-5" />
+                                                <div className="relative flex-1">
+                                                    <Input
+                                                        type="number"
+                                                        placeholder={isRTL ? "الثمن" : "Prix"}
+                                                        className="pr-10"
+                                                        value={newExpense.cost}
+                                                        onChange={(e) => setNewExpense(prev => ({ ...prev, cost: e.target.value }))}
+                                                    />
+                                                    <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold", isRTL ? "left-3" : "right-3")}>DH</span>
+                                                </div>
+                                                <Button onClick={handleAddExpense} size="icon" className="h-12 w-12 rounded-xl bg-primary hover:bg-primary/90 shadow-md transition-transform active:scale-90">
+                                                    <Plus className="h-6 w-6" />
                                                 </Button>
                                             </div>
 
                                             {newOrder.expenses.length > 0 && (
-                                                <div className="space-y-2 mt-4">
+                                                <div className="space-y-3">
                                                     {newOrder.expenses.map((expense, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-3 bg-background rounded-xl border border-border animate-in fade-in slide-in-from-top-2">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-xs">
+                                                        <div key={idx} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200 transition-all hover:bg-slate-50 group animate-in fade-in slide-in-from-top-2">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                                                                     {idx + 1}
                                                                 </div>
-                                                                <span className="font-medium text-sm">{expense.description}</span>
+                                                                <span className="font-bold text-slate-700">{expense.description}</span>
                                                             </div>
-                                                            <div className="flex items-center gap-3">
-                                                                <span className="font-bold text-sm">{expense.cost} DH</span>
+                                                            <div className="flex items-center gap-4">
+                                                                <span className="font-lalezar text-xl text-slate-900">{expense.cost} <span className="text-xs font-sans font-bold text-slate-400">DH</span></span>
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
-                                                                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                                                                    className="h-10 w-10 text-destructive/60 hover:text-destructive hover:bg-destructive/10 rounded-full opacity-0 group-hover:opacity-100 transition-all"
                                                                     onClick={() => handleRemoveExpense(idx)}
                                                                 >
-                                                                    <Trash2 className="h-4 w-4" />
+                                                                    <Trash2 className="h-5 w-5" />
                                                                 </Button>
                                                             </div>
                                                         </div>
                                                     ))}
-                                                    <div className="flex justify-end pt-2 border-t border-dashed border-border mt-2">
-                                                        <span className="text-sm font-medium text-muted-foreground mr-2">{isRTL ? "المجموع:" : "Total:"}</span>
-                                                        <span className="text-sm font-bold">{newOrder.expenses.reduce((s, e) => s + e.cost, 0)} DH</span>
+                                                    <div className="flex justify-end pt-4 border-t border-dashed border-slate-200 mt-2">
+                                                        <span className="text-sm font-bold text-slate-500 mr-2">{isRTL ? "المجموع:" : "Total:"}</span>
+                                                        <span className="text-lg font-lalezar text-slate-900">{newOrder.expenses.reduce((s, e) => s + e.cost, 0)} DH</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -373,7 +373,7 @@ export default function OrdersPage() {
                                         <div className="flex gap-4 pt-6 sticky bottom-0 bg-background/95 backdrop-blur py-4 border-t mt-auto">
                                             <Button
                                                 size="lg"
-                                                className="flex-1 h-14 text-lg rounded-xl shadow-lg hover-elevate transition-all gap-2 bg-primary text-primary-foreground"
+                                                className="flex-1 h-14 text-lg rounded-sm shadow-sm hover-elevate transition-all gap-2 bg-primary text-primary-foreground"
                                                 onClick={handleCreateOrder}
                                                 disabled={createOrder.isPending || !newOrder.clientId || Number(newOrder.totalPrice) <= 0}
                                             >
@@ -381,7 +381,7 @@ export default function OrdersPage() {
                                                 {t("common.save")}
                                             </Button>
                                             <Drawer.Close asChild>
-                                                <Button variant="outline" size="lg" className="h-14 text-lg rounded-xl px-8 border-2">
+                                                <Button variant="outline" size="lg" className="h-14 text-lg rounded-sm px-8 border-2">
                                                     {t("common.cancel")}
                                                 </Button>
                                             </Drawer.Close>
@@ -395,59 +395,59 @@ export default function OrdersPage() {
 
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="rounded-3xl bg-primary shadow-xl border-none text-primary-foreground overflow-hidden relative group">
-                    <div className="absolute right-[-20px] top-[-20px] opacity-10 transition-transform group-hover:scale-125 duration-700">
-                        <TrendingUp size={200} />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg opacity-80 font-medium">{t("common.profit")}</CardTitle>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            {t("common.profit")}
+                        </CardTitle>
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold">12,500 <span className="text-lg font-normal opacity-80">DH</span></div>
-                        <p className="text-xs mt-2 opacity-60 font-medium">+15% {isRTL ? "منذ الشهر الماضي" : "depuis le mois dernier"}</p>
+                        <div className="text-2xl font-bold">12,500 DH</div>
+                        <p className="text-xs text-muted-foreground">+15% {isRTL ? "منذ الشهر الماضي" : "depuis le mois dernier"}</p>
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-3xl bg-secondary shadow-lg border-2 border-primary/10 overflow-hidden relative group">
-                    <div className="absolute right-[-20px] top-[-20px] text-primary/5 opacity-80 group-hover:scale-125 transition-transform duration-700">
-                        <Package size={200} />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg font-medium text-muted-foreground">{isRTL ? "قيد التنفيذ" : "En cours"}</CardTitle>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            {isRTL ? "قيد التنفيذ" : "En cours"}
+                        </CardTitle>
+                        <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-foreground">12</div>
-                        <p className="text-xs mt-2 text-muted-foreground font-medium">4 {isRTL ? "طلبيات تنتظر الفصالة" : "commandes en attente de coupe"}</p>
+                        <div className="text-2xl font-bold">12</div>
+                        <p className="text-xs text-muted-foreground">4 {isRTL ? "طلبيات تنتظر الفصالة" : "commandes en attente de coupe"}</p>
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-3xl bg-background shadow-lg border-2 border-primary/10 overflow-hidden relative group">
-                    <div className="absolute right-[-20px] top-[-20px] text-primary/5 opacity-80 group-hover:scale-125 transition-transform duration-700">
-                        <Wallet size={200} />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg font-medium text-muted-foreground">{isRTL ? "مداخيل الطلبات" : "Chiffre d'Affaire"}</CardTitle>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            {isRTL ? "مداخيل الطلبات" : "Chiffre d'Affaire"}
+                        </CardTitle>
+                        <Wallet className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-foreground">45,800 <span className="text-lg font-normal text-muted-foreground">DH</span></div>
-                        <p className="text-xs mt-2 text-muted-foreground font-medium">{isRTL ? "إجمالي قيمة الطلبات النشطة" : "Valeur totale des commandes actives"}</p>
+                        <div className="text-2xl font-bold">45,800 DH</div>
+                        <p className="text-xs text-muted-foreground">{isRTL ? "إجمالي قيمة الطلبات النشطة" : "Valeur totale des commandes actives"}</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="flex items-center gap-4 border-b pb-4">
+            <div className="flex items-center gap-4 pb-4">
                 <Button
                     variant={statusFilter === "all" ? "default" : "outline"}
                     onClick={() => setStatusFilter("all")}
-                    className="rounded-xl px-6"
+                    className="rounded-xl px-6 border-none shadow-none"
                 >
                     {isRTL ? "الكل" : "Tout"}
                 </Button>
                 <Button
                     variant={statusFilter === "ongoing" ? "default" : "outline"}
                     onClick={() => setStatusFilter("ongoing")}
-                    className="rounded-xl px-6 gap-2"
+                    className="rounded-xl px-6 gap-2 border-none shadow-none"
                 >
                     <Clock className="h-4 w-4" />
                     {isRTL ? "قيد التنفيذ" : "En cours"}
@@ -456,26 +456,26 @@ export default function OrdersPage() {
 
             <div className="grid grid-cols-1 gap-4">
                 {isLoading ? (
-                    [1, 2, 3].map(i => <div key={i} className="h-32 bg-muted/50 rounded-3xl animate-pulse" />)
+                    [1, 2, 3].map(i => <div key={i} className="h-32 bg-muted/50 rounded-sm animate-pulse" />)
                 ) : orders?.filter((order: Order) => {
                     if (statusFilter === "ongoing") {
                         return ["Nouvelle", "En cours"].includes(order.status);
                     }
                     return true;
                 }).map((order: Order) => (
-                    <Card key={order.id} className="group hover-elevate transition-all border-2 hover:border-primary/50 rounded-3xl overflow-hidden bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-xl">
-                        <div className="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                            <div className="flex items-center gap-6 flex-1 min-w-0">
+                    <Card key={order.id} className="group hover:bg-muted/50 transition-all cursor-pointer">
+                        <div className="p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                            <div className="flex items-center gap-4 md:gap-6 flex-1 min-w-0">
                                 <div className={cn(
-                                    "h-16 w-16 rounded-2xl flex items-center justify-center shrink-0 border-2",
-                                    "bg-primary/5 text-primary border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                                    "h-14 w-14 md:h-16 md:w-16 rounded-md flex items-center justify-center shrink-0 border border-border/50",
+                                    "bg-primary/5 text-primary group-hover:bg-primary/10 transition-colors"
                                 )}>
-                                    <Package className="h-8 w-8" />
+                                    <Package className="h-6 w-6 md:h-8 md:w-8" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <h3 className="text-xl font-bold truncate">#{order.id} - {getClientName(order.clientId || 0)}</h3>
-                                        <Badge variant="outline" className={cn("rounded-full border px-3 py-0.5 font-bold uppercase text-[10px]", statusColors[order.status])}>
+                                        <h3 className="text-lg md:text-xl font-bold truncate text-foreground">#{order.id} - {getClientName(order.clientId || 0)}</h3>
+                                        <Badge variant="outline" className={cn("rounded-md font-medium text-xs border bg-background", statusColors[order.status])}>
                                             {order.status}
                                         </Badge>
                                     </div>
@@ -496,25 +496,25 @@ export default function OrdersPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-8 w-full md:w-auto border-t md:border-t-0 md:border-l border-primary/10 pt-4 md:pt-0 md:pl-8">
+                            <div className="flex items-center justify-between md:justify-end gap-4 md:gap-8 w-full md:w-auto border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-8 mt-2 md:mt-0">
                                 <div className="flex-1 md:flex-none">
-                                    <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">{t("common.price")}</div>
-                                    <div className="text-xl font-bold text-foreground">{order.totalPrice} <span className="text-xs font-normal">DH</span></div>
+                                    <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.price")}</div>
+                                    <div className="text-lg md:text-xl font-bold text-foreground">{order.totalPrice} <span className="text-xs font-normal">DH</span></div>
                                 </div>
                                 <div className="flex-1 md:flex-none">
-                                    <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-1">{t("common.profit")}</div>
-                                    <div className="text-xl font-bold text-emerald-500">{order.profit} <span className="text-xs font-normal">DH</span></div>
+                                    <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.profit")}</div>
+                                    <div className="text-lg md:text-xl font-bold text-primary">{order.profit} <span className="text-xs font-normal">DH</span></div>
                                 </div>
                                 <Button
                                     size="icon"
                                     variant="ghost"
-                                    className="rounded-2xl h-14 w-14 hover:bg-primary/10 border-2 border-transparent hover:border-primary/20 transition-all"
+                                    className="h-10 w-10 shrink-0"
                                     onClick={() => {
                                         setSelectedOrder(order);
                                         setIsEditOrderOpen(true);
                                     }}
                                 >
-                                    <ChevronRight className={cn("h-6 w-6", isRTL && "rotate-180")} />
+                                    <ChevronRight className={cn("h-5 w-5 md:h-6 md:w-6", isRTL && "rotate-180")} />
                                 </Button>
                             </div>
                         </div>
@@ -550,70 +550,71 @@ export default function OrdersPage() {
                                 {selectedOrder && (
                                     <div className="space-y-8">
                                         {/* Advance Payment Update */}
-                                        <div className="space-y-4 bg-muted/30 p-6 rounded-2xl border border-border/50 shadow-inner">
-                                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                                <span className="bg-emerald-500/10 p-1.5 rounded-lg text-emerald-500"><Wallet className="h-5 w-5" /></span>
+                                        {/* Advance Payment Update */}
+                                        <div className="premium-form-section flex flex-col gap-4">
+                                            <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                <Wallet className="h-6 w-6" />
                                                 {isRTL ? "إضافة تسبيق (دفعة)" : "Ajouter un acompte"}
                                             </h3>
-                                            <div className="flex justify-between items-center text-sm font-medium p-3 bg-background rounded-xl border border-border mb-2">
-                                                <span className="text-muted-foreground">{isRTL ? "التسبيق الحالي:" : "Avance actuelle:"}</span>
-                                                <span className="font-bold text-lg text-emerald-600">{selectedOrder.advancePayment} DH</span>
+                                            <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                                <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">{isRTL ? "التسبيق الحالي:" : "Avance actuelle:"}</span>
+                                                <span className="text-2xl font-lalezar text-primary">{selectedOrder.advancePayment} <span className="text-xs font-sans font-bold text-slate-400">DH</span></span>
                                             </div>
                                             <div className="flex gap-3">
-                                                <div className="relative flex-1">
+                                                <div className="relative flex-1 group">
                                                     <Input
                                                         type="number"
                                                         placeholder={isRTL ? "المبلغ المضاف" : "Montant à ajouter"}
-                                                        className="h-14 rounded-xl border-2 bg-background pr-12 text-lg"
+                                                        className="pr-12 font-bold text-lg"
                                                         value={editAdvance}
                                                         onChange={(e) => setEditAdvance(e.target.value)}
                                                     />
-                                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">DH</span>
+                                                    <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
                                                 </div>
                                                 <Button
                                                     onClick={handleAddAdvance}
-                                                    className="h-14 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-6 gap-2"
+                                                    className="h-12 rounded-xl bg-primary hover:bg-primary/90 px-8 gap-2 font-bold shadow-md transition-all active:scale-95"
                                                     disabled={!editAdvance || Number(editAdvance) <= 0 || updateOrder.isPending}
                                                 >
                                                     <Plus className="h-5 w-5" />
                                                     {isRTL ? "إضافة" : "Ajouter"}
                                                 </Button>
                                             </div>
-                                            <div className="flex justify-between items-center text-sm p-3 bg-primary/5 rounded-xl border border-primary/10">
-                                                <span className="text-primary font-medium">{isRTL ? "الباقي استخلاصه:" : "Reste à payer:"}</span>
-                                                <span className="font-bold text-lg text-primary">
-                                                    {(Number(selectedOrder.totalPrice) - Number(selectedOrder.advancePayment)).toFixed(2)} DH
+                                            <div className="flex justify-between items-center p-4 bg-primary/5 rounded-xl border-2 border-primary/20 shadow-sm">
+                                                <span className="text-sm font-bold text-primary uppercase tracking-widest">{isRTL ? "الباقي استخلاصه:" : "Reste à payer:"}</span>
+                                                <span className="text-2xl font-lalezar text-primary">
+                                                    {(Number(selectedOrder.totalPrice) - Number(selectedOrder.advancePayment)).toFixed(2)} <span className="text-xs font-sans font-bold text-primary/60">DH</span>
                                                 </span>
                                             </div>
                                         </div>
 
                                         {/* Expenses Update */}
-                                        <div className="space-y-4 bg-muted/30 p-6 rounded-2xl border border-border/50 shadow-inner">
-                                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                                <span className="bg-orange-500/10 p-1.5 rounded-lg text-orange-500"><ShoppingBag className="h-5 w-5" /></span>
+                                        {/* Expenses Update */}
+                                        <div className="premium-form-section flex flex-col gap-6">
+                                            <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                <ShoppingBag className="h-6 w-6" />
                                                 {isRTL ? "إضافة مصاريف" : "Nouvelle dépense"}
                                             </h3>
-                                            <div className="space-y-3">
+                                            <div className="space-y-4">
                                                 <Input
                                                     placeholder={isRTL ? "الوصف" : "Description"}
-                                                    className="h-12 rounded-xl border-2 bg-background"
                                                     value={editExpense.description}
                                                     onChange={(e) => setEditExpense(prev => ({ ...prev, description: e.target.value }))}
                                                 />
                                                 <div className="flex gap-3">
-                                                    <div className="relative flex-1">
+                                                    <div className="relative flex-1 group">
                                                         <Input
                                                             type="number"
                                                             placeholder={isRTL ? "المبلغ" : "Montant"}
-                                                            className="h-12 rounded-xl border-2 bg-background pr-12"
+                                                            className="pr-12"
                                                             value={editExpense.cost}
                                                             onChange={(e) => setEditExpense(prev => ({ ...prev, cost: e.target.value }))}
                                                         />
-                                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">DH</span>
+                                                        <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
                                                     </div>
                                                     <Button
                                                         onClick={handleAddEditExpense}
-                                                        className="rounded-xl px-6 bg-orange-600 hover:bg-orange-700 h-12"
+                                                        className="rounded-xl px-8 bg-primary hover:bg-primary/90 h-12 font-bold shadow-md transition-all active:scale-95"
                                                         disabled={!editExpense.description || !editExpense.cost || updateOrder.isPending}
                                                     >
                                                         {isRTL ? "تسجيل" : "Enregistrer"}
@@ -622,20 +623,20 @@ export default function OrdersPage() {
                                             </div>
 
                                             {selectedOrder.expenses && selectedOrder.expenses.length > 0 && (
-                                                <div className="space-y-2 pt-4">
-                                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{isRTL ? "لائحة المصاريف:" : "Liste des dépenses :"}</p>
+                                                <div className="space-y-3 pt-2">
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">{isRTL ? "لائحة المصاريف:" : "Liste des dépenses :"}</p>
                                                     {selectedOrder.expenses.map((exp: any, idx: number) => (
-                                                        <div key={idx} className="flex justify-between items-center p-3 bg-background rounded-xl border border-border text-sm">
+                                                        <div key={idx} className="flex justify-between items-center p-4 bg-slate-50/50 rounded-xl border border-slate-200 transition-all hover:border-slate-300">
                                                             <div className="flex flex-col">
-                                                                <span className="font-bold">{exp.description}</span>
-                                                                <span className="text-[10px] text-muted-foreground">{new Date(exp.date).toLocaleDateString()}</span>
+                                                                <span className="font-bold text-slate-700">{exp.description}</span>
+                                                                <span className="text-[10px] text-slate-400 font-medium">{new Date(exp.date).toLocaleDateString()}</span>
                                                             </div>
-                                                            <span className="font-bold text-orange-600">-{exp.cost} DH</span>
+                                                            <span className="font-lalezar text-xl text-primary">-{exp.cost} DH</span>
                                                         </div>
                                                     ))}
-                                                    <div className="flex justify-between items-center p-3 bg-orange-500/5 rounded-xl border border-orange-500/10 mt-2">
-                                                        <span className="text-muted-foreground font-medium text-xs">{isRTL ? "إجمالي المصاريف:" : "Total dépenses:"}</span>
-                                                        <span className="font-bold text-orange-700">{selectedOrder.totalCost} DH</span>
+                                                    <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-200 mt-2">
+                                                        <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">{isRTL ? "إجمالي المصاريف:" : "Total dépenses:"}</span>
+                                                        <span className="font-lalezar text-2xl text-slate-900">{selectedOrder.totalCost} DH</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -643,7 +644,7 @@ export default function OrdersPage() {
 
                                         <div className="pt-6">
                                             <Drawer.Close asChild>
-                                                <Button variant="outline" size="lg" className="w-full h-14 text-lg rounded-xl px-8 border-2">
+                                                <Button variant="outline" size="lg" className="w-full h-14 text-lg rounded-sm px-8 border-2">
                                                     {isRTL ? "إغلاق" : "Fermer"}
                                                 </Button>
                                             </Drawer.Close>

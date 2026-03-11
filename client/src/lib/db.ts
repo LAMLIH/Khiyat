@@ -1,12 +1,12 @@
-import Dexie, { type Table } from "dexie";
+import Dexie, { type EntityTable } from "dexie";
 import { type Client, type Measurement, type Order } from "@shared/schema";
 
 export type { Client, Measurement, Order };
 
 export class KhiyatmaDB extends Dexie {
-    clients!: Table<Client & { synced?: boolean }>;
-    measurements!: Table<Measurement & { synced?: boolean }>;
-    orders!: Table<Order & { synced?: boolean }>;
+    clients!: Dexie.EntityTable<Client & { synced?: boolean }, "id">;
+    measurements!: Dexie.EntityTable<Measurement & { synced?: boolean }, "id">;
+    orders!: Dexie.EntityTable<Order & { synced?: boolean }, "id">;
 
     constructor() {
         super("khiyatma_db");

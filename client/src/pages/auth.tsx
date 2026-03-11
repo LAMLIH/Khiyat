@@ -13,6 +13,8 @@ import { useLocation } from "wouter";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
+import logo from "@/assets/logo-light.png";
+
 export default function AuthPage() {
     const { t } = useTranslation();
     const { isRTL, setLanguage, language } = useLanguage();
@@ -38,113 +40,124 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
-            {/* Background elements */}
-            {/* Background elements */}
+        <div className="min-h-screen grid lg:grid-cols-2 bg-background relative overflow-hidden">
+            {/* Left side (Branding) */}
+            <div className="hidden lg:flex flex-col items-center justify-center bg-primary text-primary-foreground p-12 relative overflow-hidden">
+                {/* Decorative background elements relative to the primary side */}
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-[80px]" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-[80px]" />
 
-            <div className="w-full max-w-lg p-6 relative z-10">
-                <div className="text-center mb-8">
-                    <div className="inline-flex p-4 bg-primary/10 rounded-2xl mb-4">
-                        <Scissors className="h-10 w-10 text-primary" />
+                <div className="relative z-10 text-center flex flex-col items-center">
+                    <div className="mb-6 flex flex-col items-center gap-2 animate-in zoom-in duration-700">
+                        <div className="text-8xl font-lalezar text-white tracking-widest drop-shadow-lg leading-tight">خياط برو</div>
+                        <div className="text-xl text-white/80 font-medium tracking-[0.3em] uppercase backdrop-blur-sm bg-white/5 py-1 px-8 rounded-full border border-white/10">بصمتك في الأناقة</div>
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tighter text-foreground mb-2">
-                        KHIYATMA
-                    </h1>
-                    <p className="text-muted-foreground text-lg">
-                        {isRTL ? "منصة إدارة الخياطة العصرية" : "Plateforme de gestion de couture moderne"}
-                    </p>
                 </div>
+            </div>
 
-                <Card className="border-2 rounded-[32px] overflow-hidden">
-                    <CardHeader className="pt-8 pb-4 text-center">
-                        <CardTitle className="text-2xl font-bold">
-                            {isRTL ? "تسجيل الدخول" : "Connexion"}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-8 pb-10">
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <FormField
-                                    control={form.control}
-                                    name="username"
-                                    render={({ field }) => (
-                                        <FormItem className="space-y-3">
-                                            <FormLabel className="text-base font-semibold">
-                                                {isRTL ? "اسم المستخدم" : "Nom d'utilisateur"}
-                                            </FormLabel>
-                                            <FormControl>
-                                                <div className="relative group">
-                                                    <User className={cn(
-                                                        "absolute top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors",
-                                                        isRTL ? "right-4" : "left-4"
-                                                    )} />
-                                                    <Input
-                                                        placeholder="admin"
-                                                        {...field}
-                                                        className={cn(
-                                                            "h-14 text-lg rounded-xl border-2 transition-all group-focus-within:border-primary/50",
-                                                            isRTL ? "pr-12 text-right" : "pl-12"
-                                                        )}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+            {/* Right side (Form) */}
+            <div className="w-full flex items-center justify-center p-6 sm:p-12 relative z-10">
+                <div className="w-full max-w-md flex flex-col">
+                    {/* Mobile Branding - only shows on small screens */}
+                    <div className="lg:hidden text-center mb-10 flex flex-col items-center gap-2">
+                        <div className="text-5xl font-lalezar text-primary tracking-wider animate-in zoom-in duration-700">خياط برو</div>
+                        <div className="text-sm text-primary/60 font-bold tracking-widest uppercase animate-in fade-in duration-1000">بصمتك في الأناقة</div>
+                    </div>
 
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem className="space-y-3">
-                                            <FormLabel className="text-base font-semibold">
-                                                {isRTL ? "كلمة المرور" : "Mot de passe"}
-                                            </FormLabel>
-                                            <FormControl>
-                                                <div className="relative group">
-                                                    <Lock className={cn(
-                                                        "absolute top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors",
-                                                        isRTL ? "right-4" : "left-4"
-                                                    )} />
-                                                    <Input
-                                                        type="password"
-                                                        placeholder="••••••••"
-                                                        {...field}
-                                                        className={cn(
-                                                            "h-14 text-lg rounded-xl border-2 transition-all group-focus-within:border-primary/50",
-                                                            isRTL ? "pr-12 text-right" : "pl-12"
-                                                        )}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                    <Card className="border-0 rounded-2xl overflow-hidden shadow-2xl bg-white/80 backdrop-blur-sm">
+                        <CardHeader className="pt-10 pb-4 text-center">
+                            <CardTitle className="text-3xl font-lalezar text-primary tracking-wide">
+                                {isRTL ? "تسجيل الدخول" : "Connexion"}
+                            </CardTitle>
+                            <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-2 opacity-60">
+                                {isRTL ? "مرحباً بك مجدداً" : "Bienvenue"}
+                            </p>
+                        </CardHeader>
+                        <CardContent className="p-8 pb-12">
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="username"
+                                        render={({ field }: { field: any }) => (
+                                            <FormItem className="space-y-3">
+                                                <FormLabel className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                                                    {isRTL ? "اسم المستخدم" : "Nom d'utilisateur"}
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className="relative group">
+                                                        <User className={cn(
+                                                            "absolute top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors",
+                                                            isRTL ? "right-4" : "left-4"
+                                                        )} />
+                                                        <Input
+                                                            placeholder="admin"
+                                                            {...field}
+                                                            className={cn(
+                                                                "h-14 text-lg font-medium",
+                                                                isRTL ? "pr-12 text-right" : "pl-12"
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage className="text-xs font-bold" />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                                <Button
-                                    type="submit"
-                                    className="w-full h-16 text-xl font-bold rounded-2xl hover-elevate transition-all mt-4"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? "..." : (isRTL ? "تسجيل الدخول" : "Se connecter")}
-                                </Button>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }: { field: any }) => (
+                                            <FormItem className="space-y-3">
+                                                <FormLabel className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                                                    {isRTL ? "كلمة المرور" : "Mot de passe"}
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className="relative group">
+                                                        <Lock className={cn(
+                                                            "absolute top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors",
+                                                            isRTL ? "right-4" : "left-4"
+                                                        )} />
+                                                        <Input
+                                                            type="password"
+                                                            placeholder="••••••••"
+                                                            {...field}
+                                                            className={cn(
+                                                                "h-14 text-lg font-medium",
+                                                                isRTL ? "pr-12 text-right" : "pl-12"
+                                                            )}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage className="text-xs font-bold" />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                <div className="mt-8 flex justify-center gap-4">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="rounded-full gap-2 px-4 h-10 border-2 border-transparent hover:border-primary/20"
-                        onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
-                    >
-                        <Languages className="h-4 w-4 text-primary" />
-                        <span className="font-bold">{language === "fr" ? "العربية" : "Français"}</span>
-                    </Button>
+                                    <Button
+                                        type="submit"
+                                        className="w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 mt-6"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? "..." : (isRTL ? "تسجيل الدخول" : "Se connecter")}
+                                    </Button>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+
+                    <div className="mt-8 flex justify-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="rounded-full gap-2 px-4 h-10 border-2 border-transparent hover:border-primary/20"
+                            onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
+                        >
+                            <Languages className="h-4 w-4 text-primary" />
+                            <span className="font-bold">{language === "fr" ? "العربية" : "Français"}</span>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -26,29 +26,29 @@ export default function DashboardPage() {
             title: t("common.clients"),
             value: clients?.length || 0,
             icon: Users,
-            color: "text-blue-500",
-            bg: "bg-blue-500/10",
+            color: "text-primary",
+            bg: "bg-primary/10",
         },
         {
             title: t("common.orders"),
             value: orders?.length || 0,
             icon: Package,
-            color: "text-orange-500",
-            bg: "bg-orange-500/10",
+            color: "text-primary",
+            bg: "bg-primary/10",
         },
         {
             title: isRTL ? "إجمالي الأرباح" : "Chiffre d'affaires",
             value: (orders?.reduce((acc, o) => acc + Number(o.totalPrice), 0) || 0).toLocaleString() + " DH",
             icon: Wallet,
-            color: "text-emerald-500",
-            bg: "bg-emerald-500/10",
+            color: "text-primary",
+            bg: "bg-primary/10",
         },
         {
             title: isRTL ? "النمو" : "Croissance",
             value: "+12%",
             icon: TrendingUp,
-            color: "text-purple-500",
-            bg: "bg-purple-500/10",
+            color: "text-primary",
+            bg: "bg-primary/10",
         },
     ];
 
@@ -66,44 +66,39 @@ export default function DashboardPage() {
     const recentOrders = orders?.slice(0, 5) || [];
 
     return (
-        <div className="p-6 space-y-8 animate-in fade-in duration-500">
-            <div>
-                <h1 className="text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
-                    <span className="p-2 bg-primary/10 rounded-xl">
-                        <TrendingUp className="h-8 w-8 text-primary" />
-                    </span>
+        <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col gap-2">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
+                    <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground/50" />
                     {isRTL ? "لوحة التحكم" : "Tableau de Bord"}
                 </h1>
-                <p className="text-muted-foreground mt-2 text-lg">
+                <p className="text-muted-foreground mt-1 text-base md:text-lg">
                     {isRTL ? "نظرة عامة على نشاطك التجاري اليوم." : "Aperçu de votre activité aujourd'hui."}
                 </p>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat, i) => (
-                    <Card key={i} className="group hover-elevate transition-all border-2 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl">
-                        <CardContent className="p-6">
-                            <div className="flex justify-between items-start">
-                                <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110", stat.bg)}>
-                                    <stat.icon className={cn("h-7 w-7", stat.color)} />
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{stat.title}</p>
-                                <h3 className="text-3xl font-bold mt-1 tabular-nums">{stat.value}</h3>
-                            </div>
+                    <Card key={i}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {stat.title}
+                            </CardTitle>
+                            <stat.icon className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{stat.value}</div>
                         </CardContent>
                     </Card>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                 {/* Activity Chart */}
-                <Card className="lg:col-span-2 border-2 rounded-[32px] shadow-sm overflow-hidden">
+                <Card className="lg:col-span-2 component-card shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                            <TrendingUp className="h-6 w-6 text-primary" />
+                        <CardTitle className="text-xl md:text-2xl font-bold">
                             {isRTL ? "نشاط المبيعات" : "Activité des ventes"}
                         </CardTitle>
                     </CardHeader>
@@ -143,10 +138,9 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Recent Orders */}
-                <Card className="border-2 rounded-[32px] shadow-sm overflow-hidden">
+                <Card className="component-card shadow-sm">
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                            <Clock className="h-6 w-6 text-primary" />
+                        <CardTitle className="text-xl md:text-2xl font-bold">
                             {isRTL ? "آخر الطلبات" : "Commandes récentes"}
                         </CardTitle>
                     </CardHeader>
@@ -157,8 +151,8 @@ export default function DashboardPage() {
                                     {isRTL ? "لا يوجد طلبات حالياً" : "Aucune commande pour le moment"}
                                 </div>
                             ) : recentOrders.map((order, i) => (
-                                <div key={i} className="p-6 flex items-center gap-4 hover:bg-muted/50 transition-colors">
-                                    <div className="p-3 bg-primary/10 rounded-xl">
+                                <div key={i} className="p-4 md:p-6 flex items-center gap-4 hover:bg-muted/50 transition-colors border-b border-border/50 last:border-0">
+                                    <div className="p-3 bg-primary/10 rounded-2xl">
                                         <Package className="h-5 w-5 text-primary" />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -170,7 +164,7 @@ export default function DashboardPage() {
                                     </div>
                                     <div className="text-right">
                                         <p className="font-bold text-primary">{order.totalPrice} DH</p>
-                                        <span className="text-[10px] font-bold uppercase tracking-tighter bg-secondary px-2 py-0.5 rounded-full">
+                                        <span className="text-[10px] font-bold uppercase tracking-tighter bg-primary/20 text-primary px-2 py-0.5 rounded-full">
                                             {order.status}
                                         </span>
                                     </div>
