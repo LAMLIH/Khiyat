@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useClients } from "@/hooks/use-clients";
 import { useOrders } from "@/hooks/use-orders";
+import { useStandaloneExpenses } from "@/hooks/use-standalone-expenses";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Users, Package, Wallet, TrendingUp, Scissors, Calendar, Clock, CreditCard, PieChart as PieChartIcon, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,7 +20,8 @@ import {
     ResponsiveContainer,
     BarChart,
     Bar,
-    Cell
+    Cell,
+    LabelList
 } from "recharts";
 
 export default function DashboardPage() {
@@ -26,6 +29,14 @@ export default function DashboardPage() {
     const { isRTL } = useLanguage();
     const { clients, isLoading: clientsLoading } = useClients();
     const { orders, isLoading: ordersLoading } = useOrders();
+    const { expenses: standaloneExpenses } = useStandaloneExpenses();
+
+    const ORDER_STEPS = ["Fsalla", "Terwam", "Khiata", "Finition", "Mslouh", "Prete"];
+    const getProgress = (order: any) => {
+        if (order.status?.includes("Termin") || order.currentStep === "Prete") return 100;
+        const idx = ORDER_STEPS.indexOf(order.currentStep);
+        return idx >= 0 ? Math.round(((idx + 1) / ORDER_STEPS.length) * 100) : 10;
+    };
 
     // Calculations
     const totalOrders = orders?.length || 0;
@@ -51,7 +62,7 @@ export default function DashboardPage() {
     const stats = [
         {
             title: isRTL ? "إجمالي الأرباح" : "Chiffre d'affaires",
-            value: totalRevenue.toLocaleString() + " DH",
+            value: totalRevenue.toLocaleString() + " Dhs",
             icon: Wallet,
             color: "text-emerald-500",
             bg: "bg-emerald-500/10",
@@ -59,7 +70,7 @@ export default function DashboardPage() {
         },
         {
             title: isRTL ? "الربح الصافي" : "Bénéfice Net",
-            value: netProfit.toLocaleString() + " DH",
+            value: netProfit.toLocaleString() + " Dhs",
             icon: TrendingUp,
             color: "text-primary",
             bg: "bg-primary/10",
@@ -83,16 +94,37 @@ export default function DashboardPage() {
         },
     ];
 
-    // Chart Data (Mock for visualization, preferably derived from real dates)
-    const chartData = [
-        { name: "Lun", value: totalRevenue * 0.1 },
-        { name: "Mar", value: totalRevenue * 0.15 },
-        { name: "Mer", value: totalRevenue * 0.12 },
-        { name: "Jeu", value: totalRevenue * 0.22 },
-        { name: "Ven", value: totalRevenue * 0.18 },
-        { name: "Sam", value: totalRevenue * 0.25 },
-        { name: "Dim", value: totalRevenue * 0.08 },
-    ];
+    // 7-Days Performance
+    const chartData = useMemo(() => {
+        const data = [];
+        const days = isRTL ? ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"] : ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+        
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            d.setHours(0, 0, 0, 0);
+            
+            const dEnd = new Date(d);
+            dEnd.setHours(23, 59, 59, 999);
+            
+            const dayOrders = orders?.filter(o => {
+                const od = new Date(o.createdAt || "");
+                return od >= d && od <= dEnd;
+            }) || [];
+
+            const dayExpenses = standaloneExpenses?.filter(e => {
+                const ed = new Date(e.date || "");
+                return ed >= d && ed <= dEnd;
+            }) || [];
+            
+            data.push({
+                name: days[d.getDay()],
+                revenue: dayOrders.reduce((s, o) => s + Number(o.totalPrice || 0), 0),
+                cost: dayOrders.reduce((s, o) => s + Number(o.totalCost || 0), 0) + dayExpenses.reduce((s, e) => s + Number(e.amount || 0), 0)
+            });
+        }
+        return data;
+    }, [orders, standaloneExpenses, isRTL]);
 
     const recentOrders = [...(orders || [])].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 5);
 
@@ -153,9 +185,13 @@ export default function DashboardPage() {
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={chartData}>
                                     <defs>
-                                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                        <linearGradient id="gRevenue" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#1c918f" stopOpacity={0.2} />
                                             <stop offset="95%" stopColor="#1c918f" stopOpacity={0} />
+                                        </linearGradient>
+                                        <linearGradient id="gCost" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
+                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -173,14 +209,8 @@ export default function DashboardPage() {
                                         }}
                                         itemStyle={{ color: "hsl(var(--primary))" }}
                                     />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="value"
-                                        stroke="#1c918f"
-                                        strokeWidth={4}
-                                        fillOpacity={1}
-                                        fill="url(#colorValue)"
-                                    />
+                                    <Area type="monotone" dataKey="revenue" name={isRTL ? "الإيرادات" : "Revenus"} stroke="#1c918f" strokeWidth={3} fillOpacity={1} fill="url(#gRevenue)" />
+                                    <Area type="monotone" dataKey="cost" name={isRTL ? "المصاريف" : "Dépenses"} stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#gCost)" />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
@@ -198,17 +228,34 @@ export default function DashboardPage() {
                     <CardContent className="p-6">
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={distributionData} layout="vertical" margin={{ left: 20 }}>
+                                <BarChart data={distributionData} layout="vertical" margin={{ left: 20, right: 30 }}>
                                     <XAxis type="number" hide />
                                     <YAxis
                                         dataKey="name"
                                         type="category"
                                         axisLine={false}
                                         tickLine={false}
-                                        tick={{ fontSize: 11, fontWeight: 700, fill: "hsl(var(--muted-foreground))" }}
-                                        width={80}
+                                        tick={{ fontSize: 12, fontWeight: 700, fill: "hsl(var(--muted-foreground))", textAnchor: isRTL ? "start" : "end" }}
+                                        tickFormatter={(value) => {
+                                            const item = distributionData.find(d => d.name === value);
+                                            const val = item ? item.value : 0;
+                                            return isRTL ? `${val} ${value}` : `${value} ${val}`;
+                                        }}
+                                        width={100}
                                     />
-                                    <Tooltip cursor={{ fill: 'hsl(var(--muted)/0.1)' }} />
+                                    <Tooltip 
+                                        cursor={{ fill: 'hsl(var(--muted)/0.1)' }} 
+                                        contentStyle={{
+                                            backgroundColor: "hsl(var(--popover))",
+                                            borderColor: "hsl(var(--border))",
+                                            color: "hsl(var(--popover-foreground))",
+                                            borderRadius: "12px",
+                                            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                                            fontSize: "12px",
+                                            fontWeight: "bold"
+                                        }}
+                                        itemStyle={{ color: "hsl(var(--primary))" }}
+                                    />
                                     <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
                                         {distributionData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={index === 0 ? '#1c918f' : 'hsl(var(--muted-foreground)/0.4)'} />
@@ -220,11 +267,11 @@ export default function DashboardPage() {
                         <div className="mt-4 space-y-2">
                             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{isRTL ? "نظرة سريعة" : "Résumé rapide"}</p>
                             <div className="grid grid-cols-2 gap-2">
-                                <div className="p-3 bg-muted/20 rounded-xl border border-border">
+                                <div className="p-3 bg-muted/20 rounded-xl border border-border flex flex-col items-center">
                                     <p className="text-[10px] text-muted-foreground uppercase font-bold">{isRTL ? "الزبناء" : "Clients"}</p>
                                     <p className="text-xl font-black text-foreground">{clients?.length || 0}</p>
                                 </div>
-                                <div className="p-3 bg-primary/5 rounded-xl border border-primary/10">
+                                <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex flex-col items-center">
                                     <p className="text-[10px] text-primary uppercase font-bold">{isRTL ? "الطلبات" : "Orders"}</p>
                                     <p className="text-xl font-black text-primary">{totalOrders}</p>
                                 </div>
@@ -273,20 +320,23 @@ export default function DashboardPage() {
                                             <p className="text-sm text-muted-foreground font-medium flex items-center gap-2 mt-1">
                                                 <Calendar className="h-3.5 w-3.5" />
                                                 {isRTL ? "تاريخ الإضافة:" : "Créé le:"} {new Date(order.createdAt!).toLocaleDateString()}
-                                                <Badge variant="outline" className="text-[10px] font-bold border-border ml-2">
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
                                                     {t(`steps.${order.currentStep}`)}
-                                                </Badge>
+                                                </span>
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between md:justify-end gap-10 md:min-w-[200px]">
                                         <div className="text-right">
                                             <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{isRTL ? "المبلغ" : "Montant"}</p>
-                                            <p className="text-2xl font-black text-primary leading-none mt-1">{order.totalPrice} DH</p>
+                                            <p className="text-2xl font-black text-primary leading-none mt-1">{order.totalPrice} Dhs</p>
                                         </div>
                                         {/* Status progress indicator mini */}
                                         <div className="w-24 h-2 bg-muted rounded-full overflow-hidden shrink-0">
-                                            <div className="h-full bg-primary" style={{ width: '45%' }}></div>
+                                            <div
+                                                className={cn("h-full rounded-full transition-all", order.status?.includes("Termin") ? "bg-emerald-500" : "bg-primary")}
+                                                style={{ width: `${getProgress(order)}%` }}
+                                            />
                                         </div>
                                     </div>
                                 </div>

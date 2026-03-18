@@ -61,7 +61,7 @@ export default function SaaSAdminDashboard() {
         },
         {
             title: "Revenu Mensuel",
-            value: `${revenue.toLocaleString()} DH`,
+            value: `${revenue.toLocaleString()} Dhs`,
             icon: TrendingUp,
             description: "Estimation sur abonnements actifs",
             color: "text-emerald-500",

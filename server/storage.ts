@@ -1,7 +1,7 @@
 import {
-    users, tenants, clients, measurements, orders,
-    type User, type Tenant, type Client, type Measurement, type Order,
-    type InsertUser, type InsertTenant, type InsertClient, type InsertMeasurement, type InsertOrder
+    users, tenants, clients, measurements, orders, subscriptionRequests,
+    type User, type Tenant, type Client, type Measurement, type Order, type SubscriptionRequest,
+    type InsertUser, type InsertTenant, type InsertClient, type InsertMeasurement, type InsertOrder, type InsertSubscriptionRequest
 } from "@shared/schema";
 import session from "express-session";
 import { db } from "./db";
@@ -41,6 +41,12 @@ export interface IStorage {
     getOrders(tenantId: number): Promise<Order[]>;
     createOrder(tenantId: number, order: InsertOrder): Promise<Order>;
     updateOrder(id: number, order: Partial<InsertOrder>): Promise<Order>;
+
+    // Subscription Requests
+    getSubscriptionRequests(): Promise<SubscriptionRequest[]>;
+    getSubscriptionRequest(id: number): Promise<SubscriptionRequest | undefined>;
+    createSubscriptionRequest(request: InsertSubscriptionRequest): Promise<SubscriptionRequest>;
+    updateSubscriptionRequestStatus(id: number, status: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -143,6 +149,27 @@ export class DatabaseStorage implements IStorage {
 
     async getAllUsers(): Promise<User[]> {
         return db.select().from(users);
+    }
+
+    // Subscription Requests
+    async getSubscriptionRequests(): Promise<SubscriptionRequest[]> {
+        return db.select().from(subscriptionRequests);
+    }
+
+    async getSubscriptionRequest(id: number): Promise<SubscriptionRequest | undefined> {
+        const [request] = await db.select().from(subscriptionRequests).where(eq(subscriptionRequests.id, id));
+        return request;
+    }
+
+    async createSubscriptionRequest(request: InsertSubscriptionRequest): Promise<SubscriptionRequest> {
+        const [subRequest] = await db.insert(subscriptionRequests).values(request).returning();
+        return subRequest;
+    }
+
+    async updateSubscriptionRequestStatus(id: number, status: string): Promise<void> {
+        await db.update(subscriptionRequests)
+            .set({ status })
+            .where(eq(subscriptionRequests.id, id));
     }
 }
 

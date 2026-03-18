@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { insertClientSchema, insertMeasurementSchema, insertOrderSchema } from "@shared/schema";
+import { insertClientSchema, insertMeasurementSchema, insertOrderSchema, insertSubscriptionRequestSchema } from "@shared/schema";
 
 export function registerRoutes(app: Express): Server {
     setupAuth(app);
@@ -89,7 +89,11 @@ export function registerRoutes(app: Express): Server {
 
             let orderData;
             try {
-                orderData = insertOrderSchema.omit({ tenantId: true }).parse(req.body);
+                const body = {
+                    ...req.body,
+                    dueDate: req.body.dueDate ? new Date(req.body.dueDate) : undefined
+                };
+                orderData = insertOrderSchema.omit({ tenantId: true }).parse(body);
             } catch (parseError: any) {
                 console.error("Order Data Parsing Error:", parseError);
                 return res.status(400).json({
@@ -98,7 +102,10 @@ export function registerRoutes(app: Express): Server {
                 });
             }
 
-            const order = await storage.createOrder(tenantId, orderData);
+            const order = await storage.createOrder(tenantId, {
+                ...orderData,
+                currentStep: orderData.currentStep || "Fsalla"
+            });
             console.log("Order created successfully:", order.id);
             res.status(201).json(order);
         } catch (error: any) {
@@ -125,6 +132,24 @@ export function registerRoutes(app: Express): Server {
             console.error("Order update error:", error);
             res.status(500).json({ error: "Failed to update order", message: error.message });
         }
+    });
+
+    // Subscription Requests
+    app.post("/api/subscription-requests", async (req, res) => {
+        try {
+            const requestData = insertSubscriptionRequestSchema.parse(req.body);
+            const request = await storage.createSubscriptionRequest(requestData);
+            res.status(201).json(request);
+        } catch (error: any) {
+            console.error("Subscription request error:", error);
+            res.status(400).json({ error: "Invalid request data", details: error.errors });
+        }
+    });
+
+    app.get("/api/subscription-requests", async (req, res) => {
+        const requests = await storage.getSubscriptionRequests();
+        console.log("GET /api/subscription-requests called. Count:", requests.length);
+        res.json(requests);
     });
 
     const httpServer = createServer(app);

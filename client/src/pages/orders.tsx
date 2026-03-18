@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
     ClipboardList,
@@ -18,7 +18,9 @@ import {
     UserPlus,
     ShoppingBag,
     Trash2,
-    Scissors
+    Scissors,
+    FileText,
+    PartyPopper
 } from "lucide-react";
 import { useOrders } from "@/hooks/use-orders";
 import { useClients } from "@/hooks/use-clients";
@@ -30,6 +32,7 @@ import { Drawer } from "vaul";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
     Command,
@@ -39,12 +42,12 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { DatePicker } from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { useSearch, useLocation } from "wouter";
 
 const ORDER_STEPS = ["Fsalla", "Terwam", "Khiata", "Finition", "Mslouh", "Prete"] as const;
 type OrderStep = typeof ORDER_STEPS[number];
@@ -55,10 +58,20 @@ export default function OrdersPage() {
     const { orders, isLoading, createOrder, updateOrder } = useOrders();
     const { clients } = useClients();
 
-    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-    const [isEditOrderOpen, setIsEditOrderOpen] = useState(false);
+    const [editOrderId, setEditOrderId] = useState<number | null>(null);
+    const selectedOrder = orders?.find(o => o.id === editOrderId) || null;
+    
+    // For local UI state while editing
     const [editAdvance, setEditAdvance] = useState("");
     const [editExpense, setEditExpense] = useState({ description: "", cost: "", step: "" });
+    const [localNotes, setLocalNotes] = useState("");
+
+    // Sync localNotes when selectedOrder changes
+    useEffect(() => {
+        if (selectedOrder) {
+            setLocalNotes(selectedOrder.notes || "");
+        }
+    }, [editOrderId, selectedOrder?.notes]);
 
     const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
     const [newOrder, setNewOrder] = useState({
@@ -68,14 +81,27 @@ export default function OrdersPage() {
         totalCost: "0",
         advancePayment: "0",
         dueDate: new Date().toISOString(),
-        expenses: [] as Array<{ description: string; cost: number; date: string; step?: string }>,
+        notes: "",
         currentStep: "Fsalla"
     });
 
     const [statusFilter, setStatusFilter] = useState<"all" | "ongoing">("ongoing");
     const [isClientSearchOpen, setIsClientSearchOpen] = useState(false);
+    const search = useSearch();
+    const [, navigate] = useLocation();
 
-    const [newExpense, setNewExpense] = useState({ description: "", cost: "", step: "" });
+    // Pre-filter by clientId from URL
+    const [clientIdFilter, setClientIdFilter] = useState<number | null>(null);
+    useEffect(() => {
+        const params = new URLSearchParams(search);
+        const cid = params.get("clientId");
+        if (cid) {
+            setClientIdFilter(Number(cid));
+            setStatusFilter("all"); // show all statuses when filtering by client
+        } else {
+            setClientIdFilter(null);
+        }
+    }, [search]);
 
     const calculateCurrentStep = (expenses: { step?: string }[]) => {
         const taggedSteps = expenses
@@ -90,41 +116,6 @@ export default function OrdersPage() {
         return ORDER_STEPS[maxIndex];
     };
 
-    const handleAddExpense = () => {
-        if (!newExpense.description || !newExpense.cost) return;
-        const expense = {
-            description: newExpense.description,
-            cost: Number(newExpense.cost),
-            date: new Date().toISOString(),
-            step: newExpense.step || undefined,
-        };
-        setNewOrder(prev => {
-            const updatedExpenses = [...prev.expenses, expense];
-            const expensesTotal = updatedExpenses.reduce((sum, e) => sum + e.cost, 0);
-            return {
-                ...prev,
-                expenses: updatedExpenses,
-                totalCost: expensesTotal.toString(),
-                currentStep: calculateCurrentStep(updatedExpenses)
-            };
-        });
-        setNewExpense({ description: "", cost: "", step: "" });
-    };
-
-    const handleRemoveExpense = (index: number) => {
-        setNewOrder(prev => {
-            const updatedExpenses = prev.expenses.filter((_, i) => i !== index);
-            const expensesTotal = updatedExpenses.reduce((sum, e) => sum + e.cost, 0);
-            return {
-                ...prev,
-                expenses: updatedExpenses,
-                totalCost: expensesTotal.toString(),
-                currentStep: calculateCurrentStep(updatedExpenses)
-            };
-        });
-    };
-
-
     const handleCreateOrder = () => {
         const orderData = {
             clientId: Number(newOrder.clientId),
@@ -134,9 +125,10 @@ export default function OrdersPage() {
             advancePayment: newOrder.advancePayment.toString(),
             dueDate: new Date(newOrder.dueDate),
             profit: (Number(newOrder.totalPrice) - Number(newOrder.totalCost)).toString(),
-            expenses: newOrder.expenses,
+            expenses: [],
+            notes: newOrder.notes,
             status: "Nouvelle",
-            currentStep: "Coupe",
+            currentStep: newOrder.currentStep,
             productionSteps: []
         };
 
@@ -155,7 +147,7 @@ export default function OrdersPage() {
                     totalCost: "0",
                     advancePayment: "0",
                     dueDate: new Date().toISOString(),
-                    expenses: [] as any[],
+                    notes: "",
                     currentStep: "Fsalla"
                 } as any);
             }
@@ -203,10 +195,19 @@ export default function OrdersPage() {
     const handleAddAdvance = () => {
         if (!selectedOrder || !editAdvance) return;
 
-        const newTotalAdvance = (Number(selectedOrder.advancePayment) + Number(editAdvance)).toString();
+        const amount = Number(editAdvance);
+        const newTotalAdvance = (Number(selectedOrder.advancePayment) + amount).toString();
+        const newAdvances = [
+            ...(selectedOrder.advances || []),
+            {
+                amount,
+                date: new Date().toISOString()
+            }
+        ];
 
         handleUpdateOrder(selectedOrder, {
-            advancePayment: newTotalAdvance
+            advancePayment: newTotalAdvance,
+            advances: newAdvances
         });
     };
 
@@ -336,9 +337,9 @@ export default function OrdersPage() {
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label className="text-sm font-bold text-foreground/80">{isRTL ? "تاريخ التسليم" : "Date prévue"}</Label>
-                                                        <Input
-                                                            type="date"
-                                                            onChange={(e) => setNewOrder(prev => ({ ...prev, dueDate: new Date(e.target.value).toISOString() }))}
+                                                        <DatePicker
+                                                            date={newOrder.dueDate ? new Date(newOrder.dueDate) : undefined}
+                                                            setDate={(date) => setNewOrder(prev => ({ ...prev, dueDate: date?.toISOString() || "" }))}
                                                         />
                                                     </div>
                                                 </div>
@@ -356,11 +357,11 @@ export default function OrdersPage() {
                                                             <div className="relative group">
                                                                 <Input
                                                                     type="number"
-                                                                    className="pr-12 font-bold text-lg"
+                                                                    className="font-bold text-lg"
                                                                     value={newOrder.totalPrice}
                                                                     onChange={(e) => setNewOrder(prev => ({ ...prev, totalPrice: e.target.value }))}
                                                                 />
-                                                                <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
+                                                                
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
@@ -368,106 +369,42 @@ export default function OrdersPage() {
                                                             <div className="relative group">
                                                                 <Input
                                                                     type="number"
-                                                                    className="pr-12 font-bold text-lg"
+                                                                    className="font-bold text-lg"
                                                                     value={newOrder.advancePayment}
                                                                     onChange={(e) => setNewOrder(prev => ({ ...prev, advancePayment: e.target.value }))}
                                                                 />
-                                                                <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
+                                                                
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className="flex justify-between items-center p-4 bg-muted/10 rounded-xl border border-border">
                                                         <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t("common.cost")}</span>
-                                                        <span className="text-2xl font-lalezar text-foreground">{newOrder.totalCost} <span className="text-xs font-sans font-bold text-muted-foreground/60">DH</span></span>
+                                                        <span className="text-2xl font-lalezar text-foreground">{newOrder.totalCost} <span className="text-xs font-sans font-bold text-muted-foreground/60">Dhs</span></span>
                                                     </div>
                                                     <div className="flex justify-between items-center p-4 bg-primary/10 rounded-xl border border-primary/20 shadow-sm">
                                                         <span className="text-sm font-bold text-primary uppercase tracking-widest">{t("common.profit")}</span>
                                                         <span className="text-2xl font-lalezar text-primary">
-                                                            {(Number(newOrder.totalPrice) - Number(newOrder.totalCost)).toFixed(2)} <span className="text-xs font-sans font-bold text-primary/60">DH</span>
+                                                            {(Number(newOrder.totalPrice) - Number(newOrder.totalCost)).toFixed(2)} <span className="text-xs font-sans font-bold text-primary/60">Dhs</span>
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="premium-form-section flex flex-col gap-6">
+                                        <div className="premium-form-section flex flex-col gap-4 p-6 bg-card rounded-2xl border border-border shadow-sm transition-all">
                                             <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
-                                                <ShoppingBag className="h-6 w-6" />
-                                                {isRTL ? "المصاريف (سلعة، خياطة...)" : "Dépenses (Fournitures, Couture...)"}
+                                                <FileText className="h-6 w-6" />
+                                                {isRTL ? "ملاحظات إضافية" : "Notes additionnelles"}
                                             </h3>
-
-                                            <div className="flex flex-col md:flex-row gap-3">
-                                                <Input
-                                                    placeholder={isRTL ? "الوصف (مثال: ثوب)" : "Description (ex: Tissu)"}
-                                                    className="flex-[2]"
-                                                    value={newExpense.description}
-                                                    onChange={(e) => setNewExpense(prev => ({ ...prev, description: e.target.value }))}
+                                            <div className="space-y-2">
+                                                <Label className="text-sm font-bold text-foreground/80">{isRTL ? "ملاحظات حول الطلب" : "Notes sur la commande"}</Label>
+                                                <Textarea
+                                                    placeholder={isRTL ? "أضف أي تفاصيل أخرى هنا..." : "Ajoutez des détails supplémentaires ici..."}
+                                                    className="min-h-[120px] rounded-xl border-2 bg-background font-medium"
+                                                    value={newOrder.notes}
+                                                    onChange={(e) => setNewOrder(prev => ({ ...prev, notes: e.target.value }))}
                                                 />
-                                                <div className="flex flex-1 gap-2">
-                                                    <Select
-                                                        value={newExpense.step}
-                                                        onValueChange={(val) => setNewExpense(prev => ({ ...prev, step: val }))}
-                                                    >
-                                                        <SelectTrigger className="flex-1 min-w-[120px]">
-                                                            <SelectValue placeholder={isRTL ? "المرحلة" : "Étape"} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="none">{isRTL ? "عام" : "Général"}</SelectItem>
-                                                            {ORDER_STEPS.map(step => (
-                                                                <SelectItem key={step} value={step}>{t(`steps.${step}`)}</SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <div className="relative flex-1">
-                                                        <Input
-                                                            type="number"
-                                                            placeholder={isRTL ? "الثمن" : "Prix"}
-                                                            className="pr-10"
-                                                            value={newExpense.cost}
-                                                            onChange={(e) => setNewExpense(prev => ({ ...prev, cost: e.target.value }))}
-                                                        />
-                                                        <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold", isRTL ? "left-3" : "right-3")}>DH</span>
-                                                    </div>
-                                                    <Button onClick={handleAddExpense} size="icon" className="h-10 w-10 shrink-0 rounded-xl bg-primary hover:bg-primary/90 shadow-md">
-                                                        <Plus className="h-6 w-6" />
-                                                    </Button>
-                                                </div>
                                             </div>
-
-                                            {newOrder.expenses.length > 0 && (
-                                                <div className="space-y-3">
-                                                    {(newOrder.expenses as any[]).map((expense, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-4 bg-card rounded-xl border border-border transition-all hover:bg-muted/10 group animate-in fade-in slide-in-from-top-2">
-                                                            <div className="flex items-center gap-4">
-                                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                                                                    {idx + 1}
-                                                                </div>
-                                                                <div className="flex flex-col">
-                                                                    <span className="font-bold text-foreground/80">{expense.description}</span>
-                                                                    {expense.step && expense.step !== "none" && (
-                                                                        <span className="text-[10px] text-primary font-bold uppercase">{t(`steps.${expense.step}`)}</span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex items-center gap-4">
-                                                                <span className="font-lalezar text-xl text-foreground">{expense.cost} <span className="text-xs font-sans font-bold text-muted-foreground/60">DH</span></span>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="icon"
-                                                                    className="h-10 w-10 text-destructive/60 hover:text-destructive hover:bg-destructive/10 rounded-full opacity-0 group-hover:opacity-100 transition-all"
-                                                                    onClick={() => handleRemoveExpense(idx)}
-                                                                >
-                                                                    <Trash2 className="h-5 w-5" />
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                    <div className="flex justify-end pt-4 border-t border-dashed border-border mt-2">
-                                                        <span className="text-sm font-bold text-muted-foreground mr-2">{isRTL ? "المجموع:" : "Total:"}</span>
-                                                        <span className="text-lg font-lalezar text-foreground">{newOrder.expenses.reduce((s, e) => s + e.cost, 0)} DH</span>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
 
                                         <div className="flex gap-4 pt-6 sticky bottom-0 bg-background/80 backdrop-blur-md py-4 border-t mt-auto">
@@ -504,7 +441,7 @@ export default function OrdersPage() {
                         <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">12,500 DH</div>
+                        <div className="text-2xl font-bold">12,500 Dhs</div>
                         <p className="text-xs text-muted-foreground">+15% {isRTL ? "منذ الشهر الماضي" : "depuis le mois dernier"}</p>
                     </CardContent>
                 </Card>
@@ -530,7 +467,7 @@ export default function OrdersPage() {
                         <Wallet className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">45,800 DH</div>
+                        <div className="text-2xl font-bold">45,800 Dhs</div>
                         <p className="text-xs text-muted-foreground">{isRTL ? "إجمالي قيمة الطلبات النشطة" : "Valeur totale des commandes actives"}</p>
                     </CardContent>
                 </Card>
@@ -554,10 +491,25 @@ export default function OrdersPage() {
                 </Button>
             </div>
 
+            {/* Active client filter tag */}
+            {clientIdFilter && (
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">{isRTL ? "تصفية بـ:" : "Filtre :"}</span>
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold bg-primary/10 text-primary border border-primary/20">
+                        {getClientName(clientIdFilter)}
+                        <button
+                            onClick={() => navigate("/orders")}
+                            className="hover:text-destructive transition-colors text-base leading-none"
+                        >&times;</button>
+                    </span>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 gap-4">
                 {isLoading ? (
                     [1, 2, 3].map(i => <div key={i} className="h-32 bg-muted/50 rounded-sm animate-pulse" />)
                 ) : orders?.filter((order: Order) => {
+                    if (clientIdFilter && order.clientId !== clientIdFilter) return false;
                     if (statusFilter === "ongoing") {
                         return ["Nouvelle", "En cours"].includes(order.status);
                     }
@@ -592,6 +544,12 @@ export default function OrdersPage() {
                                             <Calendar className="h-4 w-4 text-primary/60" />
                                             {order.dueDate ? new Date(order.dueDate).toLocaleDateString() : "---"}
                                         </span>
+                                        {order.notes && (
+                                            <span className="flex items-center gap-1 text-primary/80 italic line-clamp-1 max-w-[200px]" title={order.notes}>
+                                                <FileText className="h-3.5 w-3.5" />
+                                                {order.notes}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -599,19 +557,18 @@ export default function OrdersPage() {
                             <div className="flex items-center justify-between md:justify-end gap-4 md:gap-8 w-full md:w-auto border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-8 mt-2 md:mt-0">
                                 <div className="flex-1 md:flex-none">
                                     <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.price")}</div>
-                                    <div className="text-lg md:text-xl font-bold text-foreground">{order.totalPrice} <span className="text-xs font-normal">DH</span></div>
+                                    <div className="text-lg md:text-xl font-bold text-foreground">{order.totalPrice} <span className="text-xs font-normal">Dhs</span></div>
                                 </div>
                                 <div className="flex-1 md:flex-none">
                                     <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.profit")}</div>
-                                    <div className="text-lg md:text-xl font-bold text-primary">{order.profit} <span className="text-xs font-normal">DH</span></div>
+                                    <div className="text-lg md:text-xl font-bold text-primary">{order.profit} <span className="text-xs font-normal">Dhs</span></div>
                                 </div>
                                 <Button
                                     size="icon"
                                     variant="ghost"
                                     className="h-10 w-10 shrink-0"
                                     onClick={() => {
-                                        setSelectedOrder(order);
-                                        setIsEditOrderOpen(true);
+                                        setEditOrderId(order.id);
                                     }}
                                 >
                                     <ChevronRight className={cn("h-5 w-5 md:h-6 md:w-6", isRTL && "rotate-180")} />
@@ -621,7 +578,7 @@ export default function OrdersPage() {
                         <div className="h-1.5 w-full bg-muted/50 overflow-hidden">
                             <div
                                 className="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(var(--primary),0.5)]"
-                                style={{ width: `${((ORDER_STEPS.indexOf(order.currentStep as any) + 1) / ORDER_STEPS.length) * 100}%` }}
+                                style={{ width: `${["Terminée", "Livrée"].includes(order.status) ? 100 : ((ORDER_STEPS.indexOf(order.currentStep as any) + 1) / ORDER_STEPS.length) * 100}%` }}
                             />
                         </div>
                     </Card>
@@ -629,7 +586,7 @@ export default function OrdersPage() {
             </div>
 
             {/* Edit Order Drawer */}
-            <Drawer.Root open={isEditOrderOpen} onOpenChange={setIsEditOrderOpen}>
+            <Drawer.Root open={!!editOrderId} onOpenChange={(open) => !open && setEditOrderId(null)}>
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
                     <Drawer.Content className={cn(
@@ -661,15 +618,38 @@ export default function OrdersPage() {
                                                 </Badge>
                                             </div>
 
+                                            {/* Order Notes (Editable) */}
+                                            <div className="flex flex-col gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
+                                                <div className="flex items-center gap-2 text-primary">
+                                                    <FileText className="h-5 w-5" />
+                                                    <span className="font-bold">{isRTL ? "ملاحظات الطلب" : "Notes de la commande"}</span>
+                                                </div>
+                                                <Textarea
+                                                    className="min-h-[80px] bg-background/50 border-primary/20"
+                                                    value={localNotes}
+                                                    onChange={(e) => setLocalNotes(e.target.value)}
+                                                />
+                                                <Button
+                                                    size="sm"
+                                                    className="w-fit gap-2 font-bold"
+                                                    onClick={() => handleUpdateOrder(selectedOrder, { notes: localNotes })}
+                                                    disabled={updateOrder.isPending}
+                                                >
+                                                    <Save className="h-4 w-4" />
+                                                    {isRTL ? "تحديث الملاحظات" : "Mettre à jour les notes"}
+                                                </Button>
+                                            </div>
+
                                             <div className="relative flex justify-between items-center px-4 pt-4">
                                                 <div className="absolute left-0 right-0 h-1.5 bg-border top-[40%] -translate-y-1/2 z-0" />
                                                 <div
                                                     className="absolute left-0 h-1.5 bg-primary top-[40%] -translate-y-1/2 z-0 transition-all duration-500"
-                                                    style={{ width: `${(ORDER_STEPS.indexOf(selectedOrder.currentStep as any) / (ORDER_STEPS.length - 1)) * 100}%` }}
+                                                    style={{ width: `${["Terminée", "Livrée"].includes(selectedOrder.status) ? 100 : (ORDER_STEPS.indexOf(selectedOrder.currentStep as any) / (ORDER_STEPS.length - 1)) * 100}%` }}
                                                 />
                                                 {ORDER_STEPS.map((step, idx) => {
-                                                    const isReached = ORDER_STEPS.indexOf(selectedOrder.currentStep as any) >= idx;
-                                                    const isCurrent = selectedOrder.currentStep === step;
+                                                    const isCompleted = ["Terminée", "Livrée"].includes(selectedOrder.status);
+                                                    const isReached = isCompleted || ORDER_STEPS.indexOf(selectedOrder.currentStep as any) >= idx;
+                                                    const isCurrent = !isCompleted && selectedOrder.currentStep === step;
                                                     return (
                                                         <div key={step} className="relative z-10 flex flex-col items-center gap-3">
                                                             <div className={cn(
@@ -680,7 +660,7 @@ export default function OrdersPage() {
                                                                 {isReached ? <Check className="h-5 w-5" /> : <span className="text-sm font-bold">{idx + 1}</span>}
                                                             </div>
                                                             <span className={cn(
-                                                                "text-[11px] font-bold uppercase tracking-tight whitespace-nowrap mt-2",
+                                                                "text-sm font-bold uppercase tracking-tight whitespace-nowrap mt-2",
                                                                 isReached ? "text-primary" : "text-muted-foreground"
                                                             )}>
                                                                 {t(`steps.${step}`)}
@@ -699,18 +679,18 @@ export default function OrdersPage() {
                                             </h3>
                                             <div className="flex justify-between items-center p-4 bg-card rounded-xl border border-border">
                                                 <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{isRTL ? "التسبيق الحالي:" : "Avance actuelle:"}</span>
-                                                <span className="text-2xl font-lalezar text-primary">{selectedOrder.advancePayment} <span className="text-xs font-sans font-bold text-muted-foreground/40">DH</span></span>
+                                                <span className="text-primary text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-2xl">{selectedOrder.advancePayment}</span></span>
                                             </div>
                                             <div className="flex gap-3">
                                                 <div className="relative flex-1 group">
                                                     <Input
                                                         type="number"
                                                         placeholder={isRTL ? "المبلغ المضاف" : "Montant à ajouter"}
-                                                        className="pr-12 font-bold text-lg"
+                                                        className="font-bold text-lg"
                                                         value={editAdvance}
                                                         onChange={(e) => setEditAdvance(e.target.value)}
                                                     />
-                                                    <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
+                                                    
                                                 </div>
                                                 <Button
                                                     onClick={handleAddAdvance}
@@ -723,10 +703,36 @@ export default function OrdersPage() {
                                             </div>
                                             <div className="flex justify-between items-center p-4 bg-primary/10 rounded-xl border border-primary/20 shadow-sm">
                                                 <span className="text-sm font-bold text-primary uppercase tracking-widest">{isRTL ? "الباقي استخلاصه:" : "Reste à payer:"}</span>
-                                                <span className="text-2xl font-lalezar text-primary">
-                                                    {(Number(selectedOrder.totalPrice) - Number(selectedOrder.advancePayment)).toFixed(2)} <span className="text-xs font-sans font-bold text-primary/60">DH</span>
-                                                </span>
+                                                <span className="text-primary text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-2xl">{(Number(selectedOrder.totalPrice) - Number(selectedOrder.advancePayment)).toFixed(2)}</span></span>
                                             </div>
+
+                                            {/* Advances History */}
+                                            {/* Advances History: show initial advance + subsequent ones */}
+                                            {(Number(selectedOrder.advancePayment) > 0 || (selectedOrder.advances && selectedOrder.advances.length > 0)) && (
+                                                <div className="space-y-3 pt-2">
+                                                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-[0.15em] mb-2">{isRTL ? "تاريخ الدفعات:" : "Historique des paiements :"}</p>
+                                                    {/* Initial advance from order creation */}
+                                                    {Number(selectedOrder.advancePayment) > 0 && (
+                                                        <div className="flex justify-between items-center p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/10">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-foreground/80">{isRTL ? "تسبيق أولي (Aلإنشاء)" : "Avance initiale (Création)"}</span>
+                                                                <span className="text-[10px] text-muted-foreground font-medium">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "--"}</span>
+                                                            </div>
+                                                            <span className="text-emerald-600 text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-xl">+{selectedOrder.advancePayment}</span></span>
+                                                        </div>
+                                                    )}
+                                                    {/* Subsequent advances */}
+                                                    {selectedOrder.advances && selectedOrder.advances.map((adv: any, idx: number) => (
+                                                        <div key={idx} className="flex justify-between items-center p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/10 transition-all hover:border-emerald-500/20">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-foreground/80">{isRTL ? "دفعة (تسبيق)" : "Paiement (Avance)"}</span>
+                                                                <span className="text-[10px] text-muted-foreground font-medium">{new Date(adv.date).toLocaleString()}</span>
+                                                            </div>
+                                                            <span className="text-emerald-600 text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-xl">+{adv.amount}</span></span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Expenses Update */}
@@ -747,7 +753,7 @@ export default function OrdersPage() {
                                                         value={editExpense.step}
                                                         onValueChange={(val) => setEditExpense(prev => ({ ...prev, step: val }))}
                                                     >
-                                                        <SelectTrigger className="flex-1">
+                                                        <SelectTrigger className="flex-1 h-10 rounded-xl">
                                                             <SelectValue placeholder={isRTL ? "المرحلة" : "Étape"} />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -761,11 +767,11 @@ export default function OrdersPage() {
                                                         <Input
                                                             type="number"
                                                             placeholder={isRTL ? "المبلغ" : "Montant"}
-                                                            className="pr-12"
+                                                            className="h-10 rounded-xl"
                                                             value={editExpense.cost}
                                                             onChange={(e) => setEditExpense(prev => ({ ...prev, cost: e.target.value }))}
                                                         />
-                                                        <span className={cn("absolute top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold", isRTL ? "left-4" : "right-4")}>DH</span>
+                                                        
                                                     </div>
                                                     <Button
                                                         onClick={handleAddEditExpense}
@@ -779,9 +785,9 @@ export default function OrdersPage() {
 
                                             {selectedOrder.expenses && selectedOrder.expenses.length > 0 && (
                                                 <div className="space-y-3 pt-2">
-                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2">{isRTL ? "لائحة المصاريف:" : "Liste des dépenses :"}</p>
+                                                    <p className="text-base font-bold text-muted-foreground uppercase tracking-[0.15em] mb-2">{isRTL ? "لائحة المصاريف:" : "Liste des dépenses :"}</p>
                                                     {selectedOrder.expenses.map((exp: any, idx: number) => (
-                                                        <div key={idx} className="flex justify-between items-center p-4 bg-muted/10 rounded-xl border border-border transition-all hover:border-primary/20">
+                                                        <div key={idx} className="flex justify-between items-center p-4 bg-destructive/5 rounded-xl border border-destructive/10 transition-all hover:border-destructive/20">
                                                             <div className="flex flex-col">
                                                                 <span className="font-bold text-foreground/80">{exp.description}</span>
                                                                 <div className="flex items-center gap-2">
@@ -789,23 +795,78 @@ export default function OrdersPage() {
                                                                     {exp.step && exp.step !== "none" && (
                                                                         <>
                                                                             <span className="text-[10px] text-muted-foreground">•</span>
-                                                                            <span className="text-[10px] text-primary font-bold uppercase">{t(`steps.${exp.step}`)}</span>
+                                                                            <span className="text-sm text-destructive font-bold uppercase">{t(`steps.${exp.step}`)}</span>
                                                                         </>
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                            <span className="font-lalezar text-xl text-primary">-{exp.cost} DH</span>
+                                                            <span className="text-destructive text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-xl">-{exp.cost}</span></span>
                                                         </div>
                                                     ))}
                                                     <div className="flex justify-between items-center p-4 bg-muted/20 rounded-xl border border-border mt-2">
-                                                        <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-widest">{isRTL ? "إجمالي المصاريف:" : "Total dépenses:"}</span>
-                                                        <span className="font-lalezar text-2xl text-foreground">{selectedOrder.totalCost} DH</span>
+                                                        <span className="text-muted-foreground font-bold text-base uppercase tracking-wide">{isRTL ? "إجمالي المصاريف:" : "Total dépenses:"}</span>
+                                                        <span className="text-destructive text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-2xl">{selectedOrder.totalCost}</span></span>
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="pt-6">
+                                        {/* Mark as Complete Button */}
+                                        {selectedOrder.status !== "Terminée" && (
+                                            <div className="pt-4">
+                                                {selectedOrder.currentStep !== "Mslouh" && selectedOrder.currentStep !== "Prete" ? (
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button
+                                                                className="w-full h-14 text-lg font-bold rounded-xl gap-3 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20"
+                                                            >
+                                                                {isRTL ? "تحديد الطلب كمنجز" : "Marquer comme Réalisé"}
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className="rounded-2xl">
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
+                                                                    <AlertCircle className="h-6 w-6" />
+                                                                    {isRTL ? "تحذير: مرحلة غير مكتملة" : "Attention : Étape incomplete"}
+                                                                </AlertDialogTitle>
+                                                                <AlertDialogDescription className="text-base">
+                                                                    {isRTL
+                                                                        ? `الطلب لم يصل بعد مرحلة "مصلوح" (المرحلة الأخيرة). هل تريد تحديده كمنجز على أي حال?`
+                                                                        : `Cette commande n'a pas encore atteint l'étape "Mslouh" (dernière étape). Voulez-vous quand même la marquer comme réalisée ?`}
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel className="rounded-xl">
+                                                                    {isRTL ? "إلغاء" : "Annuler"}
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    className="bg-emerald-600 hover:bg-emerald-700 rounded-xl"
+                                                                    onClick={() => handleUpdateOrder(selectedOrder, { status: "Terminée" })}
+                                                                >
+                                                                    {isRTL ? "تأكيد الإنجاز" : "Confirmer la réalisation"}
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                ) : (
+                                                    <Button
+                                                        className="w-full h-14 text-lg font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20"
+                                                        onClick={() => handleUpdateOrder(selectedOrder, { status: "Terminée" })}
+                                                        disabled={updateOrder.isPending}
+                                                    >
+                                                        {isRTL ? "تحديد الطلب كمنجز ✅" : "Marquer comme Réalisé ✅"}
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        )}
+                                        {selectedOrder.status === "Terminée" && (
+                                            <div className="pt-4 flex items-center justify-center gap-3 p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                                                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                                                <span className="font-bold text-emerald-700 text-lg">{isRTL ? "هذا الطلب منجز" : "Commande réalisée !"}</span>
+                                            </div>
+                                        )}
+
+                                        <div className="pt-4">
                                             <Drawer.Close asChild>
                                                 <Button variant="outline" size="lg" className="w-full h-14 text-lg rounded-sm px-8 border-2">
                                                     {isRTL ? "إغلاق" : "Fermer"}

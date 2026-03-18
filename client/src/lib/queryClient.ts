@@ -1,14 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
-export const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            retry: false,
-            refetchOnWindowFocus: false,
-        },
-    },
-});
-
 export const getQueryFn: QueryFunction = async ({ queryKey }) => {
     const res = await fetch(queryKey[0] as string);
     if (!res.ok) {
@@ -16,6 +7,16 @@ export const getQueryFn: QueryFunction = async ({ queryKey }) => {
     }
     return res.json();
 };
+
+export const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            queryFn: getQueryFn,
+            retry: false,
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 
 export async function apiRequest(
     method: string,

@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
     CheckCircle2,
@@ -25,6 +25,7 @@ export default function LandingPage() {
     const { isRTL, setLanguage, language } = useLanguage();
     const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
+    const [, setLocation] = useLocation();
 
     const features = [
         {
@@ -78,13 +79,17 @@ export default function LandingPage() {
         }
     ];
 
+    const handleStart = (plan?: string) => {
+        setLocation(`/subscribe-request${plan ? `?plan=${plan}` : ""}`);
+    };
+
     return (
         <div className={cn("min-h-screen bg-background text-foreground selection:bg-primary/20", isRTL && "font-arabic")} dir={isRTL ? "rtl" : "ltr"}>
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-                <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 md:h-24 flex items-center justify-between">
                     <div className="flex items-center">
-                        <span className="text-4xl font-lalezar text-primary drop-shadow-sm select-none">
+                        <span className="text-3xl md:text-4xl font-lalezar text-primary drop-shadow-sm select-none">
                             خياط برو
                         </span>
                     </div>
@@ -92,34 +97,34 @@ export default function LandingPage() {
                     <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-muted-foreground uppercase tracking-widest">
                         <a href="#features" className="hover:text-primary transition-colors">{t("landing.features.title")}</a>
                         <a href="#pricing" className="hover:text-primary transition-colors">{t("landing.pricing.title")}</a>
+                    </nav>
 
-                        <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <div className="flex items-center gap-1 md:gap-2">
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="rounded-full gap-2 px-4 h-10 border border-border"
+                                className="rounded-full gap-2 px-3 md:px-4 h-9 md:h-10 border border-border"
                                 onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
                             >
                                 <Languages className="h-4 w-4 text-primary" />
-                                <span className="font-bold">{language === "fr" ? "العربية" : "Français"}</span>
+                                <span className="font-bold hidden xs:inline">{language === "fr" ? "العربية" : "Français"}</span>
+                                <span className="font-bold xs:hidden uppercase">{language === "fr" ? "AR" : "FR"}</span>
                             </Button>
 
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="rounded-full h-10 w-10 border border-border"
+                                className="rounded-full h-9 w-9 md:h-10 md:w-10 border border-border"
                                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                             >
                                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                             </Button>
                         </div>
-                    </nav>
-
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" className="font-bold hidden sm:flex" onClick={() => window.location.href = `http://admin.${window.location.host}`}>
-                            Admin
-                        </Button>
-                        <Button className="bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 rounded-xl px-8 py-6 font-black text-lg">
+                        <Button 
+                            className="hidden sm:flex bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 rounded-xl px-4 md:px-8 py-4 md:py-6 font-black text-sm md:text-lg"
+                            onClick={() => handleStart()}
+                        >
                             {t("landing.hero.cta")}
                         </Button>
                     </div>
@@ -127,23 +132,27 @@ export default function LandingPage() {
             </header>
 
             {/* Hero */}
-            <section className="pt-48 pb-32 px-6 relative overflow-hidden text-center">
+            <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-6 relative overflow-hidden text-center">
                 <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/10 blur-[150px] rounded-full -z-10 animate-pulse" />
                 <div className="max-w-7xl mx-auto">
-                    <Badge variant="outline" className="mb-8 py-2 px-6 rounded-full border-primary/20 bg-primary/5 text-primary text-sm font-black uppercase tracking-widest">
+                    <Badge variant="outline" className="mb-6 md:mb-8 py-2 px-4 md:px-6 rounded-full border-primary/20 bg-primary/5 text-primary text-[10px] md:text-sm font-black uppercase tracking-widest">
                         {isRTL ? "أفضل منصة لإدارة الخياطة في المغرب" : "LA PLATEFORME N°1 DE COUTURE AU MAROC"}
                     </Badge>
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.95] text-foreground">
+                    <h1 className="text-4xl md:text-8xl font-black tracking-tighter mb-8 md:mb-10 leading-[1.1] md:leading-[0.95] text-foreground">
                         {t("landing.hero.title")}
                     </h1>
-                    <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-16 font-medium leading-relaxed">
+                    <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 md:mb-16 font-medium leading-relaxed">
                         {t("landing.hero.subtitle")}
                     </p>
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                        <Button size="lg" className="h-20 px-12 text-2xl font-black rounded-xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 gap-4 group">
-                            {t("landing.hero.cta")} <ArrowRight className={cn("h-7 w-7 transition-transform", isRTL ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2")} />
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+                        <Button 
+                            size="lg" 
+                            className="w-full md:w-auto h-16 md:h-20 px-8 md:px-12 text-xl md:text-2xl font-black rounded-xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 gap-4 group"
+                            onClick={() => handleStart()}
+                        >
+                            {t("landing.hero.cta")} <ArrowRight className={cn("h-6 w-6 md:h-7 md:w-7 transition-transform", isRTL ? "rotate-180 group-hover:-translate-x-2" : "group-hover:translate-x-2")} />
                         </Button>
-                        <Button variant="outline" size="lg" className="h-20 px-12 text-xl font-bold rounded-xl border-2 hover:bg-muted/50 border-border">
+                        <Button variant="outline" size="lg" className="w-full md:w-auto h-16 md:h-20 px-8 md:px-12 text-lg md:text-xl font-bold rounded-xl border-2 hover:bg-muted/50 border-border">
                             {t("landing.hero.demo")}
                         </Button>
                     </div>
@@ -151,51 +160,78 @@ export default function LandingPage() {
             </section>
 
             {/* Features */}
-            <section id="features" className="py-24 bg-muted/20">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-24">
-                        <h2 className="text-5xl md:text-7xl font-black text-foreground mb-8">
+            <section id="features" className="py-20 md:py-24 bg-muted/20">
+                <div className="max-w-7xl mx-auto px-4 md:px-6">
+                    <div className="text-center mb-16 md:mb-24">
+                        <h2 className="text-4xl md:text-7xl font-black text-foreground mb-6 md:mb-8">
                             {t("landing.features.title")}
                         </h2>
-                        <p className="text-2xl text-muted-foreground font-medium">
+                        <p className="text-lg md:text-2xl text-muted-foreground font-medium">
                             {t("landing.features.subtitle")}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {features.map((f, i) => (
-                            <div key={i} className="p-10 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all hover:translate-y-[-5px] group shadow-sm">
-                                <div className="h-16 w-16 bg-primary/10 rounded-xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 border border-primary/20">
-                                    <f.icon className="h-8 w-8 text-primary" />
+                            <div key={i} className="p-8 md:p-10 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-all hover:translate-y-[-5px] group shadow-sm">
+                                <div className="h-14 w-14 md:h-16 md:w-16 bg-primary/10 rounded-xl flex items-center justify-center mb-6 md:mb-8 group-hover:scale-110 transition-transform duration-500 border border-primary/20">
+                                    <f.icon className="h-7 w-7 md:h-8 md:w-8 text-primary" />
                                 </div>
-                                <h3 className="text-2xl font-black text-foreground mb-4">{f.title}</h3>
-                                <p className="text-muted-foreground leading-relaxed text-lg font-medium">{f.description}</p>
+                                <h3 className="text-xl md:text-2xl font-black text-foreground mb-3">{f.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed text-base md:text-lg font-medium">{f.description}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
+            {/* Trusted By Section */}
+            <section className="py-10 md:py-12 border-y border-border/50 bg-muted/5 font-arabic">
+                <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
+                    <p className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 md:mb-10 opacity-70">
+                        {isRTL ? "محلّات ومصممون يثقون في خياط برو" : "Des ateliers et créateurs qui nous font confiance"}
+                    </p>
+                    <div className="flex flex-wrap justify-center items-center gap-8 md:gap-24 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                        <div className="flex items-center gap-2 font-lalezar text-xl md:text-2xl">
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded bg-primary/20 flex items-center justify-center text-primary text-lg md:text-xl font-bold">L</div>
+                            L'Artisanat
+                        </div>
+                        <div className="flex items-center gap-2 font-serif italic text-xl md:text-2xl">
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-foreground/10 flex items-center justify-center text-foreground text-lg md:text-xl not-italic">S</div>
+                            Sultan Style
+                        </div>
+                        <div className="flex items-center gap-2 font-sans font-black text-xl md:text-2xl">
+                            <div className="w-8 h-8 md:w-10 md:h-10 transform rotate-45 bg-primary/30 flex items-center justify-center text-primary text-lg md:text-xl -rotate-45">M</div>
+                            Moda Maghreb
+                        </div>
+                        <div className="flex items-center gap-2 font-bold text-xl md:text-2xl">
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground text-lg md:text-xl">F</div>
+                            Fassi Couture
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Pricing */}
-            <section id="pricing" className="py-24">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-24">
-                        <h2 className="text-5xl md:text-7xl font-black text-foreground mb-8">{t("landing.pricing.title")}</h2>
-                        <p className="text-2xl text-muted-foreground max-w-2xl mx-auto font-medium">{t("landing.pricing.subtitle")}</p>
+            <section id="pricing" className="py-20 md:py-24">
+                <div className="max-w-7xl mx-auto px-4 md:px-6">
+                    <div className="text-center mb-16 md:mb-24">
+                        <h2 className="text-4xl md:text-7xl font-black text-foreground mb-6 md:mb-8">{t("landing.pricing.title")}</h2>
+                        <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium">{t("landing.pricing.subtitle")}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                         {pricing.map((p, i) => (
                             <Card key={i} className={cn(
-                                "p-10 border-2 rounded-2xl transition-all relative",
-                                p.popular ? "border-primary bg-card/50 shadow-xl shadow-primary/10 scale-105 z-10" : "border-border/50 bg-card/50"
+                                "p-8 md:p-10 border-2 rounded-2xl transition-all relative flex flex-col",
+                                p.popular ? "border-primary bg-card/50 shadow-xl shadow-primary/10 md:scale-105 z-10" : "border-border/50 bg-card/50"
                             )}>
-                                <h3 className="text-2xl font-black text-foreground mb-3">{p.name}</h3>
-                                <div className="flex items-baseline gap-2 mb-10">
-                                    <span className="text-6xl font-black text-primary">{p.price}</span>
-                                    <span className="text-lg text-muted-foreground font-black">{t("landing.pricing.month")}</span>
+                                <h3 className="text-xl md:text-2xl font-black text-foreground mb-2 md:mb-3">{p.name}</h3>
+                                <div className="flex items-baseline gap-2 mb-8 md:mb-10">
+                                    <span className="text-5xl md:text-6xl font-black text-primary">{p.price}</span>
+                                    <span className="text-base md:text-lg text-muted-foreground font-black">{t("landing.pricing.month")}</span>
                                 </div>
-                                <div className="space-y-4 mb-10 font-bold text-lg">
+                                <div className="space-y-3 md:space-y-4 mb-8 md:mb-10 font-bold text-base md:text-lg flex-1">
                                     {p.features.map((feat, fi) => (
                                         <div key={fi} className="flex items-center gap-3">
                                             <div className="h-5 w-5 bg-primary/20 rounded-full flex items-center justify-center">
@@ -205,10 +241,13 @@ export default function LandingPage() {
                                         </div>
                                     ))}
                                 </div>
-                                <Button className={cn(
-                                    "w-full h-16 rounded-xl font-black text-xl shadow-lg transition-transform active:scale-95",
-                                    p.popular ? "bg-primary hover:bg-primary/90" : "bg-muted text-foreground"
-                                )}>
+                                <Button 
+                                    className={cn(
+                                        "w-full h-14 md:h-16 rounded-xl font-black text-lg md:text-xl shadow-lg transition-transform active:scale-95",
+                                        p.popular ? "bg-primary hover:bg-primary/90" : "bg-muted text-foreground"
+                                    )}
+                                    onClick={() => handleStart(p.name)}
+                                >
                                     {t("landing.pricing.choose")}
                                 </Button>
                             </Card>

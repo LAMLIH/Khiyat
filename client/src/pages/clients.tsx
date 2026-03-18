@@ -32,7 +32,7 @@ export default function ClientsPage() {
     const { clients, isLoading, createClient } = useClients();
     const [search, setSearch] = useState("");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
     const form = useForm<InsertClient>({
         resolver: zodResolver(insertClientSchema.omit({ tenantId: true }) as any),
@@ -227,14 +227,18 @@ export default function ClientsPage() {
                                 </div>
 
                                 <div className="mt-6 flex gap-2">
-                                    <Button variant="outline" className="flex-1 gap-2 text-xs">
-                                        <Scissors className="h-4 w-4" />
-                                        <span>{t("common.measurements")}</span>
-                                    </Button>
-                                    <Button variant="outline" className="flex-1 gap-2 text-xs">
-                                        <History className="h-4 w-4" />
-                                        <span>{t("common.orders")}</span>
-                                    </Button>
+                                    <Link href={`/measurements?clientId=${client.id}`} className="flex-1">
+                                        <Button variant="outline" className="w-full gap-2 text-xs">
+                                            <Scissors className="h-4 w-4" />
+                                            <span>{t("common.measurements")}</span>
+                                        </Button>
+                                    </Link>
+                                    <Link href={`/orders?clientId=${client.id}`} className="flex-1">
+                                        <Button variant="outline" className="w-full gap-2 text-xs">
+                                            <History className="h-4 w-4" />
+                                            <span>{t("common.orders")}</span>
+                                        </Button>
+                                    </Link>
                                     <Link href={`/clients/${client.id}`} className="inline-flex">
                                         <Button size="icon" variant="ghost">
                                             <ChevronRight className={cn("h-4 w-4", isRTL && "rotate-180")} />
@@ -275,14 +279,18 @@ export default function ClientsPage() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto mt-4 md:mt-0">
-                                    <Button variant="outline" className="flex-1 md:flex-none gap-2 text-sm">
-                                        <Scissors className="h-4 w-4" />
-                                        <span>{t("common.measurements")}</span>
-                                    </Button>
-                                    <Button variant="outline" className="flex-1 md:flex-none gap-2 text-sm">
-                                        <History className="h-4 w-4" />
-                                        <span>{t("common.orders")}</span>
-                                    </Button>
+                                    <Link href={`/measurements?clientId=${client.id}`} className="flex-1 md:flex-none">
+                                        <Button variant="outline" className="w-full gap-2 text-sm">
+                                            <Scissors className="h-4 w-4" />
+                                            <span>{t("common.measurements")}</span>
+                                        </Button>
+                                    </Link>
+                                    <Link href={`/orders?clientId=${client.id}`} className="flex-1 md:flex-none">
+                                        <Button variant="outline" className="w-full gap-2 text-sm">
+                                            <History className="h-4 w-4" />
+                                            <span>{t("common.orders")}</span>
+                                        </Button>
+                                    </Link>
                                     <Link href={`/clients/${client.id}`} className="inline-flex">
                                         <Button size="icon" variant="ghost">
                                             <ChevronRight className={cn("h-4 w-4", isRTL && "rotate-180")} />

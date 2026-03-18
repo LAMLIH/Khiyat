@@ -64,7 +64,7 @@ export default function AuthPage() {
                         <div className="text-sm text-primary/60 font-bold tracking-widest uppercase animate-in fade-in duration-1000">بصمتك في الأناقة</div>
                     </div>
 
-                    <Card className="border-0 rounded-2xl overflow-hidden shadow-2xl bg-white/80 backdrop-blur-sm">
+                    <Card className="border border-border/50 rounded-2xl overflow-hidden shadow-2xl bg-card/80 backdrop-blur-sm">
                         <CardHeader className="pt-10 pb-4 text-center">
                             <CardTitle className="text-3xl font-lalezar text-primary tracking-wide">
                                 {isRTL ? "تسجيل الدخول" : "Connexion"}
@@ -81,7 +81,7 @@ export default function AuthPage() {
                                         name="username"
                                         render={({ field }: { field: any }) => (
                                             <FormItem className="space-y-3">
-                                                <FormLabel className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                                                <FormLabel className="text-sm font-bold text-foreground/80 uppercase tracking-wider">
                                                     {isRTL ? "اسم المستخدم" : "Nom d'utilisateur"}
                                                 </FormLabel>
                                                 <FormControl>
@@ -110,7 +110,7 @@ export default function AuthPage() {
                                         name="password"
                                         render={({ field }: { field: any }) => (
                                             <FormItem className="space-y-3">
-                                                <FormLabel className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                                                <FormLabel className="text-sm font-bold text-foreground/80 uppercase tracking-wider">
                                                     {isRTL ? "كلمة المرور" : "Mot de passe"}
                                                 </FormLabel>
                                                 <FormControl>

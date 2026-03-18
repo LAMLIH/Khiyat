@@ -22,7 +22,8 @@ async function diag() {
         const count = await sql`SELECT count(*) FROM tenants`;
         console.log("Tenants count:", count[0].count);
 
-    } catch (err) {
+    } catch (error) {
+        const err = error as any;
         console.error("DIAGNOSTIC FAILED");
         console.error("Error Name:", err.name);
         console.error("Error Message:", err.message);

@@ -14,7 +14,8 @@ import {
     FileText,
     Truck,
     Factory,
-    Building2
+    Building2,
+    ShoppingCart
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
@@ -90,15 +91,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const saasAdminMenu: SidebarItem[] = [
         {
             type: "simple",
-            titleKey: "Dashboard Admin",
+            titleKey: "saas_admin.dashboard",
             url: "/",
             icon: LayoutDashboard,
         },
         {
             type: "simple",
-            titleKey: "Gestion Clients",
+            titleKey: "saas_admin.tenants",
             url: "/tenants",
             icon: Building2,
+        },
+        {
+            type: "simple",
+            titleKey: "saas_admin.sub_requests",
+            url: "/subscription-requests",
+            icon: ClipboardList,
         },
     ];
 
@@ -144,11 +151,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     url: "/expenses",
                     icon: ShoppingBag,
                 },
-                {
-                    titleKey: "common.invoices",
-                    url: "/invoices",
-                    icon: FileText,
-                },
             ],
         },
         {
@@ -156,6 +158,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             titleKey: "common.products",
             url: "/products",
             icon: Package,
+        },
+        {
+            type: "simple",
+            titleKey: "common.rentals",
+            url: "/rentals",
+            icon: ShoppingCart,
         },
         {
             type: "simple",
@@ -173,7 +181,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     titleKey: "common.preferences",
                     url: "/settings/preferences",
                     icon: Settings,
-                }
+                },
             ]
         }
     ];

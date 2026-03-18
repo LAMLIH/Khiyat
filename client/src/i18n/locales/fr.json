@@ -24,7 +24,8 @@
         "expenses": "Dépenses",
         "invoices": "Factures",
         "products": "Produits",
-        "preferences": "Préférences"
+        "preferences": "Préférences",
+        "rentals": "Suivi Location Prêt à Porter"
     },
     "garments": {
         "Caftan": "Caftan",
@@ -70,12 +71,17 @@
             "title": "Tarifs Transparents",
             "subtitle": "Une offre adaptée à chaque taille d'atelier. Sans engagement.",
             "choose": "Choisir ce plan",
-            "month": "DH/mois"
+            "month": "Dhs/mois"
         },
         "cta_final": {
             "title": "Prêt à transformer votre maison de couture ?",
             "subtitle": "Rejoignez des centaines de tailleurs passionnés qui utilisent déjà Khiyat Pro pour optimiser leur passion.",
             "button": "Créer mon compte gratuit"
         }
+    },
+    "saas_admin": {
+        "dashboard": "Tableau de bord Admin",
+        "tenants": "Gestion Clients",
+        "sub_requests": "Demandes d'abonnement"
     }
 }

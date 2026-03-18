@@ -50,7 +50,20 @@ app.use(async (req, res, next) => {
         const host = req.get("host") || "";
         const hostname = host.split(":")[0]; // Strip port
         const parts = hostname.split(".");
-        const subdomain = parts.length > 1 ? parts[0] : "";
+        let subdomain = "";
+
+        // Logic for subdomain detection (matching client-side in main.tsx):
+        // 1. Platform (sevalla.app): tenant.app-name.sevalla.app (length 4)
+        // 2. Custom Domain: sub.domain.com (length 3)
+        // 3. Localhost: sub.localhost (length 2)
+        
+        if (hostname.endsWith("sevalla.app")) {
+            if (parts.length > 3) subdomain = parts[0];
+        } else if (parts.length > 2) {
+            subdomain = parts[0];
+        } else if (parts.length === 2 && parts[1] === "localhost") {
+            subdomain = parts[0];
+        }
 
         // Skip tenant lookup for system subdomains
         const systemSubdomains = ["www", "localhost", "127", "admin"];
