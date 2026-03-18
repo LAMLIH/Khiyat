@@ -1,11 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { insertClientSchema, insertMeasurementSchema, insertOrderSchema, insertSubscriptionRequestSchema } from "@shared/schema";
 
 export function registerRoutes(app: Express): Server {
-    setupAuth(app);
 
     // Tenants
     app.get("/api/tenant", async (req, res) => {

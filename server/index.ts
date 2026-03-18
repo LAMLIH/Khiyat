@@ -126,11 +126,16 @@ app.use((req, res, next) => {
         });
     }
 
-    // Error handling
+    // Error handling — never expose SQL details to client in production
     app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
         const status = err.status || err.statusCode || 500;
-        const message = err.message || "Internal Server Error";
+        // Log full error server-side for debugging
         console.error(`Error ${status} at ${req.method} ${req.path}:`, err);
+        // In production, hide raw DB error messages from client
+        const isProduction = process.env.NODE_ENV === "production";
+        const message = isProduction && status === 500
+            ? "Internal Server Error"
+            : (err.message || "Internal Server Error");
         res.status(status).json({ message });
     });
 

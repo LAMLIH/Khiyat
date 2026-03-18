@@ -57,7 +57,9 @@ export class DatabaseStorage implements IStorage {
         this.sessionStore = new PostgresSessionStore({
             conObject: {
                 connectionString: process.env.DATABASE_URL,
-                ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+                // NOTE: Sevalla proxy (europe-west1-001.proxy.sevalla.app) does NOT support TLS.
+                // Disabling SSL for the session store connection.
+                ssl: false,
             },
             createTableIfMissing: true,
             errorLog: (...args: any[]) => console.error("Session Store Error:", ...args),
