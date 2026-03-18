@@ -1,4 +1,4 @@
-import { postgres } from "../server/db";
+import postgres from "postgres";
 
 async function main() {
   const url = process.env.DATABASE_URL;
