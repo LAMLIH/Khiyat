@@ -13,7 +13,8 @@ i18n
             fr: { translation: fr },
             ar: { translation: ar },
         },
-        fallbackLng: "fr",
+        lng: "ar", // Set default to Arabic
+        fallbackLng: "ar",
         interpolation: {
             escapeValue: false,
         },

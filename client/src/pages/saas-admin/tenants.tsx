@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, ExternalLink, Users, Trash2, PlusCircle, ShieldCheck, Mail, Key } from "lucide-react";
+import { Loader2, ExternalLink, Users, Trash2, PlusCircle, ShieldCheck, Mail, Key, PencilLine } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -23,6 +23,7 @@ export default function SaaSAdminTenants() {
     const { toast } = useToast();
     const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
     
     // New user form state
     const [newUsername, setNewUsername] = useState("");
@@ -83,6 +84,27 @@ export default function SaaSAdminTenants() {
             setNewUsername("");
             setNewPassword("");
             setNewFullName("");
+        },
+        onError: (e: any) => {
+            toast({ title: "Erreur", description: e.message, variant: "destructive" });
+        }
+    });
+
+    const updateUserMutation = useMutation({
+        mutationFn: async ({ id, data }: { id: number, data: any }) => {
+            const res = await fetch(`/api/saas-admin/users/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["/api/saas-admin/users", { tenantId: selectedTenant?.id }] });
+            toast({ title: "Succès", description: "Utilisateur mis à jour." });
+            setEditingUser(null);
+            setNewPassword("");
         },
         onError: (e: any) => {
             toast({ title: "Erreur", description: e.message, variant: "destructive" });
@@ -215,7 +237,18 @@ export default function SaaSAdminTenants() {
                                                         {user.role}
                                                     </Badge>
                                                 </TableCell>
-                                                <TableCell className="text-right">
+                                                <TableCell className="text-right space-x-1">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="text-primary hover:bg-primary/10"
+                                                        onClick={() => {
+                                                            setEditingUser(user);
+                                                            setNewPassword("");
+                                                        }}
+                                                    >
+                                                        <PencilLine className="h-4 w-4" />
+                                                    </Button>
                                                     <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
@@ -234,6 +267,45 @@ export default function SaaSAdminTenants() {
                             </div>
                         )}
                     </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Change Password / Edit User Dialog */}
+            <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+                <DialogContent className="max-w-md border-t-4 border-t-primary shadow-xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-black">Modifier l'accès : {editingUser?.username}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label className="font-bold flex items-center gap-2">
+                                <Key className="h-4 w-4 text-primary" /> Nouveau mot de passe
+                            </Label>
+                            <Input 
+                                type="text"
+                                value={newPassword} 
+                                onChange={(e) => setNewPassword(e.target.value)} 
+                                placeholder="Laisser vide pour ne pas changer"
+                                className="font-bold border-2"
+                            />
+                            <p className="text-xs text-muted-foreground italic">
+                                Saisissez un nouveau mot de passe pour cet utilisateur.
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setEditingUser(null)} className="font-bold">Annuler</Button>
+                        <Button 
+                            className="bg-primary hover:bg-primary/90 text-white font-bold px-6"
+                            onClick={() => editingUser && updateUserMutation.mutate({ 
+                                id: editingUser.id, 
+                                data: { password: newPassword } 
+                            })}
+                            disabled={updateUserMutation.isPending || !newPassword}
+                        >
+                            {updateUserMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Mettre à jour"}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 

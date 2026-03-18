@@ -34,6 +34,16 @@ saasAdminRouter.post("/users", async (req, res) => {
     }
 });
 
+saasAdminRouter.patch("/users/:id", async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const user = await storage.updateUser(id, req.body);
+        res.json(user);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 // Tenants
 saasAdminRouter.get("/tenants", async (req, res) => {
     const tenants = await storage.getAllTenants();
