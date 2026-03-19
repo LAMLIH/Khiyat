@@ -6,13 +6,11 @@ if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL, must be set");
 }
 
-// NOTE: Sevalla internal K8s connection (svc.cluster.local) does NOT support SSL.
-// Sevalla external proxy also works without SSL. postgres.js does not support 'prefer'.
+// Minimal config — let postgres.js auto-negotiate SSL and connection settings.
+// Sevalla K8s internal connection doesn't need explicit SSL config.
 export const queryClient = postgres(process.env.DATABASE_URL, {
-    ssl: false,
     max: 10,
-    idle_timeout: 20,
-    connect_timeout: 10,
+    connect_timeout: 30,
     prepare: false, // Essential for proxies like PgBouncer/Sevalla
 });
 export const db = drizzle(queryClient, { schema });
