@@ -193,11 +193,11 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Trusted By Section - Now with Navigation */}
-            <section className="py-16 md:py-20 border-y border-border/50 bg-muted/5 font-arabic overflow-hidden">
+            {/* Trusted By Section - Minimalist Navigation */}
+            <section className="py-16 md:py-24 border-y border-border/50 bg-muted/5 font-arabic overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 md:px-6">
-                    <p className="text-[10px] md:text-sm font-bold text-center text-muted-foreground uppercase tracking-[0.3em] mb-12 md:mb-16 opacity-70">
-                        {isRTL ? "محلّات ومصممون يثقون في خياط برو" : "Des ateliers et créateurs qui nous font confiance"}
+                    <p className="text-xl md:text-3xl font-black text-center text-foreground uppercase tracking-[0.2em] mb-12 md:mb-16">
+                        {isRTL ? "محلّات ومصممون يثقون في خياط برو" : "Dernières Collections & Créateurs"}
                     </p>
                     
                     <div className="relative px-12 md:px-20">
@@ -209,38 +209,33 @@ export default function LandingPage() {
                             className="w-full"
                         >
                             <CarouselContent className="-ml-4 md:-ml-8 items-center">
-                                {/* LamlihCaftan - New Client */}
+                                {/* LamlihCaftan */}
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center gap-3 font-serif italic text-2xl md:text-3xl group cursor-pointer hover:scale-110 transition-transform duration-500">
-                                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-amber-200 to-amber-600 flex items-center justify-center text-white text-xl md:text-2xl font-bold shadow-lg shadow-amber-500/20">LC</div>
-                                        <span className="not-italic font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-amber-400">LamlihCaftan</span>
+                                    <div className="flex items-center justify-center font-serif italic text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
+                                        LamlihCaftan
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center gap-3 font-lalezar text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded bg-primary/20 flex items-center justify-center text-primary text-xl md:text-2xl font-bold">L</div>
+                                    <div className="flex items-center justify-center font-lalezar text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-widest">
                                         L'Artisanat
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center gap-3 font-serif italic text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-foreground/10 flex items-center justify-center text-foreground text-xl md:text-2xl not-italic">S</div>
+                                    <div className="flex items-center justify-center font-serif italic text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
                                         Sultan Style
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center gap-3 font-sans font-black text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 transform rotate-45 bg-primary/30 flex items-center justify-center text-primary text-xl md:text-2xl -rotate-45">M</div>
+                                    <div className="flex items-center justify-center font-sans font-black text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
                                         Moda Maghreb
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center gap-3 font-bold text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground text-xl md:text-2xl">F</div>
+                                    <div className="flex items-center justify-center font-bold text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-tighter">
                                         Fassi Couture
                                     </div>
                                 </CarouselItem>
