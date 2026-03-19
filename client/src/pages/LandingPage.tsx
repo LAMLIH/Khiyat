@@ -27,6 +27,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 
 export default function LandingPage() {
@@ -34,6 +35,9 @@ export default function LandingPage() {
     const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
     const [, setLocation] = useLocation();
+    const plugin = useRef(
+        Autoplay({ delay: 3000, stopOnInteraction: true })
+    );
 
     const features = [
         {
@@ -202,6 +206,9 @@ export default function LandingPage() {
                     
                     <div className="relative px-12 md:px-20">
                         <Carousel
+                            plugins={[plugin.current]}
+                            onMouseEnter={plugin.current.stop}
+                            onMouseLeave={plugin.current.reset}
                             opts={{
                                 align: "start",
                                 loop: true,
