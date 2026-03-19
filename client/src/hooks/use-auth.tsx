@@ -54,13 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         mutationFn: async () => {
             await apiRequest("POST", "/api/logout");
         },
-        onSuccess: () => {
-            queryClient.setQueryData(["/api/user"], null);
-            window.location.replace("/"); // Hard redirect to clear all states and force login view
-            toast({
-                title: "Déconnexion réussie",
-                description: "À bientôt !",
-            });
+        onSettled: () => {
+            // Force hard redirect regardless of success/error
+            window.location.replace("/"); 
         },
     });
 
