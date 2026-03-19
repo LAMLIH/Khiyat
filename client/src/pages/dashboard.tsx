@@ -189,7 +189,7 @@ export default function DashboardPage() {
                 {stats.map((stat, i) => (
                     <Card key={i} className="border border-border/50 shadow-sm hover-elevate transition-all group overflow-hidden bg-card">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 md:pb-2 pt-4 px-4">
-                            <CardTitle className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                            <CardTitle className="text-lg font-bold text-muted-foreground tracking-tight">
                                 {stat.title}
                             </CardTitle>
                             <div className={cn("p-1.5 md:p-2 rounded-xl transition-colors", stat.bg)}>
@@ -197,8 +197,8 @@ export default function DashboardPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="px-4 pb-4">
-                            <div className="text-2xl md:text-3xl font-black text-foreground leading-none">{stat.value}</div>
-                            <p className="text-[9px] md:text-[10px] text-muted-foreground mt-1 md:mt-2 font-bold uppercase tracking-tight">{stat.description}</p>
+                            <div className="text-3xl font-black text-foreground leading-none">{stat.value}</div>
+                            <p className="text-xs text-muted-foreground mt-2 font-bold tracking-tight">{stat.description}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -361,7 +361,7 @@ export default function DashboardPage() {
                                     </div>
                                     <div className="flex items-center justify-between md:justify-end gap-10 md:min-w-[200px]">
                                         <div className="text-right">
-                                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{isRTL ? "المبلغ" : "Montant"}</p>
+                                            <p className="text-sm text-muted-foreground font-bold tracking-widest">{isRTL ? "المبلغ" : "Montant"}</p>
                                             <p className="text-2xl font-black text-primary leading-none mt-1">{order.totalPrice} Dhs</p>
                                         </div>
                                         {/* Status progress indicator mini */}
