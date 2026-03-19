@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
     ClipboardList,
@@ -57,6 +57,20 @@ export default function OrdersPage() {
     const { isRTL } = useLanguage();
     const { orders, isLoading, createOrder, updateOrder } = useOrders();
     const { clients } = useClients();
+
+    const stats = useMemo(() => {
+        if (!orders) return { profit: 0, inProgress: 0, revenue: 0, waitingCoupe: 0 };
+        
+        const inProgressOrders = orders.filter(o => ["Nouvelle", "En cours"].includes(o.status));
+        const waitingCoupe = orders.filter(o => o.currentStep === "Fsalla").length;
+
+        return {
+            profit: orders.reduce((acc, o) => acc + Number(o.profit || 0), 0),
+            inProgress: inProgressOrders.length,
+            revenue: orders.reduce((acc, o) => acc + Number(o.totalPrice || 0), 0),
+            waitingCoupe
+        };
+    }, [orders]);
 
     const [editOrderId, setEditOrderId] = useState<number | null>(null);
     const selectedOrder = orders?.find(o => o.id === editOrderId) || null;
@@ -223,21 +237,21 @@ export default function OrdersPage() {
 
     return (
         <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500 bg-background min-h-screen border-none">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-2">
+                <div className="w-full md:w-auto">
                     <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
                         <ClipboardList className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground/50" />
                         {t("common.orders")}
                     </h1>
-                    <p className="text-muted-foreground mt-1 text-base md:text-lg">
+                    <p className="text-muted-foreground mt-1 text-base md:text-lg opacity-80">
                         {isRTL ? "متابعة تطور و تكاليف طلبات الخياطة" : "Suivi de l'avancement et des coûts de vos commandes."}
                     </p>
                 </div>
 
                 <Drawer.Root open={isNewOrderOpen} onOpenChange={setIsNewOrderOpen}>
-                    <Drawer.Trigger asChild>
-                        <Button size="lg" className="hover-elevate shadow-sm gap-2 text-[15px] h-14 px-6 md:px-8 rounded-full transition-all hover:scale-105 active:scale-95 bg-primary font-bold">
-                            <Plus className="h-5 w-5 md:h-6 md:w-6" />
+                    <Drawer.Trigger asChild className="w-full md:w-auto">
+                        <Button size="lg" className="w-full md:w-auto hover-elevate shadow-lg shadow-primary/20 gap-3 text-lg h-16 md:h-14 px-8 rounded-full transition-all hover:scale-105 active:scale-95 bg-primary font-bold">
+                            <Plus className="h-6 w-6 md:h-7 md:w-7" />
                             {isRTL ? "طلب جديد" : "Nouvelle commande"}
                         </Button>
                     </Drawer.Trigger>
@@ -433,42 +447,42 @@ export default function OrdersPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <Card>
+                <Card className="border border-border/50 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-sm font-bold text-muted-foreground">
                             {t("common.profit")}
                         </CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <TrendingUp className="h-4 w-4 text-emerald-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">12,500 Dhs</div>
-                        <p className="text-xs text-muted-foreground">+15% {isRTL ? "منذ الشهر الماضي" : "depuis le mois dernier"}</p>
+                        <div className="text-2xl font-bold text-foreground">{stats.profit.toLocaleString()} Dhs</div>
+                        <p className="text-xs text-muted-foreground mt-1">{isRTL ? "إجمالي الأرباح المحققة" : "Total des bénéfices réalisés"}</p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border border-border/50 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-sm font-bold text-muted-foreground">
                             {isRTL ? "قيد التنفيذ" : "En cours"}
                         </CardTitle>
-                        <Package className="h-4 w-4 text-muted-foreground" />
+                        <Package className="h-4 w-4 text-amber-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">12</div>
-                        <p className="text-xs text-muted-foreground">4 {isRTL ? "طلبيات تنتظر الفصالة" : "commandes en attente de coupe"}</p>
+                        <div className="text-2xl font-bold text-foreground">{stats.inProgress}</div>
+                        <p className="text-xs text-muted-foreground mt-1">{stats.waitingCoupe} {isRTL ? "طلبيات تنتظر الفصالة" : "commandes en attente de coupe"}</p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border border-border/50 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-sm font-bold text-muted-foreground">
                             {isRTL ? "مداخيل الطلبات" : "Chiffre d'Affaire"}
                         </CardTitle>
-                        <Wallet className="h-4 w-4 text-muted-foreground" />
+                        <Wallet className="h-4 w-4 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">45,800 Dhs</div>
-                        <p className="text-xs text-muted-foreground">{isRTL ? "إجمالي قيمة الطلبات النشطة" : "Valeur totale des commandes actives"}</p>
+                        <div className="text-2xl font-bold text-foreground">{stats.revenue.toLocaleString()} Dhs</div>
+                        <p className="text-xs text-muted-foreground mt-1">{isRTL ? "إجمالي قيمة جميع الطلبات" : "Valeur totale de toutes les commandes"}</p>
                     </CardContent>
                 </Card>
             </div>

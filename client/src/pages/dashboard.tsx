@@ -130,21 +130,21 @@ export default function DashboardPage() {
 
     return (
         <div className={cn("p-2 md:p-8 space-y-4 md:space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex flex-col gap-2">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex flex-col gap-2 w-full md:w-auto">
                     <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-2xl">
                             <TrendingUp className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                         </div>
                         {isRTL ? "لوحة التحكم" : "Tableau de Bord"}
                     </h1>
-                    <p className="text-muted-foreground text-base md:text-lg ml-14">
+                    <p className="text-muted-foreground text-base md:text-lg opacity-80">
                         {isRTL ? "نظرة عامة على نشاطك التجاري اليوم في خياط برو." : "Aperçu de votre activité aujourd'hui sur Khiyat Pro."}
                     </p>
                 </div>
-                <div className="flex gap-3">
-                    <Link href="/orders">
-                        <Button className="gap-2 bg-primary shadow-lg shadow-primary/20 hover:bg-primary/90">
+                <div className="flex gap-3 w-full md:w-auto">
+                    <Link href="/orders" className="w-full md:w-auto">
+                        <Button className="w-full md:w-auto gap-2 bg-primary shadow-lg shadow-primary/20 hover:bg-primary/90">
                             <Package className="h-4 w-4" /> {isRTL ? "جميع الطلبات" : "Toutes les commandes"}
                         </Button>
                     </Link>
@@ -153,13 +153,13 @@ export default function DashboardPage() {
 
             {/* Welcome/Empty State for New Tenants */}
             {totalOrders === 0 && !ordersLoading && (
-                <Card className="border-2 border-dashed border-primary/20 bg-primary/5 p-12 text-center rounded-3xl animate-in zoom-in duration-500">
+                <Card className="border-2 border-dashed border-primary/20 bg-primary/5 p-8 md:p-12 text-center rounded-3xl animate-in zoom-in duration-500">
                     <div className="flex flex-col items-center gap-6 max-w-md mx-auto">
                         <div className="p-4 bg-primary/10 rounded-full">
                             <Package className="h-12 w-12 text-primary animate-pulse" />
                         </div>
                         <div className="space-y-3">
-                            <h2 className="text-3xl font-black text-foreground">
+                            <h2 className="text-3xl font-bold text-foreground">
                                 {isRTL ? "مرحباً بك في خياط برو!" : "Bienvenue sur Khiyat Pro !"}
                             </h2>
                             <p className="text-muted-foreground font-medium text-lg leading-relaxed">
@@ -168,15 +168,15 @@ export default function DashboardPage() {
                                     : "Votre tableau de bord est vide. Commencez par créer votre premier client ou commande pour voir les statistiques s'afficher."}
                             </p>
                         </div>
-                        <div className="flex gap-4 mt-4 w-full">
-                            <Link href="/clients" className="flex-1">
-                                <Button className="w-full h-12 gap-2 font-bold" variant="outline">
-                                    <Users className="h-4 w-4" /> {isRTL ? "إضافة زبون" : "Ajouter un client"}
+                        <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full">
+                            <Link href="/orders" className="w-full sm:flex-1">
+                                <Button className="w-full h-14 gap-3 text-lg font-bold shadow-xl shadow-primary/20">
+                                    <Scissors className="h-5 w-5" /> {isRTL ? "طلب جديد" : "Créer une commande"}
                                 </Button>
                             </Link>
-                            <Link href="/orders" className="flex-1">
-                                <Button className="w-full h-12 gap-2 font-black shadow-lg shadow-primary/20">
-                                    <Scissors className="h-4 w-4" /> {isRTL ? "طلب جديد" : "Créer une commande"}
+                            <Link href="/clients" className="w-full sm:flex-1">
+                                <Button className="w-full h-14 gap-3 text-lg font-bold" variant="outline">
+                                    <Users className="h-5 w-5" /> {isRTL ? "إضافة زبون" : "Ajouter un client"}
                                 </Button>
                             </Link>
                         </div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="px-4 pb-4">
-                            <div className="text-3xl font-black text-foreground leading-none">{stat.value}</div>
+                            <div className="text-3xl font-bold text-foreground leading-none">{stat.value}</div>
                             <p className="text-xs text-muted-foreground mt-2 font-bold tracking-tight">{stat.description}</p>
                         </CardContent>
                     </Card>

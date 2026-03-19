@@ -292,7 +292,7 @@ export default function StatsPage() {
     return (
         <div className={cn("p-0 md:p-8 space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
             {/* Header & Filters */}
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-2">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-2xl">
@@ -300,7 +300,7 @@ export default function StatsPage() {
                         </div>
                         {isRTL ? "الإحصائيات" : "Statistiques"}
                     </h1>
-                    <p className="text-muted-foreground mt-2 text-base md:text-lg sm:mx-14">
+                    <p className="text-muted-foreground mt-2 text-base md:text-lg opacity-80 sm:mx-14">
                         {isRTL ? "تحليل شامل لأداء المشغل" : "Analyse complète de la performance de votre atelier."}
                     </p>
                 </div>
@@ -362,7 +362,7 @@ export default function StatsPage() {
                                     <kpi.icon className={cn("h-4 w-4", kpi.color)} />
                                 </div>
                             </div>
-                            <p className="text-2xl font-black text-foreground leading-none" dir="ltr">{kpi.value}</p>
+                            <p className="text-2xl font-bold text-foreground leading-none" dir="ltr">{kpi.value}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -524,7 +524,7 @@ export default function StatsPage() {
                         {topClients.map((client, i) => (
                             <div key={i} className="py-4 flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-black text-lg text-white", i === 0 ? "bg-amber-500" : i === 1 ? "bg-slate-400" : i === 2 ? "bg-amber-700" : "bg-muted")}>
+                                    <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-bold text-lg text-white", i === 0 ? "bg-amber-500" : i === 1 ? "bg-slate-400" : i === 2 ? "bg-amber-700" : "bg-muted")}>
                                         {i + 1}
                                     </div>
                                     <div>
@@ -534,7 +534,7 @@ export default function StatsPage() {
                                 </div>
                                 <div className="text-right">
                                     <span className="text-xs font-normal text-muted-foreground leading-none">Dhs </span>
-                                    <p className="text-lg font-black text-primary leading-none">{client.revenue.toLocaleString("fr-MA")}</p>
+                                    <p className="text-lg font-bold text-primary leading-none">{client.revenue.toLocaleString("fr-MA")}</p>
                                 </div>
                             </div>
                         ))}

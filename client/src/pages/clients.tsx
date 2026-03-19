@@ -59,19 +59,19 @@ export default function ClientsPage() {
 
     return (
         <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-2">
+                <div className="w-full md:w-auto">
                     <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
                         <UserPlus className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground/50" />
                         {t("common.clients")}
                     </h1>
-                    <p className="text-muted-foreground mt-1 text-base md:text-lg">
+                    <p className="text-muted-foreground mt-1 text-base md:text-lg opacity-80">
                         {isRTL ? "إدارة قاعدة بيانات الزبناء والطلبات" : "Gérez votre base de clients et leurs commandes."}
                     </p>
                 </div>
 
-                <div className="flex gap-4">
-                    <div className="bg-muted/50 p-1.5 rounded-[1.25rem] shadow-sm flex gap-1">
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                    <div className="bg-muted/50 p-1.5 rounded-[1.25rem] shadow-sm flex gap-1 w-full sm:w-auto justify-center sm:justify-start">
                         <Button
                             variant={viewMode === "grid" ? "default" : "ghost"}
                             size="icon"
@@ -92,8 +92,8 @@ export default function ClientsPage() {
 
                     <Drawer.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                         <Drawer.Trigger asChild>
-                            <Button size="lg" className="hover-elevate shadow-sm gap-2 text-[15px] h-14 px-6 md:px-8 rounded-full transition-all hover:scale-105 active:scale-95 bg-primary font-bold">
-                                <Plus className="h-5 w-5 md:h-6 md:w-6" />
+                            <Button size="lg" className="w-full md:w-auto hover-elevate shadow-lg shadow-primary/20 gap-3 text-lg h-16 md:h-14 px-8 rounded-full transition-all hover:scale-105 active:scale-95 bg-primary font-bold">
+                                <Plus className="h-6 w-6 md:h-7 md:w-7" />
                                 {t("common.add")}
                             </Button>
                         </Drawer.Trigger>

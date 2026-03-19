@@ -40,7 +40,7 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen grid lg:grid-cols-2 bg-[#f8fafc] dark:bg-slate-950 relative overflow-hidden font-sans">
+        <div className="min-h-screen grid lg:grid-cols-2 bg-[#f8fafc] dark:bg-slate-950 relative overflow-hidden">
             {/* Background Decorative patterns for the whole page */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20 dark:opacity-10">
                 <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px]" />
@@ -84,7 +84,7 @@ export default function AuthPage() {
                             <Scissors className="h-10 w-10 text-primary" />
                         </div>
                         <div className="text-6xl font-lalezar text-primary tracking-wider animate-in zoom-in duration-700">خياط برو</div>
-                        <div className="text-xs text-primary/60 font-black tracking-[0.3em] uppercase opacity-80">بصمتك في الأناقة</div>
+                        <div className="text-xs text-primary/60 font-bold tracking-[0.3em] uppercase opacity-80">بصمتك في الأناقة</div>
                     </div>
 
                     <div className="relative">
@@ -96,7 +96,7 @@ export default function AuthPage() {
                                 <CardTitle className="text-4xl font-lalezar text-primary tracking-wide">
                                     {isRTL ? "تسجيل الدخول" : "Connexion"}
                                 </CardTitle>
-                                <p className="text-sm text-muted-foreground font-black uppercase tracking-[0.2em] mt-3 opacity-50">
+                                <p className="text-sm text-muted-foreground font-bold uppercase tracking-[0.2em] mt-3 opacity-50">
                                     {isRTL ? "مرحباً بك مجدداً" : "Accès Personnel"}
                                 </p>
                             </CardHeader>
@@ -108,7 +108,7 @@ export default function AuthPage() {
                                             name="username"
                                             render={({ field }: { field: any }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">
+                                                    <FormLabel className="text-sm font-bold text-muted-foreground/90 uppercase tracking-wider ml-1">
                                                         {isRTL ? "اسم المستخدم" : "Identifiant"}
                                                     </FormLabel>
                                                     <FormControl>
@@ -139,7 +139,7 @@ export default function AuthPage() {
                                             name="password"
                                             render={({ field }: { field: any }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-sm font-bold text-foreground/80 uppercase tracking-wider ml-1">
+                                                    <FormLabel className="text-sm font-bold text-muted-foreground/90 uppercase tracking-wider ml-1">
                                                         {isRTL ? "كلمة المرور" : "Mot de passe"}
                                                     </FormLabel>
                                                     <FormControl>
@@ -187,7 +187,7 @@ export default function AuthPage() {
                             onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
                         >
                             <Languages className="h-5 w-5 text-primary" />
-                            <span className="font-black text-base uppercase tracking-wider">{language === "fr" ? "العربية" : "Français"}</span>
+                            <span className="font-bold text-base uppercase tracking-wider">{language === "fr" ? "العربية" : "Français"}</span>
                         </Button>
                     </div>
                 </div>
