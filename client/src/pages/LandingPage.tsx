@@ -148,7 +148,7 @@ export default function LandingPage() {
                 <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/10 blur-[150px] rounded-full -z-10 animate-pulse" />
                 <div className="max-w-7xl mx-auto">
                     <Badge variant="outline" className="mb-6 md:mb-8 py-2 px-4 md:px-6 rounded-full border-primary/20 bg-primary/5 text-primary text-[10px] md:text-sm font-black uppercase tracking-widest">
-                        {isRTL ? "أفضل منصة لإدارة الخياطة في المغرب" : "LA PLATEFORME N°1 DE COUTURE AU MAROC"}
+                        {isRTL ? "أول منصة لإدارة الخياطة في المغرب" : "LA PREMIÈRE PLATEFORME DE COUTURE AU MAROC"}
                     </Badge>
                     <h1 className="text-4xl md:text-8xl font-black tracking-tighter mb-8 md:mb-10 leading-[1.1] md:leading-[0.95] text-foreground">
                         {t("landing.hero.title")}
