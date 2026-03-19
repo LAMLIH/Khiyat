@@ -13,8 +13,6 @@ import { useLocation } from "wouter";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-import logo from "@/assets/logo-light.png";
-
 export default function AuthPage() {
     const { t } = useTranslation();
     const { isRTL, setLanguage, language } = useLanguage();
@@ -40,60 +38,62 @@ export default function AuthPage() {
     };
 
     return (
-        <div className={cn("min-h-screen grid lg:grid-cols-2 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-500", isRTL && "font-arabic")}>
-            {/* Desktop Left side (Branding) */}
-            <div className="hidden lg:flex flex-col items-center justify-center bg-primary text-primary-foreground p-12 relative overflow-hidden shadow-[20px_0_40px_rgba(0,0,0,0.1)] z-20">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent)]" />
+        <div className={cn("min-h-screen grid lg:grid-cols-2 bg-background relative overflow-hidden transition-colors duration-500", isRTL && "font-arabic")}>
+            {/* Desktop Left side (Branding) - Elegant Dark Theme */}
+            <div className="hidden lg:flex flex-col items-center justify-center bg-card/30 text-foreground p-12 relative overflow-hidden border-r border-border/20 z-20">
+                {/* Subtle background glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+                
                 <div className="relative z-10 text-center flex flex-col items-center">
                     <div className="mb-8 flex flex-col items-center gap-1 animate-in zoom-in slide-in-from-top-4 duration-1000">
-                        <div className="p-5 bg-white/10 backdrop-blur-md rounded-[2.5rem] border border-white/20 shadow-2xl mb-6">
-                            <Scissors className="h-16 w-16 text-white" />
+                        <div className="p-8 bg-primary/10 rounded-[2.5rem] border border-primary/20 shadow-2xl mb-8">
+                            <Scissors className="h-24 w-24 text-primary" />
                         </div>
-                        <h1 className="text-9xl font-lalezar text-white tracking-widest drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)] leading-none mb-4">خياط برو</h1>
-                        <div className="inline-flex items-center gap-3">
-                            <div className="h-[1px] w-8 bg-white/40" />
-                            <span className="text-xl text-white/90 font-medium tracking-[0.4em] uppercase">بصمتك في الأناقة</span>
-                            <div className="h-[1px] w-8 bg-white/40" />
+                        <h1 className="text-[10rem] font-lalezar text-foreground tracking-widest drop-shadow-xl leading-none mb-4">خياط برو</h1>
+                        <div className="inline-flex items-center gap-6">
+                            <div className="h-[1px] w-20 bg-primary/30" />
+                            <span className="text-3xl text-muted-foreground font-medium tracking-[0.5em] uppercase">بصمتك في الأناقة</span>
+                            <div className="h-[1px] w-20 bg-primary/30" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile/Right side Content */}
+            {/* Right side / Mobile View */}
             <div className="w-full min-h-screen lg:min-h-0 flex items-center justify-center p-4 sm:p-8 bg-background lg:bg-transparent relative z-10 transition-colors">
-                {/* Subtle Glow for consistency */}
-                <div className="lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
+                {/* Global subtle glow */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-primary/5 blur-[120px]" />
                 </div>
 
-                <div className="w-full max-w-[420px] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    {/* Simplified Mobile Logo */}
-                    <div className="text-center mb-10 flex flex-col items-center gap-2">
-                        <div className="p-4 bg-primary/10 rounded-2xl mb-2 lg:hidden">
+                <div className="w-full max-w-[440px] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    {/* Brand Header for Mobile / Sidebar for Web mobile-feel */}
+                    <div className="text-center mb-10 flex flex-col items-center gap-2 lg:hidden">
+                        <div className="p-4 bg-primary/10 rounded-2xl mb-2">
                             <Scissors className="h-10 w-10 text-primary" />
                         </div>
-                        <div className="text-5xl font-lalezar text-foreground lg:text-primary tracking-wider">خياط برو</div>
-                        <div className="text-[10px] text-muted-foreground lg:text-primary/60 font-bold tracking-[0.4em] uppercase">بصمتك في الأناقة</div>
+                        <div className="text-6xl font-lalezar text-foreground tracking-wider">خياط برو</div>
+                        <div className="text-[10px] text-muted-foreground font-bold tracking-[0.4em] uppercase">بصمتك في الأناقة</div>
                     </div>
 
-                    <Card className="border-border/40 lg:border rounded-[2.5rem] overflow-hidden shadow-2xl bg-card/50 lg:bg-card/90 backdrop-blur-3xl border-2">
-                        <CardHeader className="pt-10 pb-4 text-center">
-                            <CardTitle className="text-3xl font-lalezar text-foreground lg:text-primary">
+                    <Card className="border-border/40 rounded-[3rem] overflow-hidden shadow-2xl bg-card/40 backdrop-blur-3xl border-2">
+                        <CardHeader className="pt-12 pb-6 text-center border-b border-border/10">
+                            <CardTitle className="text-4xl font-lalezar text-foreground tracking-wide">
                                 {isRTL ? "تسجيل الدخول" : "Connexion"}
                             </CardTitle>
-                            <p className="text-xs text-white/40 lg:text-muted-foreground font-bold uppercase tracking-[0.2em] mt-2">
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.3em] mt-3 opacity-60">
                                 {isRTL ? "مرحباً بك مجدداً" : "Accès Personnel"}
                             </p>
                         </CardHeader>
-                        <CardContent className="p-8 sm:p-10 pt-4">
+                        <CardContent className="p-8 sm:p-12 pt-10">
                             <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                                     <FormField
                                         control={form.control}
                                         name="username"
                                         render={({ field }: { field: any }) => (
-                                            <FormItem className="space-y-2">
-                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] ml-1">
+                                            <FormItem className="space-y-3">
+                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em] ml-1">
                                                     {isRTL ? "اسم المستخدم" : "Identifiant"}
                                                 </FormLabel>
                                                 <FormControl>
@@ -108,13 +108,13 @@ export default function AuthPage() {
                                                             placeholder="admin"
                                                             {...field}
                                                             className={cn(
-                                                                "h-14 bg-background/50 lg:bg-background border-border/40 lg:border-input text-foreground font-medium",
+                                                                "h-14 bg-background/50 border-border/40 text-foreground font-medium text-lg focus-visible:ring-primary/20",
                                                                 isRTL ? "pr-12 text-right" : "pl-12"
                                                             )}
                                                         />
                                                     </div>
                                                 </FormControl>
-                                                <FormMessage className="text-[10px]" />
+                                                <FormMessage className="text-[10px] font-bold" />
                                             </FormItem>
                                         )}
                                     />
@@ -123,8 +123,8 @@ export default function AuthPage() {
                                         control={form.control}
                                         name="password"
                                         render={({ field }: { field: any }) => (
-                                            <FormItem className="space-y-2">
-                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] ml-1">
+                                            <FormItem className="space-y-3">
+                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em] ml-1">
                                                     {isRTL ? "كلمة المرور" : "Mot de passe"}
                                                 </FormLabel>
                                                 <FormControl>
@@ -140,20 +140,20 @@ export default function AuthPage() {
                                                             placeholder="••••••••"
                                                             {...field}
                                                             className={cn(
-                                                                "h-14 bg-background/50 lg:bg-background border-border/40 lg:border-input text-foreground font-medium",
+                                                                "h-14 bg-background/50 border-border/40 text-foreground font-medium text-lg focus-visible:ring-primary/20",
                                                                 isRTL ? "pr-12 text-right" : "pl-12"
                                                             )}
                                                         />
                                                     </div>
                                                 </FormControl>
-                                                <FormMessage className="text-[10px]" />
+                                                <FormMessage className="text-[10px] font-bold" />
                                             </FormItem>
                                         )}
                                     />
 
                                     <Button
                                         type="submit"
-                                        className="w-full h-14 text-base font-black rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98] mt-4 bg-primary hover:bg-primary/80 text-white border-0"
+                                        className="w-full h-14 text-lg font-black rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98] mt-8 bg-primary hover:bg-primary/80 text-white border-0"
                                         disabled={isLoading}
                                     >
                                         {isLoading ? "..." : (isRTL ? "تسجيل الدخول" : "Se connecter")}
@@ -163,15 +163,15 @@ export default function AuthPage() {
                         </CardContent>
                     </Card>
 
-                    <div className="mt-8 flex justify-center">
+                    <div className="mt-12 flex justify-center">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="rounded-full gap-2 px-6 h-10 text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                            className="rounded-full gap-3 px-8 h-12 text-muted-foreground hover:text-foreground hover:bg-white/5 border border-border/20 transition-all backdrop-blur-sm"
                             onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
                         >
-                            <Languages className="h-4 w-4" />
-                            <span className="font-bold text-xs uppercase tracking-widest">{language === "fr" ? "العربية" : "Français"}</span>
+                            <Languages className="h-5 w-5 text-primary" />
+                            <span className="font-bold text-sm uppercase tracking-widest">{language === "fr" ? "العربية" : "Français"}</span>
                         </Button>
                     </div>
                 </div>
