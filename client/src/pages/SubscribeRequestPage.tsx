@@ -44,10 +44,19 @@ export default function SubscribeRequestPage() {
                 description: isRTL ? "سنتصل بك في أقرب وقت لتفعيل حسابك." : "Nous vous contacterons bientôt pour activer votre compte.",
             });
             setTimeout(() => setLocation("/"), 2000);
-        } catch (error) {
+        } catch (error: any) {
+            let errorMsg = error.message || (isRTL ? "فشل في إرسال الطلب. يرجى المحاولة مرة أخرى." : "Échec de l'envoi de la demande. Veuillez réessayer.");
+            
+            // Custom translation for the phone duplicate if the server returns our specific message
+            if (errorMsg.includes("déjà une demande en cours")) {
+                errorMsg = isRTL 
+                    ? "يوجد بالفعل طلب قيد المعالجة لهذا الرقم. سنتصل بك قريباً."
+                    : "Il existe déjà une demande en cours pour ce numéro de téléphone.";
+            }
+
             toast({
-                title: "Error",
-                description: "Failed to submit request. Please try again.",
+                title: isRTL ? "تنبيه" : "Attention",
+                description: errorMsg,
                 variant: "destructive",
             });
         } finally {

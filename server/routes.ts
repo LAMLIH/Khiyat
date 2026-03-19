@@ -136,6 +136,16 @@ export function registerRoutes(app: Express): Server {
     app.post("/api/subscription-requests", async (req, res) => {
         try {
             const requestData = insertSubscriptionRequestSchema.parse(req.body);
+
+            // Check for existing pending request with same phone
+            const existing = await storage.getSubscriptionRequestByPhone(requestData.phone);
+            if (existing && existing.status === "pending") {
+                return res.status(409).json({
+                    error: "Pending request exists",
+                    message: "Il existe déjà une demande en cours de traitement pour ce numéro de téléphone."
+                });
+            }
+
             const request = await storage.createSubscriptionRequest(requestData);
             res.status(201).json(request);
         } catch (error: any) {
