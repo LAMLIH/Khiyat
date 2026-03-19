@@ -39,21 +39,19 @@ export default function AuthPage() {
 
     return (
         <div className={cn("min-h-screen grid lg:grid-cols-2 bg-background relative overflow-hidden transition-colors duration-500", isRTL && "font-arabic")}>
-            {/* Desktop Left side (Branding) - Elegant Dark Theme */}
-            <div className="hidden lg:flex flex-col items-center justify-center bg-card/30 text-foreground p-12 relative overflow-hidden border-r border-border/20 z-20">
-                {/* Subtle background glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-                
+            {/* Desktop Left side (Branding) - Vibrant & Strong */}
+            <div className="hidden lg:flex flex-col items-center justify-center bg-primary text-primary-foreground p-12 relative overflow-hidden shadow-[20px_0_40px_rgba(0,0,0,0.1)] z-20">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent)]" />
                 <div className="relative z-10 text-center flex flex-col items-center">
                     <div className="mb-8 flex flex-col items-center gap-1 animate-in zoom-in slide-in-from-top-4 duration-1000">
-                        <div className="p-8 bg-primary/10 rounded-[2.5rem] border border-primary/20 shadow-2xl mb-8">
-                            <Scissors className="h-24 w-24 text-primary" />
+                        <div className="p-8 bg-white/10 backdrop-blur-md rounded-[2.5rem] border border-white/20 shadow-2xl mb-8">
+                            <Scissors className="h-24 w-24 text-white" />
                         </div>
-                        <h1 className="text-[10rem] font-lalezar text-foreground tracking-widest drop-shadow-xl leading-none mb-4">خياط برو</h1>
+                        <h1 className="text-[10rem] font-lalezar text-white tracking-widest drop-shadow-2xl leading-none mb-4">خياط برو</h1>
                         <div className="inline-flex items-center gap-6">
-                            <div className="h-[1px] w-20 bg-primary/30" />
-                            <span className="text-3xl text-muted-foreground font-medium tracking-[0.5em] uppercase">بصمتك في الأناقة</span>
-                            <div className="h-[1px] w-20 bg-primary/30" />
+                            <div className="h-[1px] w-20 bg-white/40" />
+                            <span className="text-3xl text-white/90 font-medium tracking-[0.5em] uppercase">بصمتك في الأناقة</span>
+                            <div className="h-[1px] w-20 bg-white/40" />
                         </div>
                     </div>
                 </div>
