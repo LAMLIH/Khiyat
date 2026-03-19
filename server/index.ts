@@ -38,14 +38,34 @@ app.get("/api/health", async (_req, res) => {
     // Mask password in URL for debug
     const dbUrl = (process.env.DATABASE_URL || "").replace(/:\/\/([^:]+):([^@]+)@/, "://$1:***@");
 
+    let pgStatus = "not tested";
+    try {
+        const { Client } = await import("pg");
+        const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: false // Matching our current config
+        });
+        await client.connect();
+        const res_pg = await client.query("SELECT 1 as result");
+        pgStatus = res_pg.rows[0].result === 1 ? "connected" : "failed query";
+        await client.end();
+    } catch (err: any) {
+        pgStatus = `error: ${err.message}`;
+    }
+
     res.json({
         status: "ok",
         database: dbStatus,
+        pg_test: pgStatus,
         dbUrl,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
         cwd: process.cwd(),
-        dir: __dirname
+        dir: __dirname,
+        env: {
+            NODE_ENV: process.env.NODE_ENV,
+            PORT: process.env.PORT
+        }
     });
 });
 
