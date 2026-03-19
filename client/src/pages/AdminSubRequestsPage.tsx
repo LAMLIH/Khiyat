@@ -111,7 +111,7 @@ export default function AdminSubRequestsPage() {
                         <TableHeader>
                             <TableRow className="bg-muted/10 hover:bg-muted/10 h-16">
                                 <TableHead className="w-[120px] font-black">{isRTL ? "التاريخ" : "Date"}</TableHead>
-                                <TableHead className="font-black">{isRTL ? "الزبon" : "Client"}</TableHead>
+                                <TableHead className="font-black">{isRTL ? "الزبون" : "Client"}</TableHead>
                                 <TableHead className="font-black">{isRTL ? "المدينة" : "Ville"}</TableHead>
                                 <TableHead className="font-black">{isRTL ? "رقم الهاتف" : "Téléphone"}</TableHead>
                                 <TableHead className="font-black">{isRTL ? "الباقة" : "Plan"}</TableHead>
