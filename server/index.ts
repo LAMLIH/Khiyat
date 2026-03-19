@@ -141,8 +141,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-    // Run auto-migrations to ensure tables exist
-    await runMigrations();
+    // Disabled auto-migrations temporarily as it might cause boot issues
+    // await runMigrations();
 
     setupAuth(app);
 
