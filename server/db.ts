@@ -116,7 +116,6 @@ export async function runMigrations() {
 
         console.log("Auto-migrations complete.");
     } catch (err) {
-        console.error("Auto-migration error:", err);
-        throw err;
+        console.error("Auto-migration error (non-fatal):", err);
     }
 }
