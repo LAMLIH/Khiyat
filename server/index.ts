@@ -63,6 +63,7 @@ app.get("/api/health", async (_req, res) => {
     }
 
     res.json({
+        version: "1.0.4",
         status: "ok",
         database: dbStatus,
         details: dbDetails,
