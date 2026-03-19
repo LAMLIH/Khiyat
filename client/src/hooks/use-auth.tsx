@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { type User, type InsertUser } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -47,12 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
     });
 
+    const [, setLocation] = useLocation();
+
     const logoutMutation = useMutation({
         mutationFn: async () => {
             await apiRequest("POST", "/api/logout");
         },
         onSuccess: () => {
             queryClient.setQueryData(["/api/user"], null);
+            setLocation("/"); // Force redirection to login/home
             toast({
                 title: "Déconnexion réussie",
                 description: "À bientôt !",
