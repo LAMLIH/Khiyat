@@ -357,7 +357,7 @@ export default function StatsPage() {
                     <Card key={i} className="border border-border shadow-sm bg-card hover:shadow-md transition-all">
                         <CardContent className="p-5">
                             <div className="flex items-center justify-between mb-3">
-                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider leading-tight">{kpi.label}</p>
+                                <p className="text-base font-bold text-muted-foreground leading-tight">{kpi.label}</p>
                                 <div className={cn("p-2 rounded-xl", kpi.bg)}>
                                     <kpi.icon className={cn("h-4 w-4", kpi.color)} />
                                 </div>
