@@ -290,7 +290,7 @@ export default function StatsPage() {
     };
 
     return (
-        <div className={cn("p-4 md:p-8 space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
+        <div className={cn("p-0 md:p-8 space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
             {/* Header & Filters */}
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                 <div>
@@ -352,7 +352,7 @@ export default function StatsPage() {
             </div>
 
             {/* KPI Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {kpis.map((kpi, i) => (
                     <Card key={i} className="border border-border shadow-sm bg-card hover:shadow-md transition-all">
                         <CardContent className="p-5">

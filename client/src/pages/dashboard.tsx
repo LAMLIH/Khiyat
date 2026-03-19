@@ -129,7 +129,7 @@ export default function DashboardPage() {
     const recentOrders = [...(orders || [])].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 5);
 
     return (
-        <div className={cn("p-4 md:p-8 space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
+        <div className={cn("p-2 md:p-8 space-y-4 md:space-y-8 animate-in fade-in duration-500 bg-background min-h-screen", isRTL && "font-arabic")}>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground flex items-center gap-3">
@@ -185,20 +185,20 @@ export default function DashboardPage() {
             )}
 
             {/* KPI Cards */}
-            <div className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-4", totalOrders === 0 && "opacity-0 h-0 overflow-hidden pointer-events-none")}>
+            <div className={cn("grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-4", totalOrders === 0 && "opacity-0 h-0 overflow-hidden pointer-events-none")}>
                 {stats.map((stat, i) => (
                     <Card key={i} className="border border-border/50 shadow-sm hover-elevate transition-all group overflow-hidden bg-card">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 md:pb-2 pt-4 px-4">
+                            <CardTitle className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider">
                                 {stat.title}
                             </CardTitle>
-                            <div className={cn("p-2 rounded-xl transition-colors", stat.bg)}>
-                                <stat.icon className={cn("h-5 w-5", stat.color)} />
+                            <div className={cn("p-1.5 md:p-2 rounded-xl transition-colors", stat.bg)}>
+                                <stat.icon className={cn("h-4 w-4 md:h-5 md:w-5", stat.color)} />
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-black text-foreground leading-none">{stat.value}</div>
-                            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-tight">{stat.description}</p>
+                        <CardContent className="px-4 pb-4">
+                            <div className="text-2xl md:text-3xl font-black text-foreground leading-none">{stat.value}</div>
+                            <p className="text-[9px] md:text-[10px] text-muted-foreground mt-1 md:mt-2 font-bold uppercase tracking-tight">{stat.description}</p>
                         </CardContent>
                     </Card>
                 ))}

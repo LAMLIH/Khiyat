@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="flex flex-1 flex-col overflow-hidden">
                     <Topbar />
                     <main className="flex-1 overflow-auto bg-background/50">
-                        <div className="w-full p-6 md:p-8">
+                        <div className="w-full p-2 md:p-8">
                             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                                 {children}
                             </div>

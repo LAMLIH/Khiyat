@@ -286,9 +286,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted border">
                                 <span className="text-xs font-semibold">{user.fullName.substring(0, 2).toUpperCase()}</span>
                             </div>
-                            <div className="flex flex-col min-w-0">
+                            <div className="flex flex-col min-w-0 text-white">
                                 <span className="text-sm font-semibold truncate leading-none">{user.fullName}</span>
-                                <span className="text-xs text-muted-foreground truncate leading-none mt-1">{user.username}</span>
+                                <span className="text-xs text-white/70 truncate leading-none mt-1">{user.username}</span>
                             </div>
                         </div>
                         <Button
