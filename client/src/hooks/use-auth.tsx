@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
         onSuccess: () => {
             queryClient.setQueryData(["/api/user"], null);
-            setLocation("/"); // Force redirection to login/home
+            window.location.replace("/"); // Hard redirect to clear all states and force login view
             toast({
                 title: "Déconnexion réussie",
                 description: "À bientôt !",
