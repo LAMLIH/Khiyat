@@ -146,6 +146,10 @@
     background-color: var(--elevate-2);
   }
 
+  [dir="rtl"] {
+    font-family: 'Tajawal', 'Inter', system-ui, sans-serif !important;
+  }
+
   .font-lalezar {
     font-family: 'Lalezar', cursive, system-ui;
   }

@@ -298,7 +298,7 @@ export default function DashboardPage() {
                             </ResponsiveContainer>
                         </div>
                         <div className="mt-4 space-y-2">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{isRTL ? "نظرة سريعة" : "Résumé rapide"}</p>
+                            <p className="text-base font-bold text-muted-foreground leading-tight">{isRTL ? "نظرة سريعة" : "Résumé rapide"}</p>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="p-3 bg-muted/20 rounded-xl border border-border flex flex-col items-center">
                                     <p className="text-[10px] text-muted-foreground uppercase font-bold">{isRTL ? "الزبناء" : "Clients"}</p>
