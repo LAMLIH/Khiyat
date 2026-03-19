@@ -264,6 +264,18 @@ export default function LandingPage() {
                                         Atlas Haute Couture
                                     </div>
                                 </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/4 lg:basis-1/5">
+                                    <div className="flex items-center justify-center font-serif italic text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-tight">
+                                        Ziana Selection
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/4 lg:basis-1/5">
+                                    <div className="flex items-center justify-center font-lalezar text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-widest">
+                                        Tazi Couture
+                                    </div>
+                                </CarouselItem>
                             </CarouselContent>
                             
                             {/* Navigation Controls */}
