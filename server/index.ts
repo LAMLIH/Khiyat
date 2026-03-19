@@ -4,6 +4,7 @@ import { registerRoutes } from "./routes";
 import { saasAdminRouter } from "./saas-admin";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
+import { runMigrations } from "./db";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -34,9 +35,13 @@ app.get("/api/health", async (_req, res) => {
         dbStatus = `error: ${err.message}`;
     }
 
+    // Mask password in URL for debug
+    const dbUrl = (process.env.DATABASE_URL || "").replace(/:\/\/([^:]+):([^@]+)@/, "://$1:***@");
+
     res.json({
         status: "ok",
         database: dbStatus,
+        dbUrl,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
         cwd: process.cwd(),
@@ -94,6 +99,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+    // Run auto-migrations to ensure tables exist
+    await runMigrations();
+
     setupAuth(app);
 
     // SaaS Admin routes
