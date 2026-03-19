@@ -4,7 +4,7 @@ import { registerRoutes } from "./routes";
 import { saasAdminRouter } from "./saas-admin";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import { runMigrations } from "./db";
+import { runMigrations, queryClient } from "./db";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -28,11 +28,20 @@ app.use(express.urlencoded({ extended: false }));
 // Health check VERY early to rule out middleware/tenant issues
 app.get("/api/health", async (_req, res) => {
     let dbStatus = "unknown";
+    let dbDetails = {};
     try {
-        await storage.dbPing();
-        dbStatus = "connected";
+        const res_1 = await queryClient`SELECT 1+1 as val`;
+        const res_2 = await storage.dbPing().then(() => "ok").catch(e => `ping_failed: ${e.message}`);
+        dbStatus = res_1[0].val === 2 ? "connected (1+1=2)" : "weird_result";
+        dbDetails = { ping: res_2 };
     } catch (err: any) {
         dbStatus = `error: ${err.message}`;
+        dbDetails = { 
+            stack: err.stack,
+            code: err.code,
+            query: err.query,
+            params: err.params
+        };
     }
 
     // Mask password in URL for debug
@@ -43,7 +52,7 @@ app.get("/api/health", async (_req, res) => {
         const { Client } = await import("pg");
         const client = new Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: false // Matching our current config
+            ssl: false 
         });
         await client.connect();
         const res_pg = await client.query("SELECT 1 as result");
@@ -56,16 +65,13 @@ app.get("/api/health", async (_req, res) => {
     res.json({
         status: "ok",
         database: dbStatus,
+        details: dbDetails,
         pg_test: pgStatus,
         dbUrl,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
         cwd: process.cwd(),
         dir: __dirname,
-        env: {
-            NODE_ENV: process.env.NODE_ENV,
-            PORT: process.env.PORT
-        }
     });
 });
 
