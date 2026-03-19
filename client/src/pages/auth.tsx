@@ -60,11 +60,10 @@ export default function AuthPage() {
             </div>
 
             {/* Mobile/Right side Content */}
-            <div className="w-full min-h-screen lg:min-h-0 flex items-center justify-center p-4 sm:p-8 bg-slate-950 lg:bg-transparent relative z-10">
-                {/* Background Grains for Mobile */}
+            <div className="w-full min-h-screen lg:min-h-0 flex items-center justify-center p-4 sm:p-8 bg-background lg:bg-transparent relative z-10 transition-colors">
+                {/* Subtle Glow for consistency */}
                 <div className="lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-primary/10 blur-[120px]" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[80%] h-[80%] rounded-full bg-primary/5 blur-[120px]" />
+                    <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[80%] rounded-full bg-primary/5 blur-[120px]" />
                 </div>
 
                 <div className="w-full max-w-[420px] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -73,13 +72,13 @@ export default function AuthPage() {
                         <div className="p-4 bg-primary/10 rounded-2xl mb-2 lg:hidden">
                             <Scissors className="h-10 w-10 text-primary" />
                         </div>
-                        <div className="text-5xl font-lalezar text-white lg:text-primary tracking-wider">خياط برو</div>
-                        <div className="text-[10px] text-white/40 lg:text-primary/60 font-bold tracking-[0.4em] uppercase">بصمتك في الأناقة</div>
+                        <div className="text-5xl font-lalezar text-foreground lg:text-primary tracking-wider">خياط برو</div>
+                        <div className="text-[10px] text-muted-foreground lg:text-primary/60 font-bold tracking-[0.4em] uppercase">بصمتك في الأناقة</div>
                     </div>
 
-                    <Card className="border-0 lg:border border-white/5 lg:border-border/40 rounded-[2.5rem] overflow-hidden shadow-2xl bg-white/5 lg:bg-card/90 backdrop-blur-2xl">
+                    <Card className="border-border/40 lg:border rounded-[2.5rem] overflow-hidden shadow-2xl bg-card/50 lg:bg-card/90 backdrop-blur-3xl border-2">
                         <CardHeader className="pt-10 pb-4 text-center">
-                            <CardTitle className="text-3xl font-lalezar text-white lg:text-primary">
+                            <CardTitle className="text-3xl font-lalezar text-foreground lg:text-primary">
                                 {isRTL ? "تسجيل الدخول" : "Connexion"}
                             </CardTitle>
                             <p className="text-xs text-white/40 lg:text-muted-foreground font-bold uppercase tracking-[0.2em] mt-2">
@@ -94,13 +93,13 @@ export default function AuthPage() {
                                         name="username"
                                         render={({ field }: { field: any }) => (
                                             <FormItem className="space-y-2">
-                                                <FormLabel className="text-[10px] font-bold text-white/40 lg:text-muted-foreground/90 uppercase tracking-[0.2em] ml-1">
+                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] ml-1">
                                                     {isRTL ? "اسم المستخدم" : "Identifiant"}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <div className="relative group">
                                                         <div className={cn(
-                                                            "absolute inset-y-0 flex items-center px-4 pointer-events-none text-white/20 group-focus-within:text-primary transition-colors",
+                                                            "absolute inset-y-0 flex items-center px-4 pointer-events-none text-muted-foreground/30 group-focus-within:text-primary transition-colors",
                                                             isRTL ? "right-0" : "left-0"
                                                         )}>
                                                             <User className="h-5 w-5" />
@@ -109,7 +108,7 @@ export default function AuthPage() {
                                                             placeholder="admin"
                                                             {...field}
                                                             className={cn(
-                                                                "h-14 bg-white/5 lg:bg-background border-white/10 lg:border-input text-white lg:text-foreground placeholder:text-white/10",
+                                                                "h-14 bg-background/50 lg:bg-background border-border/40 lg:border-input text-foreground font-medium",
                                                                 isRTL ? "pr-12 text-right" : "pl-12"
                                                             )}
                                                         />
@@ -125,13 +124,13 @@ export default function AuthPage() {
                                         name="password"
                                         render={({ field }: { field: any }) => (
                                             <FormItem className="space-y-2">
-                                                <FormLabel className="text-[10px] font-bold text-white/40 lg:text-muted-foreground/90 uppercase tracking-[0.2em] ml-1">
+                                                <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] ml-1">
                                                     {isRTL ? "كلمة المرور" : "Mot de passe"}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <div className="relative group">
                                                         <div className={cn(
-                                                            "absolute inset-y-0 flex items-center px-4 pointer-events-none text-white/20 group-focus-within:text-primary transition-colors",
+                                                            "absolute inset-y-0 flex items-center px-4 pointer-events-none text-muted-foreground/30 group-focus-within:text-primary transition-colors",
                                                             isRTL ? "right-0" : "left-0"
                                                         )}>
                                                             <Lock className="h-5 w-5" />
@@ -141,7 +140,7 @@ export default function AuthPage() {
                                                             placeholder="••••••••"
                                                             {...field}
                                                             className={cn(
-                                                                "h-14 bg-white/5 lg:bg-background border-white/10 lg:border-input text-white lg:text-foreground placeholder:text-white/10",
+                                                                "h-14 bg-background/50 lg:bg-background border-border/40 lg:border-input text-foreground font-medium",
                                                                 isRTL ? "pr-12 text-right" : "pl-12"
                                                             )}
                                                         />
@@ -154,7 +153,7 @@ export default function AuthPage() {
 
                                     <Button
                                         type="submit"
-                                        className="w-full h-14 text-base font-black rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98] mt-4 bg-primary hover:bg-primary/90 text-white"
+                                        className="w-full h-14 text-base font-black rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98] mt-4 bg-primary hover:bg-primary/80 text-white border-0"
                                         disabled={isLoading}
                                     >
                                         {isLoading ? "..." : (isRTL ? "تسجيل الدخول" : "Se connecter")}
@@ -168,7 +167,7 @@ export default function AuthPage() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="rounded-full gap-2 px-6 h-10 text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+                            className="rounded-full gap-2 px-6 h-10 text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
                             onClick={() => setLanguage(language === "fr" ? "ar" : "fr")}
                         >
                             <Languages className="h-4 w-4" />
