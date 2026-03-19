@@ -147,10 +147,20 @@ app.use((req, res, next) => {
     app.use((req, res, next) => {
         if (req.isAuthenticated() && req.user && (req as any).tenant) {
             const currentTenant = (req as any).tenant;
+            
+            // SECURITY 1: Role-based isolation (Tenant mismatch)
             if (req.user.role !== "saas_admin" && req.user.tenantId !== currentTenant.id) {
                 console.warn(`Unauthorized Access Attempt: User ${req.user.username} (T:${req.user.tenantId}) tried to access Tenant ${currentTenant.id} (${currentTenant.subdomain})`);
                 return res.status(403).json({ 
                     message: "Établissement non autorisé. Vous ne pouvez accéder qu'à votre propre espace de travail." 
+                });
+            }
+
+            // SECURITY 2: Suspension check
+            if (req.user.role !== "saas_admin" && !currentTenant.isActive) {
+                console.warn(`Suspended Tenant Access Attempt: User ${req.user.username} for Tenant ${currentTenant.subdomain}`);
+                return res.status(403).json({ 
+                    message: "Votre établissement est actuellement suspendu. Veuillez contacter l'administrateur pour régulariser votre situation." 
                 });
             }
         }

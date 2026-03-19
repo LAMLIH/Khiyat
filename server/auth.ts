@@ -38,9 +38,19 @@ export function setupAuth(app: Express) {
 
                 // SECURITY: Verify that the user belongs to the current tenant
                 const currentTenant = (req as any).tenant;
-                if (currentTenant && user.tenantId !== currentTenant.id) {
-                    console.warn(`Unauthorized login attempt: User ${username} (Tenant ${user.tenantId}) tried to log into Tenant ${currentTenant.id} (${currentTenant.subdomain})`);
-                    return done(null, false, { message: "Vous n'êtes pas autorisé à vous connecter sur cet établissement." });
+                
+                if (currentTenant) {
+                    // 1. Check if the user belongs to this tenant
+                    if (user.tenantId !== currentTenant.id) {
+                        console.warn(`Unauthorized login attempt: User ${username} (T:${user.tenantId}) tried to log into T:${currentTenant.id}`);
+                        return done(null, false, { message: "Vous n'êtes pas autorisé à vous connecter sur cet établissement." });
+                    }
+                    
+                    // 2. Check if the tenant is active
+                    if (!currentTenant.isActive) {
+                        console.warn(`Blocked login for suspended tenant: ${currentTenant.subdomain}`);
+                        return done(null, false, { message: "Cet établissement est suspendu. Veuillez contacter l'administrateur." });
+                    }
                 }
 
                 return done(null, user);
