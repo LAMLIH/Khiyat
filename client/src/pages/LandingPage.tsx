@@ -239,6 +239,24 @@ export default function LandingPage() {
                                         Fassi Couture
                                     </div>
                                 </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center font-sans font-medium text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-[0.2em] uppercase">
+                                        Ribat Couture
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center font-serif italic text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
+                                        Majorelle Chic
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center font-black text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-normal">
+                                        Atlas Haute Couture
+                                    </div>
+                                </CarouselItem>
                             </CarouselContent>
                             
                             {/* Navigation Controls */}
