@@ -77,17 +77,13 @@ app.get("/api/health", async (_req, res) => {
     }
 
     res.json({
-        version: "1.0.5",
+        version: "1.1.0",
         status: "ok",
         database: dbStatus,
         details: dbDetails,
-        pg_test: pgStatus,
-        dns: dnsTest,
         dbUrl,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
-        cwd: process.cwd(),
-        dir: __dirname,
     });
 });
 
