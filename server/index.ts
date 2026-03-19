@@ -142,6 +142,20 @@ app.use((req, res, next) => {
     // await runMigrations();
 
     setupAuth(app);
+    
+    // SECURITY GUARD: Ensure authenticated users only access their own tenant
+    app.use((req, res, next) => {
+        if (req.isAuthenticated() && req.user && (req as any).tenant) {
+            const currentTenant = (req as any).tenant;
+            if (req.user.role !== "saas_admin" && req.user.tenantId !== currentTenant.id) {
+                console.warn(`Unauthorized Access Attempt: User ${req.user.username} (T:${req.user.tenantId}) tried to access Tenant ${currentTenant.id} (${currentTenant.subdomain})`);
+                return res.status(403).json({ 
+                    message: "Établissement non autorisé. Vous ne pouvez accéder qu'à votre propre espace de travail." 
+                });
+            }
+        }
+        next();
+    });
 
     // SaaS Admin routes
     app.use("/api/saas-admin", saasAdminRouter);

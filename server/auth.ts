@@ -28,13 +28,21 @@ export function setupAuth(app: Express) {
     app.use(passport.session());
 
     passport.use(
-        new LocalStrategy(async (username, password, done) => {
+        new LocalStrategy({ passReqToCallback: true }, async (req, username, password, done) => {
             try {
                 const user = await storage.getUserByUsername(username);
                 // In a real app, use bcrypt for password comparison
                 if (!user || user.password !== password) {
-                    return done(null, false);
+                    return done(null, false, { message: "Nom d'utilisateur ou mot de passe incorrect." });
                 }
+
+                // SECURITY: Verify that the user belongs to the current tenant
+                const currentTenant = (req as any).tenant;
+                if (currentTenant && user.tenantId !== currentTenant.id) {
+                    console.warn(`Unauthorized login attempt: User ${username} (Tenant ${user.tenantId}) tried to log into Tenant ${currentTenant.id} (${currentTenant.subdomain})`);
+                    return done(null, false, { message: "Vous n'êtes pas autorisé à vous connecter sur cet établissement." });
+                }
+
                 return done(null, user);
             } catch (err) {
                 return done(err);

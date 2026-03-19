@@ -29,16 +29,16 @@ export function registerRoutes(app: Express): Server {
 
     // Clients
     app.get("/api/clients", async (req, res) => {
-        const tenantId = Number(req.query.tenantId) || req.user?.tenantId;
-        if (!tenantId) return res.status(400).send("tenantId is required");
+        const tenantId = req.user?.tenantId;
+        if (!tenantId) return res.status(401).send("Unauthorized");
         const clients = await storage.getClients(tenantId);
         res.json(clients);
     });
 
     app.post("/api/clients", async (req, res) => {
         try {
-            const tenantId = Number(req.body.tenantId) || req.user?.tenantId;
-            if (!tenantId) return res.status(400).send("tenantId is required");
+            const tenantId = req.user?.tenantId;
+            if (!tenantId) return res.status(401).send("Unauthorized");
 
             const clientData = insertClientSchema.omit({ tenantId: true }).parse(req.body);
             const client = await storage.createClient(tenantId, clientData);
@@ -51,7 +51,7 @@ export function registerRoutes(app: Express): Server {
 
     // Measurements
     app.get("/api/measurements", async (req, res) => {
-        const tenantId = Number(req.query.tenantId) || req.user?.tenantId;
+        const tenantId = req.user?.tenantId;
         const clientId = Number(req.query.clientId);
         if (!tenantId || !clientId) return res.status(400).send("tenantId and clientId are required");
         const measurements = await storage.getMeasurements(tenantId, clientId);
@@ -59,8 +59,8 @@ export function registerRoutes(app: Express): Server {
     });
 
     app.post("/api/measurements", async (req, res) => {
-        const tenantId = Number(req.body.tenantId) || req.user?.tenantId;
-        if (!tenantId) return res.status(400).send("tenantId is required");
+        const tenantId = req.user?.tenantId;
+        if (!tenantId) return res.status(401).send("Unauthorized");
 
         const measurementData = insertMeasurementSchema.omit({ tenantId: true }).parse(req.body);
         const measurement = await storage.createMeasurement(tenantId, measurementData);
@@ -69,18 +69,18 @@ export function registerRoutes(app: Express): Server {
 
     // Orders
     app.get("/api/orders", async (req, res) => {
-        const tenantId = Number(req.query.tenantId) || req.user?.tenantId;
-        if (!tenantId) return res.status(400).send("tenantId is required");
+        const tenantId = req.user?.tenantId;
+        if (!tenantId) return res.status(401).send("Unauthorized");
         const orders = await storage.getOrders(tenantId);
         res.json(orders);
     });
 
     app.post("/api/orders", async (req, res) => {
         try {
-            const tenantId = Number(req.body.tenantId) || req.user?.tenantId;
+            const tenantId = req.user?.tenantId;
             if (!tenantId) {
-                console.warn("Order creation attempt without tenantId");
-                return res.status(400).send("tenantId is required");
+                console.warn("Order creation attempt without session tenantId");
+                return res.status(401).send("Unauthorized");
             }
 
             console.log("Creating order for tenant:", tenantId, "Data:", JSON.stringify(req.body, null, 2));
