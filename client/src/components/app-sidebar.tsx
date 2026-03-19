@@ -126,7 +126,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     titleKey: "common.orders",
                     url: "/orders",
                     icon: ClipboardList,
-                    badge: 5,
                 },
                 {
                     titleKey: "common.clients",

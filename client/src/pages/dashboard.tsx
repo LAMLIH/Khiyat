@@ -151,8 +151,41 @@ export default function DashboardPage() {
                 </div>
             </div>
 
+            {/* Welcome/Empty State for New Tenants */}
+            {totalOrders === 0 && !ordersLoading && (
+                <Card className="border-2 border-dashed border-primary/20 bg-primary/5 p-12 text-center rounded-3xl animate-in zoom-in duration-500">
+                    <div className="flex flex-col items-center gap-6 max-w-md mx-auto">
+                        <div className="p-4 bg-primary/10 rounded-full">
+                            <Package className="h-12 w-12 text-primary animate-pulse" />
+                        </div>
+                        <div className="space-y-3">
+                            <h2 className="text-3xl font-black text-foreground">
+                                {isRTL ? "مرحباً بك في خياط برو!" : "Bienvenue sur Khiyat Pro !"}
+                            </h2>
+                            <p className="text-muted-foreground font-medium text-lg leading-relaxed">
+                                {isRTL 
+                                    ? "لوحة التحكم فارغة حالياً. ابدأ بإنشاء أول زبون أو طلب لتظهر الإحصائيات هنا." 
+                                    : "Votre tableau de bord est vide. Commencez par créer votre premier client ou commande pour voir les statistiques s'afficher."}
+                            </p>
+                        </div>
+                        <div className="flex gap-4 mt-4 w-full">
+                            <Link href="/clients" className="flex-1">
+                                <Button className="w-full h-12 gap-2 font-bold" variant="outline">
+                                    <Users className="h-4 w-4" /> {isRTL ? "إضافة زبون" : "Ajouter un client"}
+                                </Button>
+                            </Link>
+                            <Link href="/orders" className="flex-1">
+                                <Button className="w-full h-12 gap-2 font-black shadow-lg shadow-primary/20">
+                                    <Scissors className="h-4 w-4" /> {isRTL ? "طلب جديد" : "Créer une commande"}
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </Card>
+            )}
+
             {/* KPI Cards */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-4", totalOrders === 0 && "opacity-0 h-0 overflow-hidden pointer-events-none")}>
                 {stats.map((stat, i) => (
                     <Card key={i} className="border border-border/50 shadow-sm hover-elevate transition-all group overflow-hidden bg-card">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -171,7 +204,7 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className={cn("grid grid-cols-1 lg:grid-cols-3 gap-8", totalOrders === 0 && "hidden")}>
                 {/* Activity Chart */}
                 <Card className="lg:col-span-2 hover-elevate transition-all border border-border bg-card overflow-hidden">
                     <CardHeader className="border-b border-border bg-muted/20">
