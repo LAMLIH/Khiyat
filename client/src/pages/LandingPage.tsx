@@ -20,6 +20,14 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/contexts/ThemeContext";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useRef } from "react";
 
 export default function LandingPage() {
     const { isRTL, setLanguage, language } = useLanguage();
@@ -185,28 +193,69 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Trusted By Section */}
-            <section className="py-10 md:py-12 border-y border-border/50 bg-muted/5 font-arabic">
-                <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
-                    <p className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 md:mb-10 opacity-70">
+            {/* Trusted By Section - Now with Navigation */}
+            <section className="py-16 md:py-20 border-y border-border/50 bg-muted/5 font-arabic overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 md:px-6">
+                    <p className="text-[10px] md:text-sm font-bold text-center text-muted-foreground uppercase tracking-[0.3em] mb-12 md:mb-16 opacity-70">
                         {isRTL ? "محلّات ومصممون يثقون في خياط برو" : "Des ateliers et créateurs qui nous font confiance"}
                     </p>
-                    <div className="flex flex-wrap justify-center items-center gap-8 md:gap-24 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                        <div className="flex items-center gap-2 font-lalezar text-xl md:text-2xl">
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded bg-primary/20 flex items-center justify-center text-primary text-lg md:text-xl font-bold">L</div>
-                            L'Artisanat
-                        </div>
-                        <div className="flex items-center gap-2 font-serif italic text-xl md:text-2xl">
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-foreground/10 flex items-center justify-center text-foreground text-lg md:text-xl not-italic">S</div>
-                            Sultan Style
-                        </div>
-                        <div className="flex items-center gap-2 font-sans font-black text-xl md:text-2xl">
-                            <div className="w-8 h-8 md:w-10 md:h-10 transform rotate-45 bg-primary/30 flex items-center justify-center text-primary text-lg md:text-xl -rotate-45">M</div>
-                            Moda Maghreb
-                        </div>
-                        <div className="flex items-center gap-2 font-bold text-xl md:text-2xl">
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground text-lg md:text-xl">F</div>
-                            Fassi Couture
+                    
+                    <div className="relative px-12 md:px-20">
+                        <Carousel
+                            opts={{
+                                align: "start",
+                                loop: true,
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent className="-ml-4 md:-ml-8 items-center">
+                                {/* LamlihCaftan - New Client */}
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center gap-3 font-serif italic text-2xl md:text-3xl group cursor-pointer hover:scale-110 transition-transform duration-500">
+                                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-amber-200 to-amber-600 flex items-center justify-center text-white text-xl md:text-2xl font-bold shadow-lg shadow-amber-500/20">LC</div>
+                                        <span className="not-italic font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-amber-400">LamlihCaftan</span>
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center gap-3 font-lalezar text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded bg-primary/20 flex items-center justify-center text-primary text-xl md:text-2xl font-bold">L</div>
+                                        L'Artisanat
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center gap-3 font-serif italic text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-foreground/10 flex items-center justify-center text-foreground text-xl md:text-2xl not-italic">S</div>
+                                        Sultan Style
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center gap-3 font-sans font-black text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 transform rotate-45 bg-primary/30 flex items-center justify-center text-primary text-xl md:text-2xl -rotate-45">M</div>
+                                        Moda Maghreb
+                                    </div>
+                                </CarouselItem>
+
+                                <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                                    <div className="flex items-center justify-center gap-3 font-bold text-2xl md:text-3xl grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-muted border border-border flex items-center justify-center text-muted-foreground text-xl md:text-2xl">F</div>
+                                        Fassi Couture
+                                    </div>
+                                </CarouselItem>
+                            </CarouselContent>
+                            
+                            {/* Navigation Controls */}
+                            <CarouselPrevious className="hidden md:flex -left-4 bg-background border-border hover:bg-primary hover:text-white transition-all scale-125 shadow-xl" />
+                            <CarouselNext className="hidden md:flex -right-4 bg-background border-border hover:bg-primary hover:text-white transition-all scale-125 shadow-xl" />
+                        </Carousel>
+                        
+                        {/* Mobile Indicators hint */}
+                        <div className="mt-8 flex justify-center gap-2 md:hidden">
+                            <div className="h-1 w-8 rounded-full bg-primary" />
+                            <div className="h-1 w-2 rounded-full bg-border" />
+                            <div className="h-1 w-2 rounded-full bg-border" />
                         </div>
                     </div>
                 </div>
