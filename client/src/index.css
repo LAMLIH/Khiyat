@@ -146,7 +146,7 @@
     background-color: var(--elevate-2);
   }
 
-  [dir="rtl"], [dir="rtl"] body, [dir="rtl"] #root, [dir="rtl"] .font-sans {
+  [dir="rtl"], [dir="rtl"] body, [dir="rtl"] #root, [dir="rtl"] .font-sans, .font-arabic {
     font-family: 'Noto Sans Arabic', 'Inter', system-ui, sans-serif !important;
   }
 

@@ -40,7 +40,7 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen grid lg:grid-cols-2 bg-[#f8fafc] dark:bg-slate-950 relative overflow-hidden">
+        <div className={cn("min-h-screen grid lg:grid-cols-2 bg-[#f8fafc] dark:bg-slate-950 relative overflow-hidden", isRTL && "font-arabic")}>
             {/* Background Decorative patterns for the whole page */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20 dark:opacity-10">
                 <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px]" />
