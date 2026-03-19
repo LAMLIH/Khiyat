@@ -211,31 +211,31 @@ export default function LandingPage() {
                             <CarouselContent className="-ml-4 md:-ml-8 items-center">
                                 {/* LamlihCaftan */}
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center font-serif italic text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
+                                    <div className="flex items-center justify-center font-serif italic text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
                                         LamlihCaftan
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center font-lalezar text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-widest">
+                                    <div className="flex items-center justify-center font-lalezar text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-widest">
                                         L'Artisanat
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center font-serif italic text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
+                                    <div className="flex items-center justify-center font-serif italic text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
                                         Sultan Style
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center font-sans font-black text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
+                                    <div className="flex items-center justify-center font-sans font-black text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none">
                                         Moda Maghreb
                                     </div>
                                 </CarouselItem>
 
                                 <CarouselItem className="pl-4 md:pl-8 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                                    <div className="flex items-center justify-center font-bold text-2xl md:text-4xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-tighter">
+                                    <div className="flex items-center justify-center font-bold text-xl md:text-2xl text-muted-foreground hover:text-white transition-all duration-500 cursor-default select-none tracking-tighter">
                                         Fassi Couture
                                     </div>
                                 </CarouselItem>
