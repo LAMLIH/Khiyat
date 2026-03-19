@@ -146,16 +146,8 @@
     background-color: var(--elevate-2);
   }
 
-  [dir="rtl"] {
-    font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, sans-serif !important;
-  }
-
   .font-lalezar {
     font-family: 'Lalezar', cursive, system-ui;
-  }
-
-  .font-arabic {
-    font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, sans-serif;
   }
 
   .premium-form-section {
