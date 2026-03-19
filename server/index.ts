@@ -62,12 +62,27 @@ app.get("/api/health", async (_req, res) => {
         pgStatus = `error: ${err.message}`;
     }
 
+    let dnsTest = "unknown";
+    try {
+        const dns = await import("dns/promises");
+        const host = (process.env.DATABASE_URL || "").split("@")[1]?.split(":")[0];
+        if (host) {
+            const lookups = await dns.lookup(host, { all: true });
+            dnsTest = JSON.stringify(lookups);
+        } else {
+            dnsTest = "no host in URL";
+        }
+    } catch (err: any) {
+        dnsTest = `error: ${err.message}`;
+    }
+
     res.json({
-        version: "1.0.4",
+        version: "1.0.5",
         status: "ok",
         database: dbStatus,
         details: dbDetails,
         pg_test: pgStatus,
+        dns: dnsTest,
         dbUrl,
         mode: process.env.NODE_ENV,
         port: process.env.PORT,
