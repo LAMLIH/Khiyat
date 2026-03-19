@@ -22,6 +22,7 @@ process.on("uncaughtException", (err) => {
 });
 
 const app = express();
+app.set("trust proxy", 1); // Essential for Sevalla/Proxies to handle cookies correctly
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
