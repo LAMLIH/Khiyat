@@ -138,8 +138,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-    // Disabled auto-migrations temporarily as it might cause boot issues
-    // await runMigrations();
+    // Re-enabled auto-migrations to apply schema changes
+    await runMigrations();
 
     setupAuth(app);
     

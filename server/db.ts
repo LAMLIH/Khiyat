@@ -85,6 +85,7 @@ export async function runMigrations() {
                 "production_steps" jsonb DEFAULT '[]'::jsonb,
                 "expenses" jsonb DEFAULT '[]'::jsonb,
                 "advances" jsonb DEFAULT '[]'::jsonb,
+                "measurements" jsonb DEFAULT '{}'::jsonb,
                 "notes" text,
                 "created_at" timestamp DEFAULT now()
             )
@@ -100,6 +101,9 @@ export async function runMigrations() {
                 "created_at" timestamp DEFAULT now()
             )
         `;
+        
+        // Ensure measurements column exists in orders (Migrate existing DB)
+        await queryClient`ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "measurements" jsonb DEFAULT '{}'::jsonb`;
 
         // Seed saasadmin if not exists
         const [existing] = await queryClient`SELECT id FROM users WHERE username = 'saasadmin'`;

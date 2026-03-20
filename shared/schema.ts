@@ -80,6 +80,7 @@ export const orders = pgTable("orders", {
         date: string;
         notes?: string;
     }>>().default([]),
+    measurements: jsonb("measurements").$type<Record<string, number>>().default({}),
     notes: text("notes"),
     createdAt: timestamp("created_at").defaultNow(),
 });

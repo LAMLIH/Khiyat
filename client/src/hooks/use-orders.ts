@@ -36,7 +36,11 @@ export function useOrders() {
                 return { ...newOrder, id: localId, tenantId, createdAt: new Date() } as Order;
             }
         },
-        onSuccess: () => {
+        onSuccess: (newOrder: Order) => {
+            queryClient.setQueryData(["/api/orders", tenantId], (old: Order[] | undefined) => {
+                if (!old) return [newOrder];
+                return [newOrder, ...old];
+            });
             queryClient.invalidateQueries({ queryKey: ["/api/orders", tenantId] });
         },
     });

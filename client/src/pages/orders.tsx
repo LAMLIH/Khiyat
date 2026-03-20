@@ -20,10 +20,32 @@ import {
     Trash2,
     Scissors,
     FileText,
-    PartyPopper
+    PartyPopper,
+    MoveHorizontal,
+    MoveVertical,
+    Circle,
+    CircleDashed,
+    Ruler,
+    Watch,
+    CircleDot,
+    Printer
 } from "lucide-react";
 import { useOrders } from "@/hooks/use-orders";
 import { useClients } from "@/hooks/use-clients";
+import { useMeasurements } from "@/hooks/use-measurements";
+import { useTenant } from "@/hooks/use-tenant";
+import { format } from "date-fns";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { type Client, type Order, garmentTypes } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -45,7 +67,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DatePicker } from "@/components/ui/date-picker";
 import { cn } from "@/lib/utils";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useSearch, useLocation } from "wouter";
 
@@ -55,8 +76,36 @@ type OrderStep = typeof ORDER_STEPS[number];
 export default function OrdersPage() {
     const { t } = useTranslation();
     const { isRTL } = useLanguage();
+    const { toast } = useToast();
+    const { tenant } = useTenant();
     const { orders, isLoading, createOrder, updateOrder } = useOrders();
     const { clients } = useClients();
+
+    const [newOrder, setNewOrder] = useState({
+        clientId: 0,
+        garmentType: "Caftan" as typeof garmentTypes[number],
+        totalPrice: "0",
+        totalCost: "0",
+        advancePayment: "0",
+        dueDate: new Date().toISOString(),
+        notes: "",
+        currentStep: "Fsalla"
+    });
+
+    const { measurements, createMeasurement } = useMeasurements(newOrder.clientId);
+    const [measurementData, setMeasurementData] = useState<Record<string, number>>({});
+
+    // Load measurements when client or garment type changes
+    useEffect(() => {
+        if (newOrder.clientId && measurements) {
+            const last = measurements.find(m => m.garmentType === newOrder.garmentType);
+            if (last) {
+                setMeasurementData(last.data as Record<string, number>);
+            } else {
+                setMeasurementData({ shoulders: 0, chest: 0, waist: 0, hips: 0, length: 0, sleeves: 0, wrist: 0, neck: 0 });
+            }
+        }
+    }, [newOrder.clientId, newOrder.garmentType, measurements]);
 
     const stats = useMemo(() => {
         if (!orders) return { profit: 0, inProgress: 0, revenue: 0, waitingCoupe: 0 };
@@ -79,25 +128,19 @@ export default function OrdersPage() {
     const [editAdvance, setEditAdvance] = useState("");
     const [editExpense, setEditExpense] = useState({ description: "", cost: "", step: "" });
     const [localNotes, setLocalNotes] = useState("");
+    const [showHistoricalMeasurements, setShowHistoricalMeasurements] = useState(false);
+    const [isPrintConfirmOpen, setIsPrintConfirmOpen] = useState(false);
 
     // Sync localNotes when selectedOrder changes
     useEffect(() => {
         if (selectedOrder) {
             setLocalNotes(selectedOrder.notes || "");
+            setShowHistoricalMeasurements(false);
         }
     }, [editOrderId, selectedOrder?.notes]);
 
     const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
-    const [newOrder, setNewOrder] = useState({
-        clientId: 0,
-        garmentType: "Caftan" as typeof garmentTypes[number],
-        totalPrice: "0",
-        totalCost: "0",
-        advancePayment: "0",
-        dueDate: new Date().toISOString(),
-        notes: "",
-        currentStep: "Fsalla"
-    });
+
 
     const [statusFilter, setStatusFilter] = useState<"all" | "ongoing">("ongoing");
     const [isClientSearchOpen, setIsClientSearchOpen] = useState(false);
@@ -143,6 +186,7 @@ export default function OrdersPage() {
             notes: newOrder.notes,
             status: "Nouvelle",
             currentStep: newOrder.currentStep,
+            measurements: measurementData,
             productionSteps: []
         };
 
@@ -151,8 +195,18 @@ export default function OrdersPage() {
             return;
         }
 
+        // Save or update measurements if they exist
+        if (Object.keys(measurementData).length > 0) {
+            createMeasurement.mutate({
+                clientId: orderData.clientId,
+                garmentType: orderData.garmentType,
+                data: measurementData,
+                isLast: true
+            });
+        }
+
         createOrder.mutate(orderData, {
-            onSuccess: () => {
+            onSuccess: (data: Order) => {
                 setIsNewOrderOpen(false);
                 setNewOrder({
                     clientId: 0,
@@ -163,7 +217,17 @@ export default function OrdersPage() {
                     dueDate: new Date().toISOString(),
                     notes: "",
                     currentStep: "Fsalla"
-                } as any);
+                });
+                setMeasurementData({});
+                
+                // Open print confirmation and select the new order
+                setEditOrderId(data.id);
+                setIsPrintConfirmOpen(true);
+                
+                toast({
+                    title: isRTL ? "تم بنجاح" : "Succès",
+                    description: isRTL ? "تم إنشاء الطلب بنجاح" : "Commande créée avec succès."
+                });
             }
         });
     };
@@ -225,7 +289,14 @@ export default function OrdersPage() {
         });
     };
 
-    const getClientName = (id: number) => clients?.find((c: Client) => c.id === id)?.name || "---";
+    const handlePrint = () => {
+        window.print();
+    };
+
+    const getClientName = (id: number | null) => {
+        if (!id) return "---";
+        return clients?.find((c: Client) => c.id === id)?.name || "---";
+    };
 
     const statusColors: Record<string, string> = {
         "Nouvelle": "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -419,6 +490,39 @@ export default function OrdersPage() {
                                                     onChange={(e) => setNewOrder(prev => ({ ...prev, notes: e.target.value }))}
                                                 />
                                             </div>
+                                        </div>
+
+                                        {/* Measurement Section */}
+                                        <div className="premium-form-section flex flex-col gap-4 p-6 bg-card rounded-2xl border border-border shadow-sm transition-all">
+                                            <h3 className="text-xl font-lalezar flex items-center gap-2 text-primary">
+                                                <Ruler className="h-6 w-6" />
+                                                {isRTL ? "القياسات" : "Mesures"}
+                                            </h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                {Object.entries(measurementData).map(([key, value]) => (
+                                                    <div key={key} className="space-y-2">
+                                                        <Label className="text-xs font-bold text-muted-foreground uppercase">{t(`measurements.${key}`)}</Label>
+                                                        <div className="relative">
+                                                            <Input
+                                                                type="number"
+                                                                className="h-10 font-bold text-sm pr-8"
+                                                                value={value || ""}
+                                                                onChange={(e) => setMeasurementData(prev => ({ ...prev, [key]: Number(e.target.value) }))}
+                                                            />
+                                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground uppercase">cm</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {Object.keys(measurementData).length === 0 && newOrder.clientId > 0 && (
+                                                <Button 
+                                                    variant="outline" 
+                                                    className="w-full border-dashed"
+                                                    onClick={() => setMeasurementData({ shoulders: 0, chest: 0, waist: 0, hips: 0, length: 0, sleeves: 0, wrist: 0, neck: 0 })}
+                                                >
+                                                    {isRTL ? "إضافة قياسات جديدة" : "Ajouter des mesures"}
+                                                </Button>
+                                            )}
                                         </div>
 
                                         <div className="flex gap-4 pt-6 sticky bottom-0 bg-background/80 backdrop-blur-md py-4 border-t mt-auto">
@@ -638,6 +742,46 @@ export default function OrdersPage() {
                                                     <FileText className="h-5 w-5" />
                                                     <span className="font-bold">{isRTL ? "ملاحظات الطلب" : "Notes de la commande"}</span>
                                                 </div>
+
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="gap-2 font-bold bg-background shadow-sm border-primary/20 hover:bg-primary/5 h-10"
+                                                        onClick={() => setShowHistoricalMeasurements(!showHistoricalMeasurements)}
+                                                    >
+                                                        <Ruler className="h-4 w-4 text-primary" />
+                                                        {isRTL ? "قياسات الطلب" : "Mesures du client"}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="gap-2 font-bold bg-primary/10 shadow-sm border-primary/30 hover:bg-primary/20 h-10 text-primary"
+                                                        onClick={handlePrint}
+                                                    >
+                                                        <Printer className="h-4 w-4" />
+                                                        {isRTL ? "طباعة الوصل" : "Imprimer le reçu"}
+                                                    </Button>
+                                                </div>
+
+                                                {showHistoricalMeasurements && (
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 mt-2 bg-background/80 rounded-xl border-2 border-primary/20 animate-in slide-in-from-top-4 duration-300">
+                                                        {selectedOrder.measurements && Object.entries(selectedOrder.measurements).map(([key, value]) => (
+                                                            <div key={key} className="space-y-1">
+                                                                <Label className="text-[10px] font-black text-muted-foreground uppercase">{t(`measurements.${key}`)}</Label>
+                                                                <div className="text-sm font-black flex items-center gap-1 text-primary">
+                                                                    {value} <span className="text-[10px] opacity-70">CM</span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        {(!selectedOrder.measurements || Object.keys(selectedOrder.measurements).length === 0) && (
+                                                            <div className="col-span-full py-4 text-center text-xs text-muted-foreground italic">
+                                                                {isRTL ? "لم يتم تسجيل قياسات لهذا الطلب" : "Aucune mesure enregistrée pour cette commande."}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+
                                                 <Textarea
                                                     className="min-h-[80px] bg-background/50 border-primary/20"
                                                     value={localNotes}
@@ -894,6 +1038,155 @@ export default function OrdersPage() {
                     </Drawer.Content>
                 </Drawer.Portal>
             </Drawer.Root>
+            
+            {/* Print Layout */}
+            <div id="print-area" className="hidden print:block !m-0 !p-8 bg-white font-sans text-black" dir={isRTL ? "rtl" : "ltr"}>
+                <style>{`
+                    @media print {
+                        body * { visibility: hidden; }
+                        #print-area, #print-area * { visibility: visible; }
+                        #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+                        @page { margin: 0; }
+                    }
+                `}</style>
+                
+                {selectedOrder && (
+                    <div className="space-y-12">
+                        {/* 1. Atelier Sheet */}
+                        <div className="border-2 border-black p-6 space-y-6">
+                            <div className="flex justify-between items-start border-b-2 border-black pb-4">
+                                <div>
+                                    <h1 className="text-3xl font-black uppercase tracking-tighter">{tenant?.name || "KHIYATMA"}</h1>
+                                    <p className="text-sm font-bold opacity-80 italic">{isRTL ? "فيشة العمل" : "FICHE DE TRAVAIL"}</p>
+                                </div>
+                                <div className="text-right">
+                                    <h2 className="text-2xl font-bold">#{selectedOrder.id}</h2>
+                                    <p className="text-sm">{selectedOrder.createdAt ? format(new Date(selectedOrder.createdAt), "dd/MM/yyyy HH:mm") : ""}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-8 text-lg font-bold">
+                                <div>
+                                    <p className="text-xs font-normal opacity-60 mb-1">{isRTL ? "الزبون:" : "CLIENT:"}</p>
+                                    <p className="text-2xl">{getClientName(selectedOrder.clientId)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-normal opacity-60 mb-1">{isRTL ? "اللباس:" : "HABIT:"}</p>
+                                    <p className="text-2xl uppercase">{t(`garments.${selectedOrder.garmentType}`)}</p>
+                                </div>
+                            </div>
+
+                            <div className="border-t-2 border-black pt-6">
+                                <h3 className="text-lg font-black uppercase mb-4 text-center bg-black text-white py-1">{isRTL ? "القياسات" : "MESURES"}</h3>
+                                <div className="grid grid-cols-4 gap-y-4 gap-x-8">
+                                    {selectedOrder.measurements && Object.entries(selectedOrder.measurements).map(([key, value]) => (
+                                        <div key={key} className="flex flex-col border-b border-black pb-1">
+                                            <span className="text-[10px] font-bold opacity-70 uppercase tracking-widest">{t(`measurements.${key}`)}</span>
+                                            <span className="text-xl font-black text-center">{value} <span className="text-[8px] font-normal">cm</span></span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {selectedOrder.notes && (
+                                <div className="border-t-2 border-black pt-4">
+                                    <p className="text-xs font-bold opacity-60 uppercase mb-1">{isRTL ? "ملاحظات:" : "NOTES:"}</p>
+                                    <p className="font-bold italic text-sm">{selectedOrder.notes}</p>
+                                </div>
+                            )}
+
+                            <div className="flex justify-between text-xs font-bold pt-4">
+                                <span>{isRTL ? "موعد التسليم:" : "Date de livraison :"} {selectedOrder.dueDate ? format(new Date(selectedOrder.dueDate), "dd/MM/yyyy") : "---"}</span>
+                                <span>{isRTL ? "التوقيع:" : "Signature :"} .......................</span>
+                            </div>
+                        </div>
+
+                        {/* SEPARATION LINE */}
+                        <div className="relative h-4 flex items-center justify-center">
+                            <div className="w-full border-b-[3px] border-dashed border-black"></div>
+                            <span className="absolute bg-white px-4 text-[10px] font-bold italic tracking-[0.5em]">{isRTL ? "مقص" : "COUPE"} ✂ ✂ ✂</span>
+                        </div>
+
+                        {/* 2. Customer Receipt */}
+                        <div className="border-2 border-black p-6 space-y-6 bg-slate-50/10">
+                            <div className="flex justify-between items-start border-b-2 border-black pb-4">
+                                <div>
+                                    <h1 className="text-3xl font-black uppercase tracking-tighter">{tenant?.name || "KHIYATMA"}</h1>
+                                    <p className="text-sm font-bold opacity-80 italic">{isRTL ? "وصل الزبون" : "REÇU CLIENT"}</p>
+                                </div>
+                                <div className="text-right">
+                                    <h2 className="text-2xl font-bold">#{selectedOrder.id}</h2>
+                                    <p className="text-sm">{selectedOrder.createdAt ? format(new Date(selectedOrder.createdAt), "dd/MM/yyyy HH:mm") : ""}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-8 text-lg font-bold">
+                                <div>
+                                    <p className="text-xs font-normal opacity-60 mb-1">{isRTL ? "الزبون:" : "CLIENT:"}</p>
+                                    <p className="text-2xl">{getClientName(selectedOrder.clientId)}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs font-normal opacity-60 mb-1">{isRTL ? "موعد الاستلام:" : "Rendez-vous :"}</p>
+                                    <p className="text-2xl">{selectedOrder.dueDate ? format(new Date(selectedOrder.dueDate), "dd/MM/yyyy") : "---"}</p>
+                                </div>
+                            </div>
+
+                            <div className="border-y-2 border-black py-6 grid grid-cols-3 gap-4 text-center h-28">
+                                <div className="flex flex-col justify-center bg-black/5 rounded">
+                                    <p className="text-[10px] font-bold opacity-60 uppercase mb-2">{isRTL ? "المجموع الكلي" : "TOTAL"}</p>
+                                    <p className="text-3xl font-black">{selectedOrder.totalPrice} <span className="text-sm">DH</span></p>
+                                </div>
+                                <div className="flex flex-col justify-center border-x-2 border-black">
+                                    <p className="text-[10px] font-bold opacity-60 uppercase mb-2 text-emerald-700">{isRTL ? "التسبيق" : "AVANCE"}</p>
+                                    <p className="text-3xl font-black text-emerald-700">+{selectedOrder.advancePayment} <span className="text-sm">DH</span></p>
+                                </div>
+                                <div className="flex flex-col justify-center bg-red-500/5">
+                                    <p className="text-[10px] font-bold opacity-60 uppercase mb-2 text-red-600">{isRTL ? "الباقي" : "RESTE"}</p>
+                                    <p className="text-3xl font-black text-red-600">{(Number(selectedOrder.totalPrice) - Number(selectedOrder.advancePayment)).toFixed(2)} <span className="text-sm">DH</span></p>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-end italic text-xs pt-4">
+                                <div className="space-y-1">
+                                    <p>{isRTL ? "شكراً لزيارتكم." : "Merci pour votre confiance."}</p>
+                                    <p className="text-[9px] opacity-70">Khiyatma Pro - Logiciel de gestion pour tailleurs</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="mt-8 border-t border-black w-40 inline-block pt-1 uppercase">{isRTL ? "توقيع المحل" : "Sceau du Magasin"}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Post-creation Print Confirmation */}
+            <AlertDialog open={isPrintConfirmOpen} onOpenChange={setIsPrintConfirmOpen}>
+                <AlertDialogContent className="rounded-2xl border-2">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-2xl font-lalezar text-primary">
+                            {isRTL ? "طلب جديد" : "Nouvelle commande"}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-lg font-bold">
+                            {isRTL 
+                                ? "تم تسجيل الطلب بنجاح. هل تريد طباعة الوصل للزبون الآن؟" 
+                                : "La commande a été enregistrée. Voulez-vous imprimer le reçu pour le client maintenant ?"}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-3 mt-6">
+                        <AlertDialogCancel className="h-12 font-bold rounded-xl flex-1">
+                            {isRTL ? "لا، لاحقاً" : "Non, plus tard"}
+                        </AlertDialogCancel>
+                        <AlertDialogAction 
+                            className="h-12 font-bold rounded-xl flex-1 bg-primary text-primary-foreground gap-2"
+                            onClick={handlePrint}
+                        >
+                            <Printer className="h-5 w-5" />
+                            {isRTL ? "نعم، اطبع" : "Oui, imprimer"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
