@@ -5,9 +5,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { format, addMonths } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Phone, MapPin, LayoutList, UserPlus, CheckCircle2, ShieldCheck, Globe, Key, Calendar, Loader2 } from "lucide-react";
+import { Phone, MapPin, LayoutList, UserPlus, CheckCircle2, ShieldCheck, Globe, Key, Calendar, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,18 +83,25 @@ export default function AdminSubRequestsPage() {
     const processedRequests = requests?.filter(r => r.status !== "pending") || [];
 
     return (
-        <div className={`p-8 space-y-8 ${isRTL ? "font-arabic" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-4xl font-black text-foreground">
-                        {isRTL ? "طلبات الاشتراك" : "Demandes d'abonnement"}
-                    </h1>
-                    <p className="text-muted-foreground mt-2 font-medium">
-                        {isRTL ? "إدارة الطلبات الجديدة وتحويلها إلى زبائن." : "Gérez les nouvelles demandes et convertissez-les en clients."}
-                    </p>
+        <div className={`p-4 md:p-8 space-y-6 md:space-y-8 max-w-[100vw] overflow-x-hidden ${isRTL ? "font-arabic" : ""}`} dir={isRTL ? "rtl" : "ltr"}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col gap-1">
+                    <Link href="/">
+                        <Button variant="ghost" size="sm" className="w-fit gap-2 -ml-2 text-muted-foreground hover:text-primary font-bold">
+                            <ArrowLeft className="h-4 w-4" /> {isRTL ? "رجوع" : "Retour"}
+                        </Button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl md:text-4xl font-black text-foreground">
+                            {isRTL ? "طلبات الاشتراك" : "Demandes d'abonnement"}
+                        </h1>
+                        <p className="text-sm md:text-base text-muted-foreground mt-1 font-medium">
+                            {isRTL ? "إدارة الطلبات الجديدة وتحويلها إلى زبائن." : "Gérez les nouvelles demandes et convertissez-les en clients."}
+                        </p>
+                    </div>
                 </div>
                 <div className="flex gap-4">
-                    <Badge variant="outline" className="px-4 py-2 font-black text-lg text-primary bg-primary/5">
+                    <Badge variant="outline" className="px-3 py-1.5 md:px-4 md:py-2 font-black text-sm md:text-lg text-primary bg-primary/5">
                         {pendingRequests.length} {isRTL ? "طلب قيد الانتظار" : "En attente"}
                     </Badge>
                 </div>
@@ -107,69 +115,71 @@ export default function AdminSubRequestsPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="bg-muted/10 hover:bg-muted/10 h-16">
-                                <TableHead className="w-[120px] font-black">{isRTL ? "التاريخ" : "Date"}</TableHead>
-                                <TableHead className="font-black">{isRTL ? "الزبون" : "Client"}</TableHead>
-                                <TableHead className="font-black">{isRTL ? "المدينة" : "Ville"}</TableHead>
-                                <TableHead className="font-black">{isRTL ? "رقم الهاتف" : "Téléphone"}</TableHead>
-                                <TableHead className="font-black">{isRTL ? "الباقة" : "Plan"}</TableHead>
-                                <TableHead className="text-right font-black">{isRTL ? "إجراءات" : "Actions"}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {pendingRequests.map((req) => (
-                                <TableRow key={req.id} className="hover:bg-muted/5 transition-colors h-20">
-                                    <TableCell className="font-medium text-muted-foreground italic">
-                                        {req.createdAt ? format(new Date(req.createdAt), "dd/MM/yyyy") : "-"}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black uppercase border border-primary/20">
-                                                {req.fullName[0]}
+                    <div className="overflow-x-auto">
+                        <Table className="min-w-[800px]">
+                            <TableHeader>
+                                <TableRow className="bg-muted/10 hover:bg-muted/10 h-16">
+                                    <TableHead className="w-[120px] font-black">{isRTL ? "التاريخ" : "Date"}</TableHead>
+                                    <TableHead className="font-black">{isRTL ? "الزبون" : "Client"}</TableHead>
+                                    <TableHead className="font-black">{isRTL ? "المدينة" : "Ville"}</TableHead>
+                                    <TableHead className="font-black">{isRTL ? "رقم الهاتف" : "Téléphone"}</TableHead>
+                                    <TableHead className="font-black">{isRTL ? "الباقة" : "Plan"}</TableHead>
+                                    <TableHead className="text-right font-black">{isRTL ? "إجراءات" : "Actions"}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {pendingRequests.map((req) => (
+                                    <TableRow key={req.id} className="hover:bg-muted/5 transition-colors h-20">
+                                        <TableCell className="font-medium text-muted-foreground italic">
+                                            {req.createdAt ? format(new Date(req.createdAt), "dd/MM/yyyy") : "-"}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black uppercase border border-primary/20">
+                                                    {req.fullName[0]}
+                                                </div>
+                                                <span className="font-black text-lg">{req.fullName}</span>
                                             </div>
-                                            <span className="font-black text-lg">{req.fullName}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2 font-medium">
-                                            <MapPin className="h-4 w-4 text-muted-foreground" />
-                                            {req.city}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2 font-bold">
-                                            <Phone className="h-4 w-4 text-muted-foreground" />
-                                            {req.phone}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant={req.plan === "Elite" ? "destructive" : req.plan === "Pro" ? "default" : "secondary"} className="font-black px-4 py-1">
-                                            {req.plan}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button 
-                                            size="sm" 
-                                            className="gap-2 font-black shadow-md shadow-primary/10" 
-                                            onClick={() => handleOpenConvert(req)}
-                                        >
-                                            <UserPlus className="h-4 w-4" />
-                                            {isRTL ? "تحويل لزبون" : "Convertir"}
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                            {pendingRequests.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="h-48 text-center text-muted-foreground font-black text-xl italic bg-muted/5">
-                                        {isRTL ? "لا توجد طلبات جديدة حالياً." : "Aucune nouvelle demande pour le moment."}
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2 font-medium">
+                                                <MapPin className="h-4 w-4 text-muted-foreground" />
+                                                {req.city}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2 font-bold">
+                                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                                {req.phone}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant={req.plan === "Elite" ? "destructive" : req.plan === "Pro" ? "default" : "secondary"} className="font-black px-4 py-1">
+                                                {req.plan}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button 
+                                                size="sm" 
+                                                className="gap-2 font-black shadow-md shadow-primary/10" 
+                                                onClick={() => handleOpenConvert(req)}
+                                            >
+                                                <UserPlus className="h-4 w-4" />
+                                                {isRTL ? "تحويل لزبon" : "Convertir"}
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                {pendingRequests.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="h-48 text-center text-muted-foreground font-black text-xl italic bg-muted/5">
+                                            {isRTL ? "لا توجد طلبات جديدة حالياً." : "Aucune nouvelle demande pour le moment."}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -182,25 +192,27 @@ export default function AdminSubRequestsPage() {
                     </h2>
                     <Card className="border-border/50 opacity-70">
                         <CardContent className="p-0">
-                            <Table>
-                                <TableBody>
-                                    {processedRequests.map((req) => (
-                                        <TableRow key={req.id} className="h-16">
-                                            <TableCell className="w-[120px] font-medium text-muted-foreground">
-                                                {req.createdAt ? format(new Date(req.createdAt), "dd/MM/yyyy") : "-"}
-                                            </TableCell>
-                                            <TableCell className="font-bold">{req.fullName}</TableCell>
-                                            <TableCell>{req.city}</TableCell>
-                                            <TableCell className="text-muted-foreground">{req.phone}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                                                    {isRTL ? "تم التفعيل" : "Activé"}
-                                                </Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <div className="overflow-x-auto">
+                                <Table className="min-w-[700px]">
+                                    <TableBody>
+                                        {processedRequests.map((req) => (
+                                            <TableRow key={req.id} className="h-16">
+                                                <TableCell className="w-[120px] font-medium text-muted-foreground">
+                                                    {req.createdAt ? format(new Date(req.createdAt), "dd/MM/yyyy") : "-"}
+                                                </TableCell>
+                                                <TableCell className="font-bold">{req.fullName}</TableCell>
+                                                <TableCell>{req.city}</TableCell>
+                                                <TableCell className="text-muted-foreground">{req.phone}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                                                        {isRTL ? "تم التفعيل" : "Activé"}
+                                                    </Badge>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

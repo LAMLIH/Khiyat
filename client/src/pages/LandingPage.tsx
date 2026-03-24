@@ -12,13 +12,21 @@ import {
     Languages,
     ArrowRight,
     Sun,
-    Moon
+    Moon,
+    Scissors,
+    Clock,
+    History,
+    Wallet,
+    ShoppingBag
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
+import brandLogo from "@/assets/brand-logo.png";
+import dashboardMockup from "@/assets/dashboard-mockup.png";
+
 import { useTheme } from "@/contexts/ThemeContext";
 import {
     Carousel,
@@ -100,13 +108,12 @@ export default function LandingPage() {
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 md:h-24 flex items-center justify-between">
-                    <div className="flex items-center">
-                        <span className="text-3xl md:text-4xl font-lalezar text-primary drop-shadow-sm select-none">
-                            خياط برو
-                        </span>
+                    <div className="flex flex-col items-center gap-1 group">
+                        <img src={brandLogo} alt="Khayat Pro Logo" className="h-[50px] md:h-[60px] w-auto object-contain drop-shadow-sm select-none dark:invert transition-transform group-hover:scale-105" />
+                        <span className="text-[9px] md:text-[11px] font-bold text-primary/40 uppercase tracking-[0.2em] select-none">بصمتك في الأناقة.</span>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                    <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-muted-foreground">
                         <a href="#features" className="hover:text-primary transition-colors">{t("landing.features.title")}</a>
                         <a href="#pricing" className="hover:text-primary transition-colors">{t("landing.pricing.title")}</a>
                     </nav>
@@ -147,10 +154,10 @@ export default function LandingPage() {
             <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-6 relative overflow-hidden text-center">
                 <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/10 blur-[150px] rounded-full -z-10 animate-pulse" />
                 <div className="max-w-7xl mx-auto">
-                    <Badge variant="outline" className="mb-6 md:mb-8 py-2 px-4 md:px-6 rounded-full border-primary/20 bg-primary/5 text-primary text-[10px] md:text-sm font-black uppercase tracking-widest">
-                        {isRTL ? "أول منصة لإدارة الخياطة في المغرب" : "LA PREMIÈRE PLATEFORME DE COUTURE AU MAROC"}
+                    <Badge variant="outline" className="mb-6 md:mb-8 py-2 px-4 md:px-6 rounded-full border-primary/20 bg-primary/5 text-primary text-[10px] md:text-sm font-black">
+                        {isRTL ? "أول منصة لإدارة الخياطة في المغرب" : "La première plateforme de couture au Maroc"}
                     </Badge>
-                    <h1 className="text-4xl md:text-8xl font-black tracking-tighter mb-8 md:mb-10 leading-[1.1] md:leading-[0.95] text-foreground">
+                    <h1 className="text-4xl md:text-8xl font-black tracking-tighter mb-8 md:mb-10 leading-[1.1] md:leading-[0.95] text-foreground font-lalezar">
                         {t("landing.hero.title")}
                     </h1>
                     <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 md:mb-16 font-medium leading-relaxed">
@@ -168,8 +175,33 @@ export default function LandingPage() {
                             {t("landing.hero.demo")}
                         </Button>
                     </div>
+
+                    {/* Key Metrics & Business Value */}
+                    <div className="mt-20 md:mt-32 w-full max-w-6xl mx-auto z-20">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 p-8 md:p-12 border border-border/50 bg-background/60 backdrop-blur-2xl rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                            
+                            <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
+                                <span className="text-4xl md:text-6xl font-black text-primary font-lalezar drop-shadow-sm">+500</span>
+                                <span className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center">{isRTL ? "ورشة نشطة" : "Ateliers Actifs"}</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
+                                <span className="text-4xl md:text-6xl font-black text-primary font-lalezar drop-shadow-sm">+10K</span>
+                                <span className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center">{isRTL ? "طلب منجز" : "Commandes Gérées"}</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
+                                <span className="text-4xl md:text-6xl font-black text-primary font-lalezar drop-shadow-sm">100%</span>
+                                <span className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center">{isRTL ? "أمان البيانات" : "Données Sécurisées"}</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center space-y-3 relative z-10">
+                                <span className="text-4xl md:text-6xl font-black text-primary font-lalezar drop-shadow-sm">24/7</span>
+                                <span className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center">{isRTL ? "دعم فني" : "Support Technique"}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
+
 
             {/* Features */}
             <section id="features" className="py-20 md:py-24 bg-muted/20">
@@ -339,9 +371,12 @@ export default function LandingPage() {
 
             {/* Footer */}
             <footer className="py-20 border-t border-border/50 bg-muted/10">
-                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10 text-center md:text-left">
-                    <span className="text-4xl font-lalezar text-primary select-none opacity-80 decoration-primary/20 underline underline-offset-8">خياط برو</span>
-                    <p className="text-muted-foreground font-bold text-lg">© 2026 KHIYAT PRO. بصمتك في الأناقة.</p>
+                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
+                    <div className="flex flex-col items-center md:items-start gap-2">
+                        <img src={brandLogo} alt="Khayat Pro Logo" className="h-12 w-auto object-contain opacity-80 grayscale hover:grayscale-0 transition-all select-none dark:invert" />
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest leading-none">بصمتك في الأناقة.</span>
+                    </div>
+                    <p className="text-muted-foreground font-bold text-lg text-center md:text-left">© 2026 KHIYAT PRO. بصمتك في الأناقة.</p>
                     <div className="flex gap-8">
                         <Globe className="h-6 w-6 text-muted-foreground" />
                         <ShieldCheck className="h-6 w-6 text-muted-foreground" />

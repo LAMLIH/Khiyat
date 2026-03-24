@@ -91,6 +91,19 @@ export async function runMigrations() {
             )
         `;
         await queryClient`
+            CREATE TABLE IF NOT EXISTS "subscriptions" (
+                "id" serial PRIMARY KEY NOT NULL,
+                "tenant_id" integer REFERENCES "tenants"("id") NOT NULL,
+                "plan" text NOT NULL,
+                "status" text DEFAULT 'active' NOT NULL,
+                "amount" numeric(10, 2) DEFAULT '0' NOT NULL,
+                "start_date" timestamp DEFAULT now() NOT NULL,
+                "end_date" timestamp NOT NULL,
+                "created_at" timestamp DEFAULT now()
+            )
+        `;
+
+        await queryClient`
             CREATE TABLE IF NOT EXISTS "subscription_requests" (
                 "id" serial PRIMARY KEY NOT NULL,
                 "full_name" text NOT NULL,

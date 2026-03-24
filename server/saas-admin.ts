@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { storage } from "./storage";
-import { insertTenantSchema, insertUserSchema } from "@shared/schema";
+import { insertTenantSchema, insertUserSchema, insertSubscriptionSchema } from "@shared/schema";
 
 export const saasAdminRouter = Router();
 
@@ -109,3 +109,80 @@ saasAdminRouter.post("/convert-request/:id", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Subscriptions
+saasAdminRouter.get("/subscriptions", async (req, res) => {
+    const tenantId = req.query.tenantId ? parseInt(req.query.tenantId as string) : undefined;
+    if (!tenantId) {
+        return res.status(400).send("tenantId query parameter is required");
+    }
+    const subs = await storage.getSubscriptions(tenantId);
+    res.json(subs);
+});
+
+saasAdminRouter.post("/subscriptions", async (req, res) => {
+    try {
+        const subData = insertSubscriptionSchema.parse(req.body);
+        const sub = await storage.createSubscription(subData);
+        
+        // Update the tenant's main status to reflect the new subscription
+        await storage.updateTenant(subData.tenantId, {
+            plan: subData.plan,
+            subscriptionExpiresAt: new Date(subData.endDate)
+        });
+        
+        res.status(201).json(sub);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+saasAdminRouter.get("/tenants/:id/stats", async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const stats = await storage.getTenantStats(id);
+        res.json(stats);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+saasAdminRouter.get("/system-admins", async (req, res) => {
+    try {
+        const admins = await storage.getSaaSAdmins();
+        res.json(admins);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+saasAdminRouter.patch("/system-admins/:id/password", async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { password } = req.body;
+        if (!password) {
+            return res.status(400).json({ error: "Mot de passe requis" });
+        }
+        const user = await storage.updateUser(id, { password });
+        res.json(user);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+saasAdminRouter.post("/system-admins", async (req, res) => {
+    try {
+        const userData = {
+            ...req.body,
+            role: "saas_admin"
+        };
+        const user = await storage.createUser(userData);
+        res.status(201).json(user);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+

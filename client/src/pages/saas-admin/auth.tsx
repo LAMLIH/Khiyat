@@ -10,6 +10,7 @@ import { Lock, User } from "lucide-react";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
+import brandLogo from "@/assets/brand-logo.png";
 
 export default function SaaSAuthPage() {
     const { user, login, isLoading } = useAuth();
@@ -42,8 +43,7 @@ export default function SaaSAuthPage() {
             <div className="w-full max-w-md p-6 relative z-10">
                 <div className="text-center mb-12 group cursor-default relative">
                     <div className="relative inline-block animate-in zoom-in duration-1000">
-                        <div className="text-8xl font-lalezar text-white tracking-widest drop-shadow-[0_0_20px_rgba(28,145,143,0.8)] leading-none">خياط برو</div>
-                        <div className="text-[11px] text-[#1c918f] font-bold tracking-[0.5em] uppercase mt-2 opacity-80">بصمتك في الأناقة</div>
+                        <img src={brandLogo} alt="Khayat Pro Logo" className="w-64 h-auto object-contain mx-auto drop-shadow-[0_0_20px_rgba(28,145,143,0.8)] invert" />
                     </div>
                     <div className="mt-8">
                         <h1 className="text-2xl font-bold text-white tracking-tight">SaaS Admin Portal</h1>

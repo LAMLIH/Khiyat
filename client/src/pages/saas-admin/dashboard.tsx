@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import brandLogo from "@/assets/brand-logo.png";
 
 export default function SaaSAdminDashboard() {
     const { data: tenants, isLoading: loadingTenants } = useQuery<Tenant[]>({
@@ -86,26 +87,28 @@ export default function SaaSAdminDashboard() {
     ];
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-500 bg-background/30 min-h-screen">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-500 bg-background/30 min-h-screen max-w-[100vw] overflow-x-hidden">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <div className="p-0 select-none">
-                        <div className="text-5xl font-lalezar text-primary leading-none drop-shadow-sm">خياط برو</div>
+                        <img src={brandLogo} alt="Khayat Pro Logo" className="h-12 md:h-16 w-auto object-contain drop-shadow-sm dark:invert" />
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight border-l-2 border-primary/20 pl-4 ml-4 text-foreground">SaaS Admin</h1>
-                        <p className="text-muted-foreground ml-8">Vue d'ensemble globale de la plateforme Khiyatma.</p>
+                    <div className="flex items-center">
+                        <h1 className="text-xl md:text-3xl font-bold tracking-tight border-l-2 border-primary/20 pl-4 text-foreground">SaaS Admin</h1>
+                        <p className="text-sm text-muted-foreground ml-4 hidden sm:block">Vue d'ensemble globale de la plateforme Khiyatma.</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                     <Link href="/tenants">
-                        <Button variant="outline" className="gap-2 border-border bg-card hover:bg-muted">
-                            <Building2 className="h-4 w-4" /> Gérer les Clients
+                        <Button variant="outline" className="flex-1 sm:flex-none gap-2 border-border bg-card hover:bg-muted font-bold">
+                            <Building2 className="h-4 w-4" /> Clients
                         </Button>
                     </Link>
-                    <Button className="gap-2 bg-primary hover:bg-primary/90">
-                        <ShieldCheck className="h-4 w-4" /> Sécurité Système
-                    </Button>
+                    <Link href="/users">
+                        <Button className="flex-1 sm:flex-none gap-2 bg-primary hover:bg-primary/90 font-bold shadow-lg shadow-primary/20">
+                            <ShieldCheck className="h-4 w-4" /> Administrateurs
+                        </Button>
+                    </Link>
                 </div>
             </div>
 

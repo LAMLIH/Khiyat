@@ -16,6 +16,17 @@ export const tenants = pgTable("tenants", {
     createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const subscriptions = pgTable("subscriptions", {
+    id: serial("id").primaryKey(),
+    tenantId: integer("tenant_id").references(() => tenants.id).notNull(),
+    plan: text("plan").notNull(), // 'Starter', 'Pro', 'Enterprise'
+    status: text("status").notNull().default("active"), // 'active', 'expired', 'canceled'
+    amount: numeric("amount", { precision: 10, scale: 2 }).notNull().default("0"),
+    startDate: timestamp("start_date").defaultNow().notNull(),
+    endDate: timestamp("end_date").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const users = pgTable("users", {
     id: serial("id").primaryKey(),
     tenantId: integer("tenant_id").references(() => tenants.id),
@@ -101,6 +112,7 @@ export const insertUserSchema = createInsertSchema(users);
 export const insertClientSchema = createInsertSchema(clients);
 export const insertMeasurementSchema = createInsertSchema(measurements);
 export const insertOrderSchema = createInsertSchema(orders);
+export const insertSubscriptionSchema = createInsertSchema(subscriptions);
 export const insertSubscriptionRequestSchema = createInsertSchema(subscriptionRequests).omit({
     id: true,
     status: true,
@@ -123,5 +135,9 @@ export type InsertMeasurement = typeof measurements.$inferInsert;
 export type Order = typeof orders.$inferSelect;
 export type InsertOrder = typeof orders.$inferInsert;
 
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = typeof subscriptions.$inferInsert;
+
 export type SubscriptionRequest = typeof subscriptionRequests.$inferSelect;
 export type InsertSubscriptionRequest = typeof subscriptionRequests.$inferInsert;
+

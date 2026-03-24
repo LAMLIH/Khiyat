@@ -56,7 +56,7 @@ interface CollapsibleNavItem {
 
 type SidebarItem = ({ type: "simple" } & NavItem) | ({ type: "collapsible" } & CollapsibleNavItem);
 
-import logo from "@/assets/logo-dark.png";
+import brandLogo from "@/assets/brand-logo.png";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const [location] = useLocation();
@@ -193,10 +193,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             side={isRTL ? "right" : "left"}
             {...props}
         >
-            <SidebarHeader className="h-20 flex justify-center border-sidebar-border/20 border-b">
-                <div className="flex flex-col items-center gap-0.5 px-4 py-2">
-                    <span className="font-lalezar text-3xl tracking-wide text-white drop-shadow-sm leading-none">خياط برو</span>
-                    <span className="text-[10px] text-white/70 font-medium tracking-widest uppercase">بصمتك في الأناقة</span>
+            <SidebarHeader className="h-32 flex justify-center border-sidebar-border/20 border-b">
+                <div className="flex flex-col items-center px-4 py-2">
+                    <img src={brandLogo} alt="Khayat Pro Logo" className="h-[80px] w-auto object-contain invert" />
+                    <span className="text-[10px] font-bold text-sidebar-foreground/50 mt-1 uppercase tracking-widest">بصمتك في الأناقة.</span>
                 </div>
             </SidebarHeader>
 

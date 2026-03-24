@@ -1,7 +1,7 @@
 import {
-    users, tenants, clients, measurements, orders, subscriptionRequests,
-    type User, type Tenant, type Client, type Measurement, type Order, type SubscriptionRequest,
-    type InsertUser, type InsertTenant, type InsertClient, type InsertMeasurement, type InsertOrder, type InsertSubscriptionRequest
+    users, tenants, clients, measurements, orders, subscriptionRequests, subscriptions,
+    type User, type Tenant, type Client, type Measurement, type Order, type SubscriptionRequest, type Subscription,
+    type InsertUser, type InsertTenant, type InsertClient, type InsertMeasurement, type InsertOrder, type InsertSubscriptionRequest, type InsertSubscription
 } from "@shared/schema";
 import session from "express-session";
 import { db } from "./db";
@@ -49,6 +49,14 @@ export interface IStorage {
     getSubscriptionRequestByPhone(phone: string): Promise<SubscriptionRequest | undefined>;
     createSubscriptionRequest(request: InsertSubscriptionRequest): Promise<SubscriptionRequest>;
     updateSubscriptionRequestStatus(id: number, status: string): Promise<void>;
+
+    // Subscriptions
+    getSubscriptions(tenantId: number): Promise<Subscription[]>;
+    createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+
+    // Stats for SaaS Admin
+    getTenantStats(tenantId: number): Promise<any>;
+    getSaaSAdmins(): Promise<User[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -188,6 +196,40 @@ export class DatabaseStorage implements IStorage {
         await db.update(subscriptionRequests)
             .set({ status })
             .where(eq(subscriptionRequests.id, id));
+    }
+
+    async getSubscriptions(tenantId: number): Promise<Subscription[]> {
+        return db.select().from(subscriptions).where(eq(subscriptions.tenantId, tenantId));
+    }
+
+    async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
+        const [sub] = await db.insert(subscriptions).values(insertSubscription).returning();
+        return sub;
+    }
+
+    async getTenantStats(tenantId: number): Promise<any> {
+        const tenantOrders = await db.select().from(orders).where(eq(orders.tenantId, tenantId));
+        const tenantClients = await db.select().from(clients).where(eq(clients.tenantId, tenantId));
+
+        const stats = {
+            totalClients: tenantClients.length,
+            totalOrders: tenantOrders.length,
+            totalRevenue: tenantOrders.reduce((sum, o) => sum + parseFloat(o.totalPrice || "0"), 0),
+            totalProfit: tenantOrders.reduce((sum, o) => sum + parseFloat(o.profit || "0"), 0),
+            ordersByStatus: tenantOrders.reduce((acc: any, o) => {
+                acc[o.status] = (acc[o.status] || 0) + 1;
+                return acc;
+            }, {}),
+            recentOrders: tenantOrders
+                .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+                .slice(0, 5)
+        };
+
+        return stats;
+    }
+
+    async getSaaSAdmins(): Promise<User[]> {
+        return await db.select().from(users).where(eq(users.role, "saas_admin"));
     }
 }
 

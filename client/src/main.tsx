@@ -31,6 +31,8 @@ import SaaSAdminDashboard from "./pages/saas-admin/dashboard";
 import SaaSAdminTenants from "./pages/saas-admin/tenants";
 import SubscribeRequestPage from "./pages/SubscribeRequestPage";
 import AdminSubRequestsPage from "./pages/AdminSubRequestsPage";
+import TenantStatsPage from "./pages/saas-admin/tenant-stats";
+import SaaSAdminUsers from "./pages/saas-admin/users";
 
 function Router() {
     const { user, isLoading } = useAuth();
@@ -94,6 +96,8 @@ function Router() {
                 <Switch>
                     <Route path="/" component={SaaSAdminDashboard} />
                     <Route path="/tenants" component={SaaSAdminTenants} />
+                    <Route path="/tenants/:id/stats" component={TenantStatsPage} />
+                    <Route path="/users" component={SaaSAdminUsers} />
                     <Route path="/subscription-requests" component={AdminSubRequestsPage} />
                     <Route>404 SaaS Admin Page Not Found</Route>
                 </Switch>

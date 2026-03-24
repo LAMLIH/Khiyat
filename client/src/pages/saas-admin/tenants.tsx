@@ -12,18 +12,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, ExternalLink, Users, Trash2, PlusCircle, ShieldCheck, Mail, Key, PencilLine } from "lucide-react";
+import { Loader2, ExternalLink, Users, Trash2, PlusCircle, ShieldCheck, Mail, Key, PencilLine, CreditCard, History, Calendar as CalendarIcon, BarChart3, ArrowLeft, LayoutList, Globe, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Link } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SaaSAdminTenants() {
     const { toast } = useToast();
     const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
     const [isAddUserOpen, setIsAddUserOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
+    const [subTenant, setSubTenant] = useState<Tenant | null>(null);
+    const [isAddSubOpen, setIsAddSubOpen] = useState(false);
+    
+    // New subscription form
+    const [subPlan, setSubPlan] = useState("Starter");
+    const [subAmount, setSubAmount] = useState("0");
+    const [subEndDate, setSubEndDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     
     // New user form state
     const [newUsername, setNewUsername] = useState("");
@@ -41,6 +52,17 @@ export default function SaaSAdminTenants() {
         queryFn: async () => {
             const res = await fetch(`/api/saas-admin/users?tenantId=${selectedTenant?.id}`);
             if (!res.ok) throw new Error("Failed to fetch users");
+            return res.json();
+        }
+    });
+
+    // Fetch subscriptions for selected tenant
+    const { data: subscriptions, isLoading: loadingSubs } = useQuery<any[]>({
+        queryKey: ["/api/saas-admin/subscriptions", { tenantId: subTenant?.id }],
+        enabled: !!subTenant,
+        queryFn: async () => {
+            const res = await fetch(`/api/saas-admin/subscriptions?tenantId=${subTenant?.id}`);
+            if (!res.ok) throw new Error("Failed to fetch subscriptions");
             return res.json();
         }
     });
@@ -111,6 +133,35 @@ export default function SaaSAdminTenants() {
         }
     });
 
+    const addSubscriptionMutation = useMutation({
+        mutationFn: async () => {
+            if (!subTenant) return;
+            const res = await fetch("/api/saas-admin/subscriptions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    tenantId: subTenant.id,
+                    plan: subPlan,
+                    amount: subAmount,
+                    startDate: new Date().toISOString(),
+                    endDate: new Date(subEndDate).toISOString(),
+                    status: "active"
+                }),
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["/api/saas-admin/tenants"] });
+            queryClient.invalidateQueries({ queryKey: ["/api/saas-admin/subscriptions", { tenantId: subTenant?.id }] });
+            toast({ title: "Succès", description: "Abonnement ajouté avec succès." });
+            setIsAddSubOpen(false);
+        },
+        onError: (e: any) => {
+            toast({ title: "Erreur", description: e.message, variant: "destructive" });
+        }
+    });
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center p-8">
@@ -120,35 +171,60 @@ export default function SaaSAdminTenants() {
     }
 
     return (
-        <div className="p-8 space-y-8">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Gestion des Clients</h1>
-                    <p className="text-muted-foreground">Gérez les sous-domaines, les abonnements et les accès.</p>
+        <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-[100vw]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-col gap-1">
+                    <Link href="/">
+                        <Button variant="ghost" size="sm" className="w-fit gap-2 -ml-2 text-muted-foreground hover:text-primary font-bold">
+                            <ArrowLeft className="h-4 w-4" /> Retour
+                        </Button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl md:text-4xl font-black text-foreground">Gestion des Clients</h1>
+                        <p className="text-sm md:text-base text-muted-foreground mt-1 font-medium">Gérez les sous-domaines, les abonnements et les accès.</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="border rounded-lg bg-card shadow-sm">
-                <Table>
+            <Card className="border-border/50 shadow-xl overflow-hidden border-2">
+                <CardHeader className="bg-muted/30 border-b py-6">
+                    <CardTitle className="flex items-center gap-3 text-2xl font-black">
+                        <LayoutList className="h-7 w-7 text-primary" />
+                        Liste des Clients
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <Table className="min-w-[800px]">
                     <TableHeader>
-                        <TableRow className="bg-muted/30">
-                            <TableHead className="font-bold">Nom</TableHead>
-                            <TableHead className="font-bold">Sous-domaine</TableHead>
-                            <TableHead className="font-bold">Plan</TableHead>
-                            <TableHead className="font-bold">Statut</TableHead>
-                            <TableHead className="font-bold">Créé le</TableHead>
-                            <TableHead className="text-right font-bold">Actions</TableHead>
+                        <TableRow className="bg-muted/10 hover:bg-muted/10 h-16">
+                            <TableHead className="font-black text-foreground">Nom</TableHead>
+                            <TableHead className="font-black text-foreground">Sous-domaine</TableHead>
+                            <TableHead className="font-black text-foreground">Plan</TableHead>
+                            <TableHead className="font-black text-foreground">Statut</TableHead>
+                            <TableHead className="font-black text-foreground">Créé le</TableHead>
+                            <TableHead className="text-right font-black text-foreground">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {tenants?.map((tenant) => (
-                            <TableRow key={tenant.id} className="hover:bg-muted/10 transition-colors">
-                                <TableCell className="font-bold text-lg">{tenant.name}</TableCell>
+                            <TableRow key={tenant.id} className="hover:bg-muted/5 transition-colors h-20">
                                 <TableCell>
-                                    <code className="bg-muted px-2 py-1 rounded text-sm font-semibold">{tenant.subdomain}</code>
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black uppercase border border-primary/20 shrink-0">
+                                            {tenant.name[0]}
+                                        </div>
+                                        <span className="font-black text-lg">{tenant.name}</span>
+                                    </div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline" className="font-bold border-primary/20 bg-primary/5 text-primary">
+                                    <div className="flex items-center gap-2 font-black">
+                                        <Globe className="h-4 w-4 text-muted-foreground" />
+                                        <code className="bg-muted px-2 py-1 rounded text-sm">{tenant.subdomain}</code>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant={tenant.plan === "Elite" ? "destructive" : tenant.plan === "Pro" ? "default" : "secondary"} className="font-black px-3 py-1">
                                         {tenant.plan}
                                     </Badge>
                                 </TableCell>
@@ -160,15 +236,40 @@ export default function SaaSAdminTenants() {
                                                 updateTenantMutation.mutate({ id: tenant.id, data: { isActive: checked } })
                                             }
                                         />
-                                        <Badge variant={tenant.isActive ? "default" : "secondary"} className="font-bold">
+                                        <Badge variant={tenant.isActive ? "default" : "secondary"} className="font-black px-3 py-1 uppercase text-[10px]">
                                             {tenant.isActive ? "Actif" : "Suspendu"}
                                         </Badge>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-muted-foreground font-medium">
-                                    {tenant.createdAt ? new Date(tenant.createdAt).toLocaleDateString() : "-"}
+                                <TableCell>
+                                    <div className="flex items-center gap-2 font-medium text-muted-foreground italic">
+                                        <Calendar className="h-4 w-4" />
+                                        {tenant.createdAt ? new Date(tenant.createdAt).toLocaleDateString() : "-"}
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">
+                                    <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="gap-2 font-bold bg-amber-500/5 border-amber-500/20 hover:bg-amber-500/10 text-amber-600"
+                                        onClick={() => {
+                                            setSubTenant(tenant);
+                                            setIsSubscriptionsOpen(true);
+                                        }}
+                                    >
+                                        <CreditCard className="h-4 w-4" />
+                                        Abonnements
+                                    </Button>
+                                    <Link href={`/tenants/${tenant.id}/stats`}>
+                                        <Button 
+                                            variant="outline" 
+                                            size="sm" 
+                                            className="gap-2 font-bold bg-blue-500/5 border-blue-500/20 hover:bg-blue-500/10 text-blue-600"
+                                        >
+                                            <BarChart3 className="h-4 w-4" />
+                                            Indicateurs
+                                        </Button>
+                                    </Link>
                                     <Button 
                                         variant="outline" 
                                         size="sm" 
@@ -176,7 +277,7 @@ export default function SaaSAdminTenants() {
                                         onClick={() => setSelectedTenant(tenant)}
                                     >
                                         <Users className="h-4 w-4" />
-                                        Utilisateurs
+                                        Accès
                                     </Button>
                                     <Button variant="ghost" size="sm" asChild className="font-bold">
                                         <a href={`http://${tenant.subdomain}.localhost:5173`} target="_blank" rel="noreferrer">
@@ -189,7 +290,9 @@ export default function SaaSAdminTenants() {
                         ))}
                     </TableBody>
                 </Table>
-            </div>
+                </div>
+                </CardContent>
+            </Card>
 
             {/* Users Management Dialog */}
             <Dialog open={!!selectedTenant} onOpenChange={(open) => !open && setSelectedTenant(null)}>
@@ -363,6 +466,123 @@ export default function SaaSAdminTenants() {
                             {addUserMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Créer l'accès"}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Subscriptions History & Management Dialog */}
+            <Dialog open={isSubscriptionsOpen} onOpenChange={(open) => !open && setIsSubscriptionsOpen(false)}>
+                <DialogContent className="max-w-4xl border-t-4 border-t-amber-500 shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <History className="h-7 w-7 text-amber-500" />
+                                Abonnements : {subTenant?.name}
+                            </div>
+                            <Button 
+                                size="sm" 
+                                className="font-bold gap-2 bg-amber-600 hover:bg-amber-700" 
+                                onClick={() => setIsAddSubOpen(!isAddSubOpen)}
+                            >
+                                <PlusCircle className="h-4 w-4" />
+                                Nouvel abonnement
+                            </Button>
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    {isAddSubOpen && (
+                        <div className="mt-4 p-4 border-2 border-amber-100 rounded-xl bg-amber-50/30 space-y-4 animate-in slide-in-from-top-2">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="font-bold">Plan</Label>
+                                    <Select value={subPlan} onValueChange={setSubPlan}>
+                                        <SelectTrigger className="bg-white">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Starter">Starter</SelectItem>
+                                            <SelectItem value="Pro">Pro</SelectItem>
+                                            <SelectItem value="Enterprise">Enterprise</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="font-bold">Montant (Dhs)</Label>
+                                    <Input 
+                                        type="number" 
+                                        value={subAmount} 
+                                        onChange={(e) => setSubAmount(e.target.value)}
+                                        className="bg-white font-bold"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="font-bold">Date de fin</Label>
+                                    <Input 
+                                        type="date" 
+                                        value={subEndDate} 
+                                        onChange={(e) => setSubEndDate(e.target.value)}
+                                        className="bg-white font-bold"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end gap-3">
+                                <Button variant="ghost" size="sm" onClick={() => setIsAddSubOpen(false)}>Annuler</Button>
+                                <Button 
+                                    size="sm" 
+                                    className="bg-amber-600 hover:bg-amber-700 font-bold"
+                                    onClick={() => addSubscriptionMutation.mutate()}
+                                    disabled={addSubscriptionMutation.isPending}
+                                >
+                                    {addSubscriptionMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Enregistrer"}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="mt-6">
+                        {loadingSubs ? (
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+                            </div>
+                        ) : (
+                            <div className="border rounded-xl overflow-hidden shadow-sm">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="bg-muted/20">
+                                            <TableHead className="font-bold">Plan</TableHead>
+                                            <TableHead className="font-bold">Période</TableHead>
+                                            <TableHead className="font-bold">Montant</TableHead>
+                                            <TableHead className="font-bold text-right">Statut</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {subscriptions?.map((sub) => (
+                                            <TableRow key={sub.id}>
+                                                <TableCell className="font-bold">{sub.plan}</TableCell>
+                                                <TableCell className="text-sm font-medium">
+                                                    {new Date(sub.startDate).toLocaleDateString()} — {new Date(sub.endDate).toLocaleDateString()}
+                                                </TableCell>
+                                                <TableCell className="font-bold text-amber-700">
+                                                    {sub.amount} Dhs
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <Badge variant={sub.status === "active" ? "default" : "secondary"}>
+                                                        {sub.status === "active" ? "Actif" : sub.status}
+                                                    </Badge>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                        {subscriptions?.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={4} className="h-32 text-center text-muted-foreground italic">
+                                                    Aucun historique d'abonnement.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
