@@ -22,6 +22,7 @@ export interface IStorage {
     createTenant(tenant: InsertTenant): Promise<Tenant>;
     getAllTenants(): Promise<Tenant[]>;
     updateTenant(id: number, tenant: Partial<InsertTenant>): Promise<Tenant>;
+    deleteTenant(id: number): Promise<void>;
 
     // Users
     getUser(id: number): Promise<User | undefined>;
@@ -166,6 +167,18 @@ export class DatabaseStorage implements IStorage {
         const [tenant] = await db.update(tenants).set(update).where(eq(tenants.id, id)).returning();
         if (!tenant) throw new Error("Tenant not found");
         return tenant;
+    }
+
+    async deleteTenant(id: number): Promise<void> {
+        // First delete associated users, orders, clients, measurements, and subscriptions
+        // to handle foreign key constraints if they are not ON DELETE CASCADE
+        await db.delete(users).where(eq(users.tenantId, id));
+        await db.delete(orders).where(eq(orders.tenantId, id));
+        await db.delete(measurements).where(eq(measurements.tenantId, id));
+        await db.delete(clients).where(eq(clients.tenantId, id));
+        await db.delete(subscriptions).where(eq(subscriptions.tenantId, id));
+        
+        await db.delete(tenants).where(eq(tenants.id, id));
     }
 
     async getAllUsers(): Promise<User[]> {

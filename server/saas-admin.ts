@@ -65,6 +65,16 @@ saasAdminRouter.patch("/tenants/:id", async (req, res) => {
     res.json(tenant);
 });
 
+saasAdminRouter.delete("/tenants/:id", async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        await storage.deleteTenant(id);
+        res.status(204).send();
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Conversion
 saasAdminRouter.post("/convert-request/:id", async (req, res) => {
     try {

@@ -21,6 +21,16 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+    AlertDialog, 
+    AlertDialogAction, 
+    AlertDialogCancel, 
+    AlertDialogContent, 
+    AlertDialogDescription, 
+    AlertDialogFooter, 
+    AlertDialogHeader, 
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function SaaSAdminTenants() {
     const { toast } = useToast();
@@ -35,6 +45,7 @@ export default function SaaSAdminTenants() {
     const [subPlan, setSubPlan] = useState("Starter");
     const [subAmount, setSubAmount] = useState("0");
     const [subEndDate, setSubEndDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    const [deletingTenantId, setDeletingTenantId] = useState<number | null>(null);
     
     // New user form state
     const [newUsername, setNewUsername] = useState("");
@@ -156,6 +167,23 @@ export default function SaaSAdminTenants() {
             queryClient.invalidateQueries({ queryKey: ["/api/saas-admin/subscriptions", { tenantId: subTenant?.id }] });
             toast({ title: "Succès", description: "Abonnement ajouté avec succès." });
             setIsAddSubOpen(false);
+        },
+        onError: (e: any) => {
+            toast({ title: "Erreur", description: e.message, variant: "destructive" });
+        }
+    });
+
+    const deleteTenantMutation = useMutation({
+        mutationFn: async (id: number) => {
+            const res = await fetch(`/api/saas-admin/tenants/${id}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) throw new Error("Failed to delete tenant");
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["/api/saas-admin/tenants"] });
+            toast({ title: "Succès", description: "Le client a été supprimé ainsi que toutes ses données." });
+            setDeletingTenantId(null);
         },
         onError: (e: any) => {
             toast({ title: "Erreur", description: e.message, variant: "destructive" });
@@ -284,6 +312,14 @@ export default function SaaSAdminTenants() {
                                             <ExternalLink className="h-4 w-4 mr-2" />
                                             Ouvrir
                                         </a>
+                                    </Button>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => setDeletingTenantId(tenant.id)}
+                                        className="text-destructive hover:bg-destructive/10 hover:text-destructive font-bold"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -585,6 +621,28 @@ export default function SaaSAdminTenants() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* Confirmation Deletion AlertDialog */}
+            <AlertDialog open={!!deletingTenantId} onOpenChange={(open) => !open && setDeletingTenantId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-xl font-black">Confirmer la suppression ?</AlertDialogTitle>
+                        <AlertDialogDescription className="font-medium">
+                            Cette action est irréversible. Toutes les données associées à ce client (clients, commandes, mesures, utilisateurs et abonnements) seront définitivement supprimées. 
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="font-bold">Annuler</AlertDialogCancel>
+                        <AlertDialogAction 
+                            className="bg-destructive hover:bg-destructive/90 text-white font-bold"
+                            onClick={() => deletingTenantId && deleteTenantMutation.mutate(deletingTenantId)}
+                        >
+                            {deleteTenantMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                            Supprimer définitivement
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

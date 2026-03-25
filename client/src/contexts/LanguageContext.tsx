@@ -11,13 +11,28 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const { i18n } = useTranslation();
-    const [language, setLangState] = useState(i18n.language || "ar");
+    const [language, setLangState] = useState(() => {
+        const storedLang = i18n.language;
+        const hostname = window.location.hostname;
+        const parts = hostname.split(".");
+        // Check if we are on the admin subdomain
+        const isAdminSubdomain = parts[0] === "admin" || parts.includes("admin");
+        
+        if (isAdminSubdomain) {
+            return "fr";
+        }
+        return storedLang || "ar";
+    });
     const isRTL = language === "ar";
 
     useEffect(() => {
         document.documentElement.dir = isRTL ? "rtl" : "ltr";
         document.documentElement.lang = language;
-    }, [language, isRTL]);
+        // Also ensure i18n is synced (especially on first load)
+        if (i18n.language !== language) {
+            i18n.changeLanguage(language);
+        }
+    }, [language, isRTL, i18n]);
 
     const setLanguage = (lang: string) => {
         i18n.changeLanguage(lang);
