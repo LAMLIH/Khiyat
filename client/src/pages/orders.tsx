@@ -646,7 +646,7 @@ export default function OrdersPage() {
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <h3 className="text-lg md:text-xl font-bold truncate text-foreground">#{order.id} - {getClientName(order.clientId || 0)}</h3>
                                         <Badge variant="outline" className={cn("rounded-md font-medium text-xs border bg-background", statusColors[order.status])}>
-                                            {order.status}
+                                            {t(`statuses.${order.status}`)}
                                         </Badge>
                                     </div>
                                     <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground font-medium">
@@ -672,12 +672,12 @@ export default function OrdersPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between md:justify-end gap-4 md:gap-8 w-full md:w-auto border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-8 mt-2 md:mt-0">
-                                <div className="flex-1 md:flex-none">
+                            <div className="flex items-center justify-between md:justify-end gap-2 md:gap-8 w-full md:w-auto border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-8 mt-2 md:mt-0">
+                                <div className={cn("flex-1 md:flex-none", isRTL ? "text-right" : "text-left")}>
                                     <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.price")}</div>
                                     <div className="text-lg md:text-xl font-bold text-foreground">{order.totalPrice} <span className="text-xs font-normal">Dhs</span></div>
                                 </div>
-                                <div className="flex-1 md:flex-none">
+                                <div className={cn("flex-1 md:flex-none", isRTL ? "text-right" : "text-left")}>
                                     <div className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">{t("common.profit")}</div>
                                     <div className="text-lg md:text-xl font-bold text-primary">{order.profit} <span className="text-xs font-normal">Dhs</span></div>
                                 </div>
@@ -714,7 +714,7 @@ export default function OrdersPage() {
                         <div className="p-6 bg-card rounded-t-[32px] flex-1 overflow-y-auto">
                             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mb-8" />
                             <div className="max-w-2xl mx-auto">
-                                <Drawer.Title className="text-3xl font-bold mb-2 flex items-center gap-3">
+                                <Drawer.Title className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3">
                                     <TrendingUp className="h-8 w-8 text-primary" />
                                     {isRTL ? `تعديل الطلب #${selectedOrder?.id}` : `Modifier la commande #${selectedOrder?.id}`}
                                 </Drawer.Title>
@@ -743,24 +743,24 @@ export default function OrdersPage() {
                                                     <span className="font-bold">{isRTL ? "ملاحظات الطلب" : "Notes de la commande"}</span>
                                                 </div>
 
-                                                <div className="flex gap-2">
+                                                <div className="grid grid-cols-2 gap-2">
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        className="gap-2 font-bold bg-background shadow-sm border-primary/20 hover:bg-primary/5 h-10"
+                                                        className="gap-1.5 font-bold bg-background shadow-sm border-primary/20 hover:bg-primary/5 h-11 w-full"
                                                         onClick={() => setShowHistoricalMeasurements(!showHistoricalMeasurements)}
                                                     >
-                                                        <Ruler className="h-4 w-4 text-primary" />
-                                                        {isRTL ? "قياسات الطلب" : "Mesures du client"}
+                                                        <Ruler className="h-4 w-4 text-primary shrink-0" />
+                                                        <span className="truncate text-xs">{isRTL ? "قياسات الطلب" : "Mesures"}</span>
                                                     </Button>
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        className="gap-2 font-bold bg-primary/10 shadow-sm border-primary/30 hover:bg-primary/20 h-10 text-primary"
+                                                        className="gap-1.5 font-bold bg-primary/10 shadow-sm border-primary/30 hover:bg-primary/20 h-11 text-primary w-full"
                                                         onClick={handlePrint}
                                                     >
-                                                        <Printer className="h-4 w-4" />
-                                                        {isRTL ? "طباعة الوصل" : "Imprimer le reçu"}
+                                                        <Printer className="h-4 w-4 shrink-0" />
+                                                        <span className="truncate text-xs">{isRTL ? "طباعة الوصل" : "Imprimer"}</span>
                                                     </Button>
                                                 </div>
 
@@ -839,12 +839,12 @@ export default function OrdersPage() {
                                                 <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{isRTL ? "التسبيق الحالي:" : "Avance actuelle:"}</span>
                                                 <span className="text-primary text-base"><span className="text-sm font-normal">Dhs </span><span className="font-bold text-2xl">{selectedOrder.advancePayment}</span></span>
                                             </div>
-                                            <div className="flex gap-3">
+                                            <div className="flex flex-col sm:flex-row gap-3">
                                                 <div className="relative flex-1 group">
                                                     <Input
                                                         type="number"
                                                         placeholder={isRTL ? "المبلغ المضاف" : "Montant à ajouter"}
-                                                        className="font-bold text-lg"
+                                                        className="font-bold text-lg h-12"
                                                         value={editAdvance}
                                                         onChange={(e) => setEditAdvance(e.target.value)}
                                                     />
@@ -852,10 +852,10 @@ export default function OrdersPage() {
                                                 </div>
                                                 <Button
                                                     onClick={handleAddAdvance}
-                                                    className="h-12 rounded-xl bg-primary hover:bg-primary/90 px-8 gap-2 font-bold shadow-md transition-all active:scale-95"
+                                                    className="h-12 w-full sm:w-auto rounded-xl bg-primary hover:bg-primary/90 px-8 gap-2 font-bold shadow-md transition-all active:scale-95"
                                                     disabled={!editAdvance || Number(editAdvance) <= 0 || updateOrder.isPending}
                                                 >
-                                                    <Plus className="h-5 w-5" />
+                                                    <Plus className={cn("h-5 w-5", isRTL && "ml-1")} />
                                                     {isRTL ? "إضافة" : "Ajouter"}
                                                 </Button>
                                             </div>

@@ -83,5 +83,12 @@
         "dashboard": "Tableau de bord Admin",
         "tenants": "Gestion Clients",
         "sub_requests": "Demandes d'abonnement"
+    },
+    "statuses": {
+        "Nouvelle": "Nouvelle",
+        "En cours": "En cours",
+        "Terminée": "Terminée",
+        "Livrée": "Livrée",
+        "Annulée": "Annulée"
     }
 }

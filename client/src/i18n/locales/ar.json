@@ -83,5 +83,12 @@
         "dashboard": "لوحة تحكم المشرف",
         "tenants": "إدارة الزبناء",
         "sub_requests": "طلبات الاشتراك"
+    },
+    "statuses": {
+        "Nouvelle": "جديدة",
+        "En cours": "قيد الإنجاز",
+        "Terminée": "منتهية",
+        "Livrée": "مُسلمة",
+        "Annulée": "ملغاة"
     }
 }

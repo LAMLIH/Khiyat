@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 
 const url = process.env.DATABASE_URL!;
-const sql = postgres(url);
+const sql = postgres(url, { ssl: false, prepare: false });
 
 async function check() {
     try {
