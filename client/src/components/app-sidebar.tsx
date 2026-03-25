@@ -33,6 +33,7 @@ import {
     SidebarMenuSubButton,
     SidebarFooter,
     SidebarHeader,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -63,6 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { t } = useTranslation();
     const { language, isRTL } = useLanguage();
     const { user, logout } = useAuth();
+    const { isMobile, setOpenMobile } = useSidebar();
 
     // Default open state based on current location
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
@@ -216,7 +218,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                 isActive={isActive}
                                                 tooltip={title}
                                             >
-                                                <Link href={item.url}>
+                                                <Link href={item.url} onClick={() => isMobile && setOpenMobile(false)}>
                                                     <item.icon />
                                                     <span>{title}</span>
                                                 </Link>
@@ -254,7 +256,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                                         asChild
                                                                         isActive={isSubActive}
                                                                     >
-                                                                        <Link href={subItem.url}>
+                                                                        <Link href={subItem.url} onClick={() => isMobile && setOpenMobile(false)}>
                                                                             <span>{t(subItem.titleKey)}</span>
                                                                             {subItem.badge && (
                                                                                 <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">

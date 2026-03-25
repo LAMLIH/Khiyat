@@ -329,10 +329,10 @@ export default function OrdersPage() {
                     <Drawer.Portal>
                         <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
                         <Drawer.Content className={cn(
-                            "bg-background flex flex-col rounded-t-[32px] h-[90%] mt-24 fixed bottom-0 left-0 right-0 z-50 outline-none border-t border-border",
+                            "bg-background flex flex-col rounded-t-[32px] h-[95%] mt-12 fixed bottom-0 left-0 right-0 z-50 outline-none border-t border-border focus:outline-none",
                             isRTL && "font-arabic"
                         )}>
-                            <div className="p-6 bg-card rounded-t-[32px] flex-1 overflow-y-auto">
+                            <div className="p-6 pb-[40vh] bg-card rounded-t-[32px] flex-1 overflow-y-auto scroll-smooth">
                                 <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mb-8" />
                                 <div className="max-w-2xl mx-auto">
                                     <Drawer.Title className="text-3xl font-bold mb-2 flex items-center gap-3">
@@ -525,7 +525,7 @@ export default function OrdersPage() {
                                             )}
                                         </div>
 
-                                        <div className="flex gap-4 pt-6 sticky bottom-0 bg-background/80 backdrop-blur-md py-4 border-t mt-auto">
+                                        <div className="flex gap-4 pt-6 bg-background py-4 border-t mt-8">
                                             <Button
                                                 size="lg"
                                                 className="flex-1 h-14 text-lg rounded-sm shadow-sm hover-elevate transition-all gap-2 bg-primary text-primary-foreground"
@@ -708,10 +708,10 @@ export default function OrdersPage() {
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
                     <Drawer.Content className={cn(
-                        "bg-card flex flex-col rounded-t-[32px] h-[85%] mt-24 fixed bottom-0 left-0 right-0 z-50 outline-none border-t border-border",
+                        "bg-card flex flex-col rounded-t-[32px] h-[95%] mt-12 fixed bottom-0 left-0 right-0 z-50 outline-none border-t border-border focus:outline-none",
                         isRTL && "font-arabic"
                     )}>
-                        <div className="p-6 bg-card rounded-t-[32px] flex-1 overflow-y-auto">
+                        <div className="p-6 bg-card rounded-t-[32px] flex-1 overflow-y-auto pb-[40vh] scroll-smooth">
                             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mb-8" />
                             <div className="max-w-2xl mx-auto">
                                 <Drawer.Title className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3">
